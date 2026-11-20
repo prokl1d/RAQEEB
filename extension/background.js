@@ -49,12 +49,23 @@ async function isEnabled() {
 }
 
 // 1) From the content script
-chrome.runtime.onMessage.addListener((msg, sender) => {
+chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
+  if (msg?.type === "raqeeb-ready" && sender.tab?.id !== undefined) {
+    // Visible proof the guard is active on this tab.
+    chrome.action.setBadgeText({ tabId: sender.tab.id, text: "ON" });
+    chrome.action.setBadgeBackgroundColor({ tabId: sender.tab.id, color: "#8c6b2a" });
+    chrome.action.setBadgeTextColor?.({ tabId: sender.tab.id, color: "#ffffff" });
+    return;
+  }
   if (msg?.type !== "raqeeb-check" || typeof msg.url !== "string") return;
   const opts = { url: checkPage(msg.url), active: true };
   if (sender.tab?.index !== undefined) opts.index = sender.tab.index + 1;
   if (sender.tab?.windowId !== undefined) opts.windowId = sender.tab.windowId;
-  chrome.tabs.create(opts);
+  chrome.tabs
+    .create(opts)
+    .then(() => sendResponse(true))
+    .catch(() => sendResponse(false));
+  return true; // answer asynchronously
 });
 
 // 2) Safety net for tabs the watched sites open themselves.
@@ -77,13 +88,14 @@ async function redirect(tabId, rawUrl) {
   return true;
 }
 
-chrome.webNavigation.onCreatedNavigationTarget.addListener(async (d) => {
+// Only if Chrome granted the webNavigation permission (never let a missing permission break the click guard).
+if (chrome.webNavigation) chrome.webNavigation.onCreatedNavigationTarget.addListener(async (d) => {
   if (!(await isEnabled()) || !(await fromWatchedSite(d.sourceTabId))) return;
   if (d.url && d.url !== "about:blank" && (await redirect(d.tabId, d.url))) return;
   pending.set(d.tabId, Date.now() + 5000);
 });
 
-chrome.webNavigation.onBeforeNavigate.addListener(async (d) => {
+if (chrome.webNavigation) chrome.webNavigation.onBeforeNavigate.addListener(async (d) => {
   if (d.frameId !== 0) return;
   const until = pending.get(d.tabId);
   if (!until) return;

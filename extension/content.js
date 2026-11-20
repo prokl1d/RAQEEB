@@ -54,7 +54,14 @@
 
   function open(url) {
     if (hasChrome) {
-      chrome.runtime.sendMessage({ type: "raqeeb-check", url });
+      const page = chrome.runtime.getURL("check.html") + "?u=" + encodeURIComponent(url);
+      // If the background worker doesn't answer, open the check page ourselves: a click must never just vanish.
+      chrome.runtime
+        .sendMessage({ type: "raqeeb-check", url })
+        .then((ok) => {
+          if (ok !== true) window.open(page, "_blank", "noopener");
+        })
+        .catch(() => window.open(page, "_blank", "noopener"));
     } else {
       // Test harness without the extension: open the page relative to this script.
       window.open(SCRIPT_BASE + "check.html?u=" + encodeURIComponent(url), "_blank");
@@ -81,6 +88,9 @@
     e.stopImmediatePropagation();
     open(real);
   }
+
+  // Tell the background this tab is protected (shows "ON" on the toolbar icon).
+  if (hasChrome && window.top === window) chrome.runtime.sendMessage({ type: "raqeeb-ready" }).catch(() => {});
 
   // Capture phase on window: runs before the page's own handlers (even ones on document/window).
   window.addEventListener("click", handler, true);
