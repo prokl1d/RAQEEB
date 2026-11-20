@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RAQEEB · Checking link</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="band">RAQEEB Link Guard · Student hackathon project, not a government service</div>
+  <main class="wrap">
+    <header class="brand">
+      <svg width="40" height="40" viewBox="0 0 44 44" aria-hidden="true">
+        <circle cx="22" cy="22" r="20" fill="none" stroke="#92722a" stroke-width="2.5" />
+        <circle cx="20" cy="20" r="8" fill="none" stroke="#282a33" stroke-width="2.5" />
+        <path d="m26 26 6.5 6.5" stroke="#282a33" stroke-width="2.5" stroke-linecap="round" />
+      </svg>
+      <div><strong>RAQEEB</strong><span lang="ar">رقيب</span></div>
+    </header>
+
+    <section class="card" id="card">
+      <div class="bar" id="bar"></div>
+      <div class="body">
+        <p class="eyebrow" id="eyebrow">Checking this link before it opens</p>
+        <p class="url" id="url"></p>
+
+        <div id="checking">
+          <ul class="steps">
+            <li>Comparing the domain with official UAE organizations</li>
+            <li>Checking certificate, redirects and domain age</li>
+            <li>Checking threat intelligence</li>
+          </ul>
+        </div>
+
+        <div id="result" hidden>
+          <div class="verdict">
+            <span class="badge" id="badge"></span>
+            <span class="score" id="score"></span>
+          </div>
+          <h1 id="headline"></h1>
+          <p class="identity" id="identity"></p>
+          <ul class="findings" id="findings"></ul>
+          <p class="note" id="note"></p>
+        </div>
+
+        <div class="actions" id="actions" hidden>
+          <button class="btn primary" id="primary"></button>
+          <button class="btn secondary" id="secondary"></button>
+          <a class="link" id="report" target="_blank" rel="noopener">Open the full report ›</a>
+        </div>
+      </div>
+    </section>
+
+    <p class="foot">Only this link was sent to your RAQEEB server. Nothing is stored. No check can guarantee a site is safe.</p>
+  </main>
+  <script src="check.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>RAQEEB Link Guard · chat demo</title>
+  <!-- Backup demo page: a fake chat with the three demo links. It loads the same content.js
+       the extension uses, so clicking a link here behaves like clicking it in WhatsApp Web.
+       Serve the extension folder (e.g. `python -m http.server 5174` inside extension/) and open
+       http://localhost:5174/demo/chat-demo.html -->
+  <style>
+    body { margin: 0; font: 15px/21px Roboto, system-ui, sans-serif; background: #0b141a; color: #e9edef; }
+    header { background: #202c33; padding: 12px 16px; font-weight: 600; }
+    header small { display: block; font-weight: 400; color: #8696a0; font-size: 12px; }
+    .chat { max-width: 720px; margin: 0 auto; padding: 16px; display: grid; gap: 10px; }
+    .msg { background: #202c33; border-radius: 8px; padding: 8px 10px; max-width: 85%; }
+    .msg a { color: #53bdeb; word-break: break-all; }
+    .time { display: block; text-align: right; font-size: 11px; color: #8696a0; }
+    .note { text-align: center; font-size: 12px; color: #8696a0; }
+  </style>
+</head>
+<body>
+  <header>Unknown number<small>Demo chat for the RAQEEB Link Guard (not WhatsApp). Example links only</small></header>
+  <div class="chat">
+    <p class="note">Click a link. RAQEEB checks it before it opens.</p>
+    <div class="msg">URGENT: Emirates NBD has suspended your card. Verify within 24 hours:
+      <a href="https://emiratesnbd-secure.co/verify" target="_blank" rel="noopener">https://emiratesnbd-secure.co/verify</a>
+      <span class="time">7:19 pm</span></div>
+    <div class="msg">Emirates Post: your parcel is on hold. Pay the AED 4.50 redelivery fee:
+      <a href="https://emiratespost-redelivery.com/pay" target="_blank" rel="noopener">https://emiratespost-redelivery.com/pay</a>
+      <span class="time">7:20 pm</span></div>
+    <div class="msg">DEWA: your November bill is ready:
+      <a href="https://www.dewa.gov.ae/en" target="_blank" rel="noopener">https://www.dewa.gov.ae/en</a>
+      <span class="time">7:21 pm</span></div>
+  </div>
+  <script src="../content.js"></script>
+</body>
+</html>

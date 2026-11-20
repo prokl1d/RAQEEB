@@ -1,0 +1,54 @@
+/* RAQEEB Link Guard, same UAE Design System-inspired tokens as the web app. */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@600;800&family=Roboto:wght@400;500&family=JetBrains+Mono&display=swap");
+
+:root {
+  --shell: #1b1d24; --canvas: #fcfcfc; --surface: #fff; --line: #e1e3e8;
+  --ink: #282a33; --ink2: #4d525e; --ink3: #6b6f7b;
+  --gold: #92722a; --gold-hover: #7c6024; --gold-strong: #6c5121; --gold-soft: #f2eccf; --cream: #fdf9ee;
+  --low: #047857; --low-bg: #e7f6ef; --mod: #c2410c; --mod-bg: #fdeee6;
+  --high: #b91c1c; --high-bg: #fdecec; --unk: #4d525e; --unk-bg: #eef0f3;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px/24px Roboto, system-ui, sans-serif; }
+.band { background: var(--shell); color: #fff; font-size: 13px; padding: 4px 16px; }
+.wrap { max-width: 640px; margin: 0 auto; padding: 24px 16px 48px; }
+.brand { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.brand strong { display: block; font: 800 18px/1 Inter, sans-serif; letter-spacing: .04em; }
+.brand span { font-size: 13px; color: var(--ink3); }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.bar { height: 6px; background: var(--gold-soft); }
+.bar.checking { background: linear-gradient(90deg, var(--gold-soft), var(--gold), var(--gold-soft)); background-size: 200% 100%; animation: slide 1.2s linear infinite; }
+@keyframes slide { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .bar.checking { animation: none; } }
+.body { padding: 24px; }
+.eyebrow { margin: 0; font-size: 14px; color: var(--gold-strong); }
+.url { margin: 6px 0 16px; font: 14px/20px "JetBrains Mono", monospace; word-break: break-all; color: var(--ink2); }
+.steps { margin: 0; padding-left: 20px; color: var(--ink2); font-size: 14px; }
+.steps li { margin: 4px 0; }
+.verdict { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; padding: 4px 8px; font-size: 14px; font-weight: 500; }
+.badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.badge.low { background: var(--low-bg); color: var(--low); }
+.badge.moderate { background: var(--mod-bg); color: var(--mod); }
+.badge.high { background: var(--high-bg); color: var(--high); }
+.badge.unknown { background: var(--unk-bg); color: var(--unk); }
+.score { font-size: 14px; color: var(--ink3); }
+h1 { font: 800 26px/32px Inter, sans-serif; letter-spacing: -.5px; margin: 14px 0 6px; }
+.identity { margin: 0 0 12px; color: var(--ink2); }
+.findings { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.findings li { padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; line-height: 20px; }
+.findings li b { display: block; font-weight: 500; color: var(--ink); }
+.findings li span { color: var(--ink3); }
+.note { font-size: 14px; color: var(--ink3); margin: 12px 0 0; }
+.actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 20px; }
+.btn { height: 44px; padding: 0 16px; border-radius: 6px; font: 600 16px Roboto, sans-serif; cursor: pointer; }
+.btn.primary { background: var(--gold); color: #fff; border: 0; }
+.btn.primary:hover { background: var(--gold-hover); }
+.btn.primary.danger { background: var(--high); }
+.btn.secondary { background: transparent; color: var(--gold); border: 2px solid var(--gold); }
+.btn.secondary:hover { background: var(--cream); }
+.btn.secondary.quiet { border-color: var(--line); color: var(--ink3); font-weight: 500; }
+.link { color: var(--gold); text-decoration: none; margin-left: auto; font-size: 14px; }
+.link:hover { color: var(--gold-strong); }
+.foot { font-size: 13px; color: var(--ink3); text-align: center; margin-top: 16px; }
+:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(146, 114, 42, .35); }

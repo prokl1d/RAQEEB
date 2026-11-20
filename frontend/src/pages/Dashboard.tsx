@@ -1,8 +1,18 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { InvestigationInput } from "../components/InvestigationInput";
 import { Report } from "../components/Report";
 import { Badge, Card, Container, LinkMore, Mono, RiskBadge } from "../components/ui";
 import { investigate, type InvestigateRequest, type InvestigationResult } from "../lib/api";
+
+/** Links from the RAQEEB Link Guard extension: /?url=... or /?message=... start an investigation. */
+function requestFromQuery(): InvestigateRequest | null {
+  const p = new URLSearchParams(window.location.search);
+  const url = p.get("url");
+  const message = p.get("message");
+  if (url) return { type: "url", url: url.slice(0, 2048) };
+  if (message) return { type: "message", message: message.slice(0, 5000) };
+  return null;
+}
 
 const PROGRESS = [
   "Extracting links and the claimed organization",
@@ -84,6 +94,8 @@ export function Dashboard() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ data: InvestigationResult; message?: string } | null>(null);
   const reportRef = useRef<HTMLDivElement>(null);
+  const [initial] = useState(requestFromQuery);
+  const started = useRef(false);
 
   async function run(req: InvestigateRequest) {
     setBusy(true);
@@ -99,6 +111,15 @@ export function Dashboard() {
       setBusy(false);
     }
   }
+
+  useEffect(() => {
+    if (initial && !started.current) {
+      started.current = true;
+      run(initial);
+      window.history.replaceState(null, "", window.location.pathname); // don't keep the link in the address bar
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
@@ -129,7 +150,7 @@ export function Dashboard() {
           </div>
 
           <div id="investigate" className="mx-auto mt-12 max-w-[800px] scroll-mt-32">
-            <InvestigationInput onSubmit={run} busy={busy} />
+            <InvestigationInput onSubmit={run} busy={busy} initial={initial} />
           </div>
 
           <div ref={reportRef} className="mx-auto mt-8 max-w-[1100px] scroll-mt-32">

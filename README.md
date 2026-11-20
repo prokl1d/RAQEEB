@@ -20,6 +20,8 @@ Under the hood:
 - deterministic weighted scoring
 - AI explanation (built-in by default, Gemini optional) with personal data masked
 
+**New: RAQEEB Link Guard**, a Chrome extension that checks links automatically when you click them in WhatsApp Web, Gmail, Outlook or Telegram. See [docs/EXTENSION.md](docs/EXTENSION.md).
+
 Presenting? See [docs/DEMO.md](docs/DEMO.md). Still to do: screenshot investigations (OCR) and final polish.
 
 ## Run it locally (Windows)

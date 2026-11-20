@@ -29,7 +29,7 @@ export const EXAMPLES: { label: string; tab: Tab; value: string }[] = [
   {
     label: "Legitimate-looking",
     tab: "message",
-    value: "DEWA: your November bill is ready. View it at https://www.dewa.gov.ae/en/consumer/billing",
+    value: "DEWA: your November bill is ready. View it at https://www.dewa.gov.ae/en",
   },
 ];
 
@@ -39,13 +39,15 @@ const field =
 export function InvestigationInput({
   onSubmit,
   busy,
+  initial,
 }: {
   onSubmit: (req: InvestigateRequest) => void;
   busy: boolean;
+  initial?: InvestigateRequest | null;
 }) {
-  const [tab, setTab] = useState<Tab>("message");
-  const [url, setUrl] = useState("");
-  const [message, setMessage] = useState("");
+  const [tab, setTab] = useState<Tab>(initial?.type ?? "message");
+  const [url, setUrl] = useState(initial?.type === "url" ? initial.url : "");
+  const [message, setMessage] = useState(initial?.type === "message" ? initial.message : "");
   const [file, setFile] = useState<File | null>(null);
 
   const ready =
