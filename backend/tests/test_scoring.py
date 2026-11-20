@@ -69,6 +69,46 @@ async def test_demo_scenarios_end_to_end():
     assert legit.identity.outcome == IdentityOutcome.verified_match
 
 
+def test_failed_threat_intel_never_gives_low_risk():
+    # Official domain, but Safe Browsing rejected the key and VirusTotal isn't configured.
+    ev = [e(Category.threat_intel, S.missing, "url0.sb"), e(Category.threat_intel, S.missing, "url0.vt"),
+          e(Category.identity, S.verified, "identity.dewa.domain")]
+    r = score_investigation(ev, IdentityOutcome.verified_match, has_urls=True, has_text=False, claimed_any=False)
+    assert r.band == RiskBand.unknown and r.low_confidence
+    assert any("threat-intelligence checks did not run" in o for o in r.overrides)
+
+
+def test_failed_threat_intel_does_not_hide_high_risk():
+    ev = [e(Category.threat_intel, S.missing, "url0.sb")]
+    r = score_investigation(ev, IdentityOutcome.possible_impersonation, has_urls=True, has_text=False, claimed_any=False)
+    assert r.band == RiskBand.high
+
+
+async def test_safe_browsing_403_gives_unknown_risk_end_to_end():
+    import httpx
+    import app.intel.clients as clients
+
+    settings.network_checks = True
+    settings.safe_browsing_api_key = "test-key"
+    from app.pipeline import technical
+    from app.intel.clients import IntelResult
+
+    async def fake_live(u):
+        rep = technical.TechReport(u, "live")
+        rep.intel = [await clients.safe_browsing(u.url, httpx.MockTransport(lambda r: httpx.Response(403))),
+                     IntelResult("VirusTotal", "missing", "not configured (no API key)")]
+        return rep
+
+    original = technical._live
+    technical._live = fake_live
+    try:
+        r = await investigate(InvestigationType.url, url="https://www.dewa.gov.ae/en")
+    finally:
+        technical._live = original
+    assert r.identity.outcome == IdentityOutcome.verified_match
+    assert r.score.band == RiskBand.unknown
+
+
 async def test_unknown_site_without_network_is_unknown_risk():
     r = await investigate(InvestigationType.url, url="https://example.com")
     assert r.score.band == RiskBand.unknown

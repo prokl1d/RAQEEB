@@ -180,5 +180,10 @@ def score_investigation(
 
     low_conf = coverage < settings.min_coverage_for_verdict
     band = RiskBand.unknown if low_conf else _band(score_i)
+    ti_applicable, ti_covered = results[Category.threat_intel][0], results[Category.threat_intel][1]
+    if band == RiskBand.low and ti_applicable and not ti_covered:
+        # Never call a link low risk when threat-intel checks failed or didn't run.
+        band, low_conf = RiskBand.unknown, True
+        overrides.append("Shown as Unknown Risk: threat-intelligence checks did not run, so RAQEEB will not call this link low risk.")
     return ScoreResult(score=score_i, band=band, coverage=coverage, low_confidence=low_conf,
                        categories=categories, overrides=overrides, contradictions=contradictions)

@@ -15,12 +15,27 @@ async def test_unconfigured_services_are_missing_not_clean():
 
 async def test_safe_browsing_match_and_no_match():
     settings.safe_browsing_api_key = "test-key"
-    hit = await safe_browsing("https://bad.example", mock(200, {"matches": [{"threatType": "SOCIAL_ENGINEERING"}]}))
+    v5_hit = {"threats": [{"url": "https://bad.example/", "threatTypes": ["SOCIAL_ENGINEERING"]}], "cacheDuration": "300s"}
+    hit = await safe_browsing("https://bad.example", mock(200, v5_hit))
     assert hit.state == "found" and "SOCIAL_ENGINEERING" in hit.detail
-    clean = await safe_browsing("https://ok.example", mock(200, {}))
+    clean = await safe_browsing("https://ok.example", mock(200, {"cacheDuration": "300s"}))
     assert clean.state == "not_found" and "does not prove" in clean.detail
-    down = await safe_browsing("https://ok.example", mock(503))
-    assert down.state == "missing"
+    assert (await safe_browsing("https://ok.example", mock(503))).state == "missing"
+    assert "rejected" in (await safe_browsing("https://ok.example", mock(403))).detail
+
+
+async def test_safe_browsing_uses_v5_and_keeps_key_out_of_url():
+    settings.safe_browsing_api_key = "test-key"
+    seen = {}
+
+    def handler(request: httpx.Request):
+        seen["method"], seen["url"], seen["key"] = request.method, str(request.url), request.headers.get("x-goog-api-key")
+        return httpx.Response(200, json={"cacheDuration": "300s"})
+
+    await safe_browsing("https://ok.example/a?b=1", httpx.MockTransport(handler))
+    assert seen["method"] == "GET"
+    assert seen["url"].startswith("https://safebrowsing.googleapis.com/v5/urls:search?urls=")
+    assert "test-key" not in seen["url"] and seen["key"] == "test-key"
 
 
 async def test_virustotal_states():

@@ -66,36 +66,42 @@ async def rdap_lookup(domain: str, transport: httpx.AsyncBaseTransport | None = 
                        {"registered": when.date().isoformat(), "age_days": age, "source_url": str(r.url)})
 
 
-# ---------- Google Safe Browsing Lookup API v4 ----------
+# ---------- Google Safe Browsing API v5: urls.search ----------
+# v4 (threatMatches:find) is deprecated per https://developers.google.com/safe-browsing/v4.
+# v5 reference: https://developers.google.com/safe-browsing/reference/rest/v5/urls/search
+#   GET /v5/urls:search?urls=<url>[&urls=...]   (max 50 URLs, empty body)
+#   200 {"threats": [{"url", "threatTypes": [...]}], "cacheDuration": "300s"}; no match -> threats empty
+# The API key is sent in the X-Goog-Api-Key header, never in the URL, so it can't leak into logs.
 
-SB_URL = "https://safebrowsing.googleapis.com/v4/threatMatches:find"
+SB_URL = "https://safebrowsing.googleapis.com/v5/urls:search"
 
 
 async def safe_browsing(url: str, transport: httpx.AsyncBaseTransport | None = None) -> IntelResult:
     svc = "Google Safe Browsing"
     if not settings.safe_browsing_api_key:
         return IntelResult(svc, "missing", "not configured (no API key)")
-    payload = {
-        "client": {"clientId": "raqeeb-hackathon", "clientVersion": "0.1"},
-        "threatInfo": {
-            "threatTypes": ["MALWARE", "SOCIAL_ENGINEERING", "UNWANTED_SOFTWARE", "POTENTIALLY_HARMFUL_APPLICATION"],
-            "platformTypes": ["ANY_PLATFORM"],
-            "threatEntryTypes": ["URL"],
-            "threatEntries": [{"url": url}],
-        },
-    }
     try:
         async with _client(transport) as c:
-            r = await c.post(SB_URL, params={"key": settings.safe_browsing_api_key}, json=payload)
+            r = await c.get(SB_URL, params=[("urls", url)],
+                            headers={"X-Goog-Api-Key": settings.safe_browsing_api_key})
     except httpx.HTTPError as exc:
         return IntelResult(svc, "missing", f"lookup failed ({type(exc).__name__})")
+    if r.status_code in (401, 403):
+        return IntelResult(svc, "missing", "the API key was rejected (check that the Safe Browsing API is enabled for it)")
+    if r.status_code == 429:
+        return IntelResult(svc, "missing", "Safe Browsing quota reached")
     if r.status_code != 200:
         return IntelResult(svc, "missing", f"Safe Browsing returned HTTP {r.status_code}")
-    matches = r.json().get("matches", [])
-    if matches:
-        types = sorted({m.get("threatType", "UNKNOWN") for m in matches})
-        return IntelResult(svc, "found", f"listed by Google Safe Browsing as {', '.join(types)}", {"threat_types": types})
-    return IntelResult(svc, "not_found", "not on Google Safe Browsing lists (this does not prove the link is safe)")
+    try:
+        threats = r.json().get("threats", []) or []
+    except ValueError:
+        return IntelResult(svc, "missing", "unreadable Safe Browsing response")
+    types = sorted({t for th in threats for t in th.get("threatTypes", [])})
+    if threats:
+        return IntelResult(svc, "found", f"listed by Google Safe Browsing as {', '.join(types) or 'a threat'}",
+                           {"threat_types": types, "api": "v5 urls.search"})
+    return IntelResult(svc, "not_found", "not on Google Safe Browsing lists (this does not prove the link is safe)",
+                       {"api": "v5 urls.search"})
 
 
 # ---------- VirusTotal API v3 (lookup only, never submit) ----------

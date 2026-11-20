@@ -50,7 +50,13 @@ npm run dev
 
 Open http://localhost:5173.
 
-**API keys (optional for now).** Copy `.env.example` to `backend/.env` and add your keys there. `backend/.env` is git-ignored, so never paste keys anywhere else.
+**API keys (optional).** Put keys **only in `backend/.env`**, which is git-ignored. Do **not** edit `.env.example`: it's a public template that gets uploaded to GitHub, so it must stay empty. To start, make a copy:
+
+```powershell
+Copy-Item .env.example backend\.env
+```
+
+Then fill in the keys in `backend\.env`. A test (`backend/tests/test_no_secrets.py`) fails if a key ever appears in a tracked file.
 
 ## Tests
 
