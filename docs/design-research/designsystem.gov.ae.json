@@ -1,0 +1,76 @@
+{
+  "source": "https://designsystem.gov.ae/",
+  "captured": "2026-11-20, 1440x900, single page; hex values converted from computed oklch (approximate)",
+  "tokens": {
+    "spacing": {
+      "scale": [4, 8, 12, 16, 24, 32, 48, 56, 112],
+      "base_unit": 4
+    },
+    "typography": {
+      "families": ["Inter", "Roboto", "Noto Kufi Arabic"],
+      "scale": [
+        { "role": "hero", "size": "58px", "weight": "800", "lineHeight": "64px", "letterSpacing": "-1.45px", "family": "Inter" },
+        { "role": "h2-display", "size": "48px", "weight": "300", "lineHeight": "57.6px", "family": "Inter" },
+        { "role": "section-title", "size": "40px", "weight": "800", "family": "Inter" },
+        { "role": "h3", "size": "34px", "weight": "600", "lineHeight": "42.5px", "letterSpacing": "-0.85px", "family": "Inter" },
+        { "role": "card-title", "size": "20px", "weight": "600", "family": "Roboto" },
+        { "role": "lead", "size": "18px", "weight": "400", "lineHeight": "27px", "maxWidth": "607px", "family": "Roboto" },
+        { "role": "body / nav", "size": "16px", "weight": "400-600", "family": "Roboto" },
+        { "role": "small", "size": "14px", "weight": "400", "family": "Roboto" },
+        { "role": "badge", "size": "12px", "weight": "500", "family": "Roboto" }
+      ]
+    },
+    "colors": [
+      { "role": "page-background", "value": "#FCFCFC" },
+      { "role": "surface", "value": "#FFFFFF" },
+      { "role": "text-primary", "value": "#282A33" },
+      { "role": "text-secondary", "value": "#4D525E" },
+      { "role": "text-muted", "value": "#6B6F7B" },
+      { "role": "accent-gold", "value": "#92722A" },
+      { "role": "accent-gold-dark-text", "value": "#6C5121" },
+      { "role": "accent-gold-tint (badges)", "value": "#F2ECCF" },
+      { "role": "timeline-marker-orange", "value": "#E9A15E" },
+      { "role": "dark-band (top bar, footer)", "value": "#1B1D24" }
+    ],
+    "radius": ["4px", "6px", "8px", "12px", "16px", "9999px"],
+    "shadows": [
+      "0 0 0 4px #FFFFFF (ring)",
+      "0 0 0 3px rgba(146,114,42,0.3) (gold focus ring)",
+      "soft wide drop shadow under the floating header card"
+    ],
+    "image_ratios": [
+      { "usage": "hero", "ratio": "no photo; UI-mockup illustration" }
+    ],
+    "grid": { "max_width": "1376px content (24px side gutters)", "columns": 10, "gutter": "24px" }
+  },
+  "taste": [
+    {
+      "name": "One metallic accent carries the national identity",
+      "trigger": "When a federal brand had to signal 'official UAE' without flag-colour clutter",
+      "decision": "Chose a single desaturated gold (#92722A) for CTAs, highlighted headline words and badges over the red/green/black flag palette",
+      "reason": "Gold reads as institutional and calm. Flag colours compete with status colours (red = error, green = success) that a service UI needs.",
+      "evidence": ["gold on Documentation CTA, Guidelines outline button, 'design'/'system' headline words", "flag colours appear only in the logo ring", "gold-tint #F2ECCF badges ('Version 4.0.4', 'Our timeline')"]
+    },
+    {
+      "name": "Heavy display headings, quiet body",
+      "trigger": "When the hero had to carry authority in one line",
+      "decision": "Chose Inter 800 at 58px with -1.45px tracking for headings over a uniform single-weight scale, with Roboto 16-18px for everything else",
+      "reason": "Dense black headlines anchor the eye fast. Body text at 18px/27px with a 607px max-width stays readable for long guidance text.",
+      "evidence": ["h1 58px/64px weight 800", "h3 34px weight 600 -0.85px", "body 18px/27px max-width 607px", "weight 400 on 87 of ~160 text nodes"]
+    },
+    {
+      "name": "Bordered cards over shadowed cards",
+      "trigger": "When grouping timeline entries and resources",
+      "decision": "Chose 1px light borders with 12-16px radii and almost no drop shadow over elevated shadow cards",
+      "reason": "Flat bordered cards keep a document-like, printable feel suited to government guidance. Elevation is saved for the floating header.",
+      "evidence": ["12px radius x41, 16px x27", "timeline cards: white, 1px border; active card gets a cream fill instead of a shadow", "only one meaningful drop shadow (header)"]
+    },
+    {
+      "name": "Restraint: no photography in the hero",
+      "trigger": "When a national design system site could have used skyline imagery",
+      "decision": "Chose a faint radial colour wash plus a greyed UI mockup over a full-bleed photo",
+      "reason": "The product is the components. Showing a mock interface sets expectations better than tourism imagery, and keeps contrast high for the headline.",
+      "evidence": ["hero background is #FCFCFC with blurred warm/green radial glows", "mockup browser frame below the fold", "contrast: #282A33 on #FCFCFC"]
+    }
+  ]
+}

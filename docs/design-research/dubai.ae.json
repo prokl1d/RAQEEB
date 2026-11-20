@@ -1,0 +1,59 @@
+{
+  "source": "https://www.dubai.ae/",
+  "captured": "2026-11-20, 1440x900, single page; hero service cards were still loading (blank white tiles), so card measurements are approximate",
+  "tokens": {
+    "spacing": {
+      "scale": [4, 8, 12, 16, 20, 24, 50],
+      "base_unit": 4
+    },
+    "typography": {
+      "families": ["Dubai"],
+      "scale": [
+        { "role": "hero wordmark / stat", "size": "56px", "weight": "700", "family": "Dubai" },
+        { "role": "h1", "size": "24px", "weight": "700", "lineHeight": "32px", "family": "Dubai" },
+        { "role": "h2", "size": "22px", "weight": "700", "lineHeight": "26.4px", "family": "Dubai" },
+        { "role": "body / lead", "size": "20px", "weight": "400", "lineHeight": "28px", "family": "Dubai" },
+        { "role": "nav", "size": "15px", "weight": "700", "family": "Dubai" },
+        { "role": "utility", "size": "13-12px", "weight": "400", "family": "Dubai" }
+      ]
+    },
+    "colors": [
+      { "role": "surface", "value": "#FFFFFF" },
+      { "role": "section-background", "value": "#F2F2F2" },
+      { "role": "text-primary", "value": "#272833" },
+      { "role": "text-secondary", "value": "#737373" },
+      { "role": "link", "value": "#0056CC" },
+      { "role": "hero-overlay", "value": "rgba(0,0,0,0.4)" },
+      { "role": "subtle-fill", "value": "rgba(0,0,0,0.05)" }
+    ],
+    "radius": ["4px", "100px (pill segments)"],
+    "shadows": ["0 13px 26px rgba(0,0,0,0.08)", "0 1px 3px -1px rgba(0,0,0,0.6)"],
+    "image_ratios": [
+      { "usage": "hero", "ratio": "full-bleed video, viewport height" }
+    ],
+    "grid": { "max_width": "~996px card row (4 x 240px, 12px gaps)", "columns": 4, "gutter": "12px" }
+  },
+  "taste": [
+    {
+      "name": "One bespoke typeface for every role",
+      "trigger": "When a city portal needed to feel like Dubai in Arabic and English",
+      "decision": "Chose the custom 'Dubai' font for all text over a display/body pairing",
+      "reason": "One family that covers both scripts keeps the bilingual switch visually seamless and makes the brand recognisable from type alone",
+      "evidence": ["'Dubai' on 335 of 335 sampled elements", "weights 700/500/400/300 only"]
+    },
+    {
+      "name": "Service search first, over the scenery",
+      "trigger": "When the hero had to serve both tourists and residents",
+      "decision": "Chose a centred search bar and 'Explore Dubai Services' link on top of a full-bleed video over a marketing headline",
+      "reason": "Most visitors arrive to do a task. Putting search in the hero shortens the path to it.",
+      "evidence": ["search input ~672px wide centred under the wordmark", "search repeated in the header", "persistent bottom utility bar: Services, Site Map, News Room, Contact Us"]
+    },
+    {
+      "name": "Restraint: almost no accent colour",
+      "trigger": "When a city brand could have splashed a brand hue everywhere",
+      "decision": "Chose white, #F2F2F2 and #272833 with only a blue #0056CC link colour over a coloured UI chrome",
+      "reason": "The photography supplies the colour. Neutral chrome keeps task UI legible on top of it.",
+      "evidence": ["white 46% + #F2F2F2 44% of background area", "only 2 text nodes in #0056CC", "4px radius on nearly all components"]
+    }
+  ]
+}
