@@ -2,6 +2,9 @@ const ids = ["enabled", "autoContinue", "backend"];
 const el = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
 const status = document.getElementById("status");
 
+// Show the extension's own version (from manifest.json) under the logo.
+document.getElementById("extVersion").textContent = `Link Guard · v${chrome.runtime.getManifest().version}`;
+
 async function ping(backend) {
   status.className = "status";
   status.textContent = "Checking connection…";
@@ -9,7 +12,7 @@ async function ping(backend) {
     const r = await fetch(backend.replace(/\/$/, "") + "/api/health");
     const j = await r.json();
     status.className = "status ok";
-    status.textContent = `Connected to RAQEEB ${j.version}` + (j.offline_demo ? " (demo mode)" : "");
+    status.textContent = `Connected to the RAQEEB engine (v${j.version})` + (j.offline_demo ? " · demo mode" : "");
   } catch {
     status.className = "status bad";
     status.textContent = "Can't reach the RAQEEB server. Start it, or check the address.";
