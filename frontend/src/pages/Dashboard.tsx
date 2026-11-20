@@ -1,5 +1,5 @@
 import { InvestigationInput } from "../components/InvestigationInput";
-import { Card, Eyebrow, Mono, RiskBadge } from "../components/ui";
+import { Badge, Card, Container, LinkMore, Mono, RiskBadge } from "../components/ui";
 
 const checks = [
   {
@@ -30,144 +30,191 @@ const checks = [
 ];
 
 const steps = [
-  ["Extract", "Pull out links, the claimed organization and what the message asks you to do."],
-  ["Verify", "Match the claim against official domains, not search results or social media."],
-  ["Check", "Query threat intelligence and inspect the domain's technical signals."],
-  ["Explain", "Score the evidence with fixed rules, then explain every finding in plain English."],
+  ["01", "Extract", "Pull out links, the claimed organization and what the message asks you to do."],
+  ["02", "Verify", "Match the claim against official domains, not search results or social media."],
+  ["03", "Check", "Query threat intelligence and inspect the domain's technical signals."],
+  ["04", "Explain", "Score the evidence with fixed rules, then explain every finding in plain English."],
 ];
+
+function SectionHead({ badge, title, lead }: { badge: string; title: string; lead?: string }) {
+  return (
+    <div className="max-w-[720px]">
+      <Badge>{badge}</Badge>
+      <h2 className="mt-4 text-[32px] font-extrabold leading-[40px] tracking-[-0.8px] text-ink sm:text-section">
+        {title}
+      </h2>
+      {lead && <p className="mt-4 text-lead text-ink-2">{lead}</p>}
+    </div>
+  );
+}
 
 export function Dashboard() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-canvas bg-[radial-gradient(60%_55%_at_50%_0%,#f6efd9_0%,transparent_70%)]">
-        <div className="mx-auto max-w-[1120px] px-4 pb-20 pt-16 sm:px-6 sm:pt-24">
-          <div className="mx-auto max-w-[760px] text-center">
-            <p className="mb-5 inline-flex items-center gap-2 rounded-md bg-accent-soft px-2.5 py-1 text-[13px] font-medium text-accent-strong">
-              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
-              Digital trust investigation for the UAE
-            </p>
-            <h1 className="text-[40px] font-extrabold leading-[1.08] tracking-[-0.025em] text-ink sm:text-[58px]">
-              Verify the <span className="text-accent">claim</span>,
-              <br />
-              not just the <span className="text-accent">link</span>.
+      <section className="relative overflow-hidden">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_50%_at_30%_35%,rgba(233,161,94,0.12),transparent_70%),radial-gradient(40%_45%_at_72%_40%,rgba(146,170,90,0.10),transparent_70%)]"
+        />
+        <Container className="relative pb-16 pt-14 sm:pb-24 sm:pt-20">
+          <div className="mx-auto max-w-[860px] text-center">
+            <Badge className="font-medium">
+              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
+                <circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M7 4v3.2l2 1.3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              </svg>
+              AD Police x 42AD Hackathon 2026
+            </Badge>
+            <h1 className="mt-6 text-[40px] font-extrabold leading-[46px] tracking-[-1px] text-ink sm:text-hero">
+              Verify the <span className="text-accent">claim</span>,{" "}
+              <br className="hidden sm:block" />
+              not just the <span className="text-accent">link</span>
             </h1>
-            <p className="mx-auto mt-5 max-w-[600px] text-[18px] leading-[27px] text-ink-2">
+            <p className="mx-auto mt-6 max-w-[607px] text-lead text-ink-2">
               Paste a suspicious message, link or screenshot. RAQEEB checks who it claims to be from,
               gathers evidence and shows you exactly why it reached its verdict.
             </p>
           </div>
-          <div className="mx-auto mt-10 max-w-[720px] text-ink">
+
+          <div id="investigate" className="mx-auto mt-12 max-w-[800px] scroll-mt-32">
             <InvestigationInput />
           </div>
-        </div>
+        </Container>
       </section>
 
       {/* What RAQEEB checks */}
-      <section id="how" className="mx-auto max-w-[1120px] px-4 py-20 sm:px-6">
-        <Eyebrow>What RAQEEB checks</Eyebrow>
-        <h2 className="mt-2 max-w-[640px] text-[30px] font-bold leading-tight tracking-[-0.01em] sm:text-[36px]">
-          Five kinds of evidence, one transparent score
-        </h2>
-        <p className="mt-3 max-w-[640px] text-[16px] leading-7 text-ink-2">
-          Each category adds a weighted share of the score. When too little evidence is available,
-          RAQEEB says <strong className="font-semibold text-ink">Unknown Risk</strong> instead of guessing.
-        </p>
-        <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {checks.map((c) => (
-            <Card key={c.title} className="p-6">
-              <div className="flex items-baseline justify-between">
-                <h3 className="text-[17px] font-semibold">{c.title}</h3>
-                <span className="font-mono text-[13px] text-ink-3">{c.weight}%</span>
+      <section id="checks" className="scroll-mt-32 py-20 sm:py-28">
+        <Container>
+          <SectionHead
+            badge="What we check"
+            title="Five kinds of evidence, one transparent score"
+            lead="Each category adds a weighted share of the score. When too little evidence is available, RAQEEB says Unknown Risk instead of guessing."
+          />
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {checks.map((c, i) => (
+              <Card key={c.title} highlight={i === 1} className="flex flex-col p-6">
+                <div className="flex items-center gap-3">
+                  <span
+                    className={`rounded-control px-1.5 py-0.5 font-mono text-badge ${
+                      i === 1 ? "bg-accent-strong text-white" : "bg-accent-soft text-accent-strong"
+                    }`}
+                  >
+                    {c.weight}%
+                  </span>
+                  <span className="text-small text-ink-3">of the score</span>
+                </div>
+                <h3
+                  className={`mt-4 font-display text-card font-semibold ${
+                    i === 1 ? "text-accent-strong" : "text-ink"
+                  }`}
+                >
+                  {c.title}
+                </h3>
+                <p className={`mt-2 text-body ${i === 1 ? "text-accent-strong/90" : "text-ink-2"}`}>
+                  {c.body}
+                </p>
+              </Card>
+            ))}
+            <Card className="flex flex-col justify-between gap-4 p-6">
+              <div>
+                <h3 className="font-display text-card font-semibold text-ink">Every report ends in one of</h3>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <RiskBadge level="low" />
+                  <RiskBadge level="moderate" />
+                  <RiskBadge level="high" />
+                  <RiskBadge level="unknown" />
+                </div>
               </div>
-              <p className="mt-2 text-[14.5px] leading-6 text-ink-2">{c.body}</p>
+              <LinkMore href="#how">How the score works</LinkMore>
             </Card>
-          ))}
-          <Card className="flex flex-col justify-center gap-3 bg-canvas p-6">
-            <p className="text-[13px] font-semibold text-ink-3">Every report ends in one of</p>
-            <div className="flex flex-wrap gap-2">
-              <RiskBadge level="low" />
-              <RiskBadge level="moderate" />
-              <RiskBadge level="high" />
-              <RiskBadge level="unknown" />
-            </div>
-          </Card>
-        </div>
+          </div>
+        </Container>
       </section>
 
-      {/* How it works */}
-      <section className="border-y border-line bg-surface">
-        <div className="mx-auto grid max-w-[1120px] gap-12 px-4 py-20 sm:px-6 lg:grid-cols-[1fr_1.1fr]">
-          <div>
-            <Eyebrow>How it works</Eyebrow>
-            <h2 className="mt-2 text-[30px] font-bold leading-tight tracking-[-0.01em] sm:text-[36px]">
-              Evidence first, AI second
-            </h2>
-            <ol className="mt-8 space-y-6">
-              {steps.map(([title, body], i) => (
-                <li key={title} className="flex gap-4">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-line font-mono text-[13px] text-ink-2">
-                    {i + 1}
+      {/* How it works: timeline */}
+      <section id="how" className="scroll-mt-32 border-y border-line bg-surface py-20 sm:py-28">
+        <Container>
+          <SectionHead badge="How it works" title="Evidence first, AI second" />
+
+          <ol className="relative mt-14 grid gap-8 md:grid-cols-4 md:gap-6">
+            <span aria-hidden className="absolute left-0 right-0 top-[7px] hidden h-px bg-line md:block" />
+            {steps.map(([num, title, body], i) => (
+              <li key={title} className="relative">
+                <span
+                  aria-hidden
+                  className={`relative block h-3.5 w-3.5 rounded-full ${
+                    i === 0 ? "bg-marker-active" : "bg-marker"
+                  }`}
+                />
+                <div className="mt-6">
+                  <span className="rounded-control bg-accent-soft px-1.5 py-0.5 font-mono text-badge text-accent-strong">
+                    {num}
                   </span>
-                  <div>
-                    <h3 className="text-[16px] font-semibold">{title}</h3>
-                    <p className="mt-1 text-[14.5px] leading-6 text-ink-2">{body}</p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
+                  <h3 className="mt-3 font-display text-card font-semibold text-ink">{title}</h3>
+                  <p className="mt-2 text-body text-ink-2">{body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
 
           {/* Static sample report preview (illustrative, clearly labelled) */}
-          <Card className="self-start p-6">
-            <div className="flex items-center justify-between">
-              <p className="text-[12px] font-semibold uppercase tracking-[0.08em] text-ink-3">
-                Sample report · illustration
+          <Card className="mt-16 grid gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+            <div>
+              <div className="flex flex-wrap items-center gap-3">
+                <Badge>Sample report · illustration</Badge>
+                <RiskBadge level="high" />
+              </div>
+              <h3 className="mt-4 text-[26px] font-semibold leading-[34px] tracking-[-0.5px] text-ink">
+                The claim doesn't match the link
+              </h3>
+              <p className="mt-3 text-body text-ink-2">
+                The message claims to be from <strong className="font-semibold text-ink">Emirates NBD</strong>,
+                but the link points to a domain that is not one of the bank's official domains.
               </p>
-              <RiskBadge level="high" />
+              <p className="mt-4 text-small text-ink-3">
+                Example domains for illustration only. Not a real investigation result.
+              </p>
             </div>
-            <p className="mt-4 text-[15px] leading-6 text-ink">
-              The message claims to be from <strong>Emirates NBD</strong>, but the link points to a
-              domain that is not one of the bank's official domains.
-            </p>
-            <div className="mt-5 grid gap-2 rounded-control border border-line bg-canvas p-4 text-[14px]">
-              <div className="flex justify-between gap-4">
-                <span className="text-ink-3">Official domain</span>
-                <Mono>emiratesnbd.com</Mono>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-ink-3">Link in message</span>
-                <Mono>
-                  emiratesnbd<span className="rounded bg-risk-high-bg px-0.5 text-risk-high">-secure</span>.co
-                </Mono>
-              </div>
-              <div className="flex justify-between gap-4">
-                <span className="text-ink-3">Verification</span>
-                <span className="font-semibold text-risk-high">Possible Impersonation</span>
-              </div>
-            </div>
-            <p className="mt-4 text-[12.5px] text-ink-3">
-              Example domains for illustration only. Not a real investigation result.
-            </p>
+            <dl className="grid gap-px overflow-hidden rounded-panel border border-line bg-line text-body">
+              {[
+                ["Official domain", <Mono key="a">emiratesnbd.com</Mono>],
+                [
+                  "Link in message",
+                  <Mono key="b">
+                    emiratesnbd<span className="rounded bg-risk-high-bg px-0.5 text-risk-high">-secure</span>.co
+                  </Mono>,
+                ],
+                ["Verification", <span key="c" className="font-semibold text-risk-high">Possible Impersonation</span>],
+              ].map(([k, v]) => (
+                <div key={String(k)} className="flex items-center justify-between gap-4 bg-surface px-5 py-4">
+                  <dt className="text-ink-3">{k}</dt>
+                  <dd className="text-right">{v}</dd>
+                </div>
+              ))}
+            </dl>
           </Card>
-        </div>
+        </Container>
       </section>
 
       {/* Privacy summary */}
-      <section id="privacy" className="mx-auto max-w-[1120px] px-4 py-20 sm:px-6">
-        <Eyebrow>Privacy</Eyebrow>
-        <h2 className="mt-2 text-[30px] font-bold leading-tight tracking-[-0.01em]">
-          Nothing is stored. Here's what is shared.
-        </h2>
-        <ul className="mt-6 grid gap-3 text-[15px] leading-6 text-ink-2 sm:grid-cols-2">
-          <li>• No accounts, no scan history, no analytics.</li>
-          <li>• Screenshots are deleted as soon as text is extracted.</li>
-          <li>• Links and domains are checked with Google Safe Browsing, VirusTotal and domain registries.</li>
-          <li>
-            • Message text, with phone numbers, emails and names masked, is sent to Google Gemini.
-            On Gemini's free tier, Google may review it.
-          </li>
-        </ul>
+      <section id="privacy" className="scroll-mt-32 py-20 sm:py-28">
+        <Container>
+          <SectionHead badge="Privacy" title="Nothing is stored. Here's what is shared." />
+          <div className="mt-12 grid gap-6 md:grid-cols-2">
+            {[
+              ["Stored", "Nothing. No accounts, no scan history, no analytics. Screenshots are deleted as soon as text is extracted."],
+              ["Domain checks", "Links and domains are checked with Google Safe Browsing, VirusTotal and public domain registries."],
+              ["AI explanation", "Message text, with phone numbers, emails and names masked, is sent to Google Gemini. On Gemini's free tier, Google may review it."],
+              ["Not shared", "Screenshots never leave the server. Text is read from them locally."],
+            ].map(([title, body]) => (
+              <Card key={title} className="p-6">
+                <h3 className="font-display text-card font-semibold text-ink">{title}</h3>
+                <p className="mt-2 text-body text-ink-2">{body}</p>
+              </Card>
+            ))}
+          </div>
+        </Container>
       </section>
     </>
   );

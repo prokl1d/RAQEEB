@@ -3,36 +3,87 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 type ButtonVariant = "primary" | "secondary" | "ghost";
 
 const buttonStyles: Record<ButtonVariant, string> = {
+  // Solid gold fill, white text
   primary:
-    "bg-accent text-white hover:bg-accent-strong disabled:bg-shell-500/40 disabled:text-white/80",
-  secondary: "border border-line bg-surface text-ink hover:border-ink-3",
-  ghost: "text-ink-2 hover:text-ink hover:bg-canvas",
+    "bg-accent text-white hover:bg-accent-hover disabled:bg-line-strong disabled:text-white",
+  // 2px gold outline, gold text
+  secondary:
+    "border-2 border-accent text-accent hover:bg-accent-cream disabled:border-line-strong disabled:text-ink-3",
+  ghost: "text-ink hover:text-accent",
 };
 
 export function Button({
   variant = "primary",
   className = "",
+  children,
+  arrow = false,
   ...props
-}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant }) {
+}: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant; arrow?: boolean }) {
   return (
     <button
-      className={`inline-flex items-center justify-center gap-2 rounded-control px-5 py-2.5 text-[15px] font-semibold transition-colors duration-150 disabled:cursor-not-allowed ${buttonStyles[variant]} ${className}`}
+      className={`inline-flex h-11 items-center justify-center gap-2 rounded-control px-4 text-body font-semibold transition-colors duration-200 disabled:cursor-not-allowed ${buttonStyles[variant]} ${className}`}
       {...props}
-    />
+    >
+      {children}
+      {arrow && <ArrowRight />}
+    </button>
   );
 }
 
-export function Card({ children, className = "" }: { children: ReactNode; className?: string }) {
+export function ArrowRight({ className = "" }: { className?: string }) {
   return (
-    <div className={`rounded-card border border-line bg-surface ${className}`}>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden className={className}>
+      <path d="M3.5 10h12m0 0-4.5-4.5M15.5 10 11 14.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+export function Chevron({ className = "" }: { className?: string }) {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden className={className}>
+      <path d="m6 3.5 4.5 4.5L6 12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/** Bordered card, no drop shadow. `highlight` gives the cream "active" fill. */
+export function Card({
+  children,
+  className = "",
+  highlight = false,
+}: {
+  children: ReactNode;
+  className?: string;
+  highlight?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-card border ${
+        highlight ? "border-transparent bg-accent-cream" : "border-line bg-surface"
+      } ${className}`}
+    >
       {children}
     </div>
   );
 }
 
-export function Eyebrow({ children }: { children: ReactNode }) {
+/** Small gold-tint label, used above section titles. */
+export function Badge({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
-    <p className="text-[13px] font-semibold uppercase tracking-[0.08em] text-accent">{children}</p>
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-control bg-accent-soft px-1.5 py-0.5 text-small font-normal text-accent-strong ${className}`}
+    >
+      {children}
+    </span>
+  );
+}
+
+export function LinkMore({ href, children }: { href: string; children: ReactNode }) {
+  return (
+    <a href={href} className="group inline-flex items-center gap-3 text-body text-accent hover:text-accent-strong">
+      {children}
+      <Chevron className="transition-transform duration-200 group-hover:translate-x-0.5" />
+    </a>
   );
 }
 
@@ -58,9 +109,9 @@ export function RiskBadge({ level }: { level: RiskLevel }) {
   const s = riskStyles[level];
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[13px] font-semibold ${s.cls}`}
+      className={`inline-flex items-center gap-1.5 rounded-control px-2 py-1 text-small font-medium ${s.cls}`}
     >
-      <span aria-hidden className={`h-1.5 w-1.5 rounded-full ${s.dot}`} />
+      <span aria-hidden className={`h-2 w-2 rounded-full ${s.dot}`} />
       {s.label}
     </span>
   );
@@ -68,4 +119,9 @@ export function RiskBadge({ level }: { level: RiskLevel }) {
 
 export function Mono({ children }: { children: ReactNode }) {
   return <code className="font-mono text-[0.92em]">{children}</code>;
+}
+
+/** Centred page container with 24px gutters (16px on phones). */
+export function Container({ children, className = "" }: { children: ReactNode; className?: string }) {
+  return <div className={`mx-auto w-full max-w-[1280px] px-4 sm:px-6 ${className}`}>{children}</div>;
 }
