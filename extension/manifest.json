@@ -2,12 +2,29 @@
   "manifest_version": 3,
   "name": "RAQEEB Link Guard",
   "short_name": "RAQEEB",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Checks links you click in WhatsApp Web, Gmail, Outlook and Telegram with RAQEEB before they open. Student hackathon project, not a government service.",
-  "permissions": ["storage"],
-  "host_permissions": ["http://localhost:8000/*", "http://127.0.0.1:8000/*"],
-  "background": { "service_worker": "background.js" },
-  "action": { "default_title": "RAQEEB Link Guard", "default_popup": "popup.html" },
+  "permissions": [
+    "storage",
+    "webNavigation"
+  ],
+  "host_permissions": [
+    "http://localhost:8000/*",
+    "http://127.0.0.1:8000/*",
+    "https://web.whatsapp.com/*",
+    "https://web.telegram.org/*",
+    "https://mail.google.com/*",
+    "https://outlook.live.com/*",
+    "https://outlook.office.com/*",
+    "https://outlook.office365.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "RAQEEB Link Guard",
+    "default_popup": "popup.html"
+  },
   "content_scripts": [
     {
       "matches": [
@@ -18,7 +35,9 @@
         "https://outlook.office.com/*",
         "https://outlook.office365.com/*"
       ],
-      "js": ["content.js"],
+      "js": [
+        "content.js"
+      ],
       "run_at": "document_start",
       "all_frames": true
     }

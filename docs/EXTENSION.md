@@ -18,7 +18,16 @@ Only the clicked link is sent to *your* RAQEEB server, which by default runs on 
 4. Click **Load unpacked** and choose the `RAQEEB\extension` folder.
 5. Pin it: click the puzzle icon, then the pin next to **RAQEEB Link Guard**. Click it to see "Connected to RAQEEB" and the on/off switches.
 
-After a `git pull` that changed the extension, press the ↻ reload button on its card in `chrome://extensions`.
+After a `git pull` that changed the extension, press the ↻ reload button on its card in `chrome://extensions`, then **reload the WhatsApp Web / Gmail tab** (F5). The extension only attaches to pages opened after it loaded.
+
+Version 0.2 asks for two permissions:
+- **"Read your browsing history"**: Chrome's wording for `webNavigation`. RAQEEB uses it only to notice when one of the four sites opens a new tab, so that tab can be checked first. Nothing is recorded or sent anywhere else.
+- **Access to web.whatsapp.com, mail.google.com, Outlook and Telegram Web**: to tell that a new tab came from one of them.
+
+## How it catches links
+
+1. **Click guard** (`content.js`): listens on the page's outermost level in the capture phase, so it runs before the app's own click handling. It also works when you click an icon inside a link, or a link inside a shadow DOM. Gmail, Outlook SafeLinks and WhatsApp/Facebook redirect wrappers are unwrapped to the real destination.
+2. **New-tab safety net** (`background.js`): if one of the four sites opens a new tab to an outside link by itself, that tab is sent to the RAQEEB check page before the site loads.
 
 ## Live demo
 
