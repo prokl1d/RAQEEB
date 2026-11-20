@@ -171,7 +171,7 @@ export function Dashboard() {
           <SectionHead
             badge="What we check"
             title="Five kinds of evidence, one transparent score"
-            lead="Each category adds a weighted share of the score. When too little evidence is available, RAQEEB says Unknown Risk instead of guessing."
+            lead="Each category adds a weighted share of the score. When too little evidence is available, RAQEEB says Unknown Risk instead of guessing. A link whose domain doesn't exist is shown as Inactive Link."
           />
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {checks.map((c, i) => (
@@ -202,7 +202,9 @@ export function Dashboard() {
               <div>
                 <h3 className="font-display text-card font-semibold text-ink">Every report ends in one of</h3>
                 <div className="mt-4 flex flex-wrap gap-2">
+                  <RiskBadge level="safe" />
                   <RiskBadge level="low" />
+                  <RiskBadge level="inactive" />
                   <RiskBadge level="moderate" />
                   <RiskBadge level="high" />
                   <RiskBadge level="unknown" />

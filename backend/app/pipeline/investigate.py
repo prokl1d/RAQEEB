@@ -97,7 +97,7 @@ async def investigate(kind: InvestigationType, *, message: str | None = None, ur
     score = score_investigation(evidence, identity.outcome, has_urls=bool(parsed), has_text=bool(text),
                                 claimed_any=bool(claimed))
 
-    ai = await explain(text or (parsed[0].url if parsed else ""), evidence, identity.outcome.value)
+    ai = await explain(text or (parsed[0].url if parsed else ""), evidence, identity.outcome.value, score.band.value)
 
     mode = check_mode()
     disclosures: list[Disclosure] = []

@@ -20,7 +20,13 @@ export interface Evidence {
   raw: Record<string, unknown>;
 }
 
-export type RiskBand = "Low Risk" | "Moderate Risk" | "High Risk" | "Unknown Risk";
+export type RiskBand =
+  | "Likely Safe"
+  | "Low Risk"
+  | "Inactive Link"
+  | "Moderate Risk"
+  | "High Risk"
+  | "Unknown Risk";
 
 export interface CategoryScore {
   category: Category;

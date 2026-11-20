@@ -56,6 +56,10 @@
   --color-marker: #e9a15e;
   --color-marker-active: #b4580f;
 
+  --color-risk-safe: #065f46;
+  --color-risk-safe-bg: #d7f2e5;
+  --color-risk-inactive: #3f5873;
+  --color-risk-inactive-bg: #e8eef5;
   --color-risk-low: #047857;
   --color-risk-low-bg: #e7f6ef;
   --color-risk-moderate: #c2410c;

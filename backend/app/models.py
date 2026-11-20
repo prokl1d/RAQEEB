@@ -39,7 +39,9 @@ class Evidence(BaseModel):
 
 
 class RiskBand(str, Enum):
+    likely_safe = "Likely Safe"  # verified official domain, or strong positive evidence, and no warning signs
     low = "Low Risk"
+    inactive = "Inactive Link"  # the domain doesn't exist / doesn't resolve, and no other warning signs
     moderate = "Moderate Risk"
     high = "High Risk"
     unknown = "Unknown Risk"

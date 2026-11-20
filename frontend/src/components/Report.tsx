@@ -3,6 +3,8 @@ import type { Evidence, EvidenceStatus, InvestigationResult, RiskBand } from "..
 import { Badge, Card, Mono, RiskBadge, type RiskLevel } from "./ui";
 
 const bandLevel: Record<RiskBand, RiskLevel> = {
+  "Likely Safe": "safe",
+  "Inactive Link": "inactive",
   "Low Risk": "low",
   "Moderate Risk": "moderate",
   "High Risk": "high",
@@ -10,6 +12,8 @@ const bandLevel: Record<RiskBand, RiskLevel> = {
 };
 
 const bandBar: Record<RiskLevel, string> = {
+  safe: "bg-risk-safe",
+  inactive: "bg-risk-inactive",
   low: "bg-risk-low",
   moderate: "bg-risk-moderate",
   high: "bg-risk-high",
@@ -145,7 +149,7 @@ export function Report({ result, message }: { result: InvestigationResult; messa
           </div>
           <div className="flex items-baseline gap-1 md:flex-col md:items-end">
             <span className="font-display text-[56px] font-extrabold leading-none tracking-[-2px] text-ink">
-              {score.band === "Unknown Risk" ? "?" : score.score}
+              {score.band === "Unknown Risk" || score.band === "Inactive Link" ? "–" : score.score}
             </span>
             <span className="text-small text-ink-3">/ 100 risk score</span>
           </div>

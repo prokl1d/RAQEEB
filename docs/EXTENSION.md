@@ -2,7 +2,8 @@
 
 Sulaiman's idea: you don't copy anything. When you click a link in **WhatsApp Web, Gmail, Outlook or Telegram Web**, RAQEEB checks it first:
 
-- **Low Risk**: "No warning signs found", and it opens by itself after 3 seconds. You can press **Stop**.
+- **Likely Safe / Low Risk**: "This looks like the real site" or "No warning signs found", and it opens by itself after 3 seconds. You can press **Stop**.
+- **Inactive Link**: the domain doesn't exist; nothing to open.
 - **Moderate / Unknown Risk**: it stops, explains why, and lets you go back or continue anyway.
 - **High Risk**: it stops with the reasons. **Close this tab** is the main button. Continuing needs a second confirmation.
 - **Open the full report** opens the full RAQEEB report for that link.
@@ -25,7 +26,7 @@ After a `git pull` that changed the extension, press the ↻ reload button on it
 2. In WhatsApp Web, send yourself the three demo links in "Message yourself":
    - `https://emiratesnbd-secure.co/verify`: stopped, **High Risk**
    - `https://emiratespost-redelivery.com/pay`: stopped, **High Risk**
-   - `https://www.dewa.gov.ae/en`: **Low Risk**, opens by itself
+   - `https://www.dewa.gov.ae/en`: **Likely Safe**, opens by itself
 3. Click each link.
 
 **Backup if WhatsApp Web isn't available:** run `python -m http.server 5174` inside the `extension` folder and open http://localhost:5174/demo/chat-demo.html. It's a look-alike chat page using the same script. Opened this way (outside the installed extension), the check page also needs the engine to allow that address. Start the engine with:

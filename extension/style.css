@@ -28,6 +28,8 @@ html, body { margin: 0; background: var(--canvas); color: var(--ink); font: 16px
 .verdict { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .badge { display: inline-flex; align-items: center; gap: 6px; border-radius: 6px; padding: 4px 8px; font-size: 14px; font-weight: 500; }
 .badge::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.badge.safe { background: #d7f2e5; color: #065f46; }
+.badge.inactive { background: #e8eef5; color: #3f5873; }
 .badge.low { background: var(--low-bg); color: var(--low); }
 .badge.moderate { background: var(--mod-bg); color: var(--mod); }
 .badge.high { background: var(--high-bg); color: var(--high); }

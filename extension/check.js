@@ -42,7 +42,11 @@ function leave() {
   else window.close();
 }
 
-const LEVEL = { "Low Risk": "low", "Moderate Risk": "moderate", "High Risk": "high", "Unknown Risk": "unknown" };
+const LEVEL = {
+  "Likely Safe": "safe", "Low Risk": "low", "Inactive Link": "inactive",
+  "Moderate Risk": "moderate", "High Risk": "high", "Unknown Risk": "unknown",
+};
+const BAR = { safe: "#065f46", low: "var(--low)", inactive: "#3f5873", moderate: "var(--mod)", high: "var(--high)", unknown: "var(--unk)" };
 
 function show(result, cfg) {
   const level = LEVEL[result.score.band] || "unknown";
@@ -50,14 +54,16 @@ function show(result, cfg) {
   $("result").hidden = false;
   $("actions").hidden = false;
   $("bar").className = "bar";
-  $("bar").style.background = `var(--${level === "moderate" ? "mod" : level === "unknown" ? "unk" : level})`;
+  $("bar").style.background = BAR[level];
 
   $("badge").className = "badge " + level;
   $("badge").textContent = result.score.band;
-  $("score").textContent = level === "unknown" ? `Evidence coverage ${result.score.coverage}%` : `Risk score ${result.score.score}/100`;
+  $("score").textContent = level === "unknown" || level === "inactive" ? `Evidence coverage ${result.score.coverage}%` : `Risk score ${result.score.score}/100`;
   $("identity").textContent = `${result.identity.outcome} · ${result.identity.summary}`;
 
   const headline = {
+    safe: "This looks like the real site",
+    inactive: "This link doesn't lead anywhere",
     low: "No warning signs found",
     moderate: "Be careful with this link",
     high: "This link looks dangerous",
@@ -93,7 +99,7 @@ function show(result, cfg) {
 
   const primary = $("primary");
   const secondary = $("secondary");
-  if (level === "low") {
+  if (level === "low" || level === "safe") {
     primary.textContent = "Continue to site";
     primary.onclick = go;
     secondary.textContent = "Go back";

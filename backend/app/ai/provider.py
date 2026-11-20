@@ -52,7 +52,7 @@ class Provider(ABC):
     name: str
 
     @abstractmethod
-    async def run(self, message: str, evidence: list[Evidence], outcome: str) -> AIResult: ...
+    async def run(self, message: str, evidence: list[Evidence], outcome: str, band: str | None = None) -> AIResult: ...
 
 
 def _clean(expl: Explanation, evidence: list[Evidence]) -> Explanation:
@@ -82,12 +82,32 @@ _ACTIONS = {
 }
 
 
+_BAND_TEXT = {
+    "Likely Safe": ("This looks like the real site, and RAQEEB found no warning signs.", [
+        "You can open it, but never share OTPs or passwords by message.",
+        "If anything feels off, use the organization's official app instead.",
+    ]),
+    "Inactive Link": ("This link doesn't lead anywhere: its domain doesn't exist right now.", [
+        "Nothing would load, so there's nothing to open.",
+        "If the message claimed to be from an organization, treat it as suspicious and contact them directly.",
+    ]),
+    "Low Risk": ("RAQEEB found no strong warning signs, but couldn't confirm who runs this site.", [
+        "Be careful before entering any personal or payment details.",
+        "Never share OTPs or passwords by message.",
+    ]),
+}
+
+
 class MockProvider(Provider):
     name = "mock"
 
-    async def run(self, message: str, evidence: list[Evidence], outcome: str) -> AIResult:
+    async def run(self, message: str, evidence: list[Evidence], outcome: str, band: str | None = None) -> AIResult:
         notable = [e for e in evidence if e.status in (EvidenceStatus.confirmed, EvidenceStatus.suspicious,
                                                        EvidenceStatus.contradictory)]
+        band_summary, band_actions = _BAND_TEXT.get(band or "", (None, None))
+        if band_summary and not notable:
+            expl = Explanation(summary=band_summary, points=[], recommended_actions=band_actions)
+            return AIResult(provider=self.name, available=True, explanation=_clean(expl, evidence))
         counts = f"{len(notable)} warning sign(s)" if notable else "no strong warning signs"
         summary = {
             "Possible Impersonation": "This looks like someone pretending to be a known organization.",
@@ -151,13 +171,14 @@ class GeminiProvider(Provider):
     def __init__(self, transport: httpx.AsyncBaseTransport | None = None):
         self.transport = transport
 
-    async def run(self, message: str, evidence: list[Evidence], outcome: str) -> AIResult:
+    async def run(self, message: str, evidence: list[Evidence], outcome: str, band: str | None = None) -> AIResult:
         if not settings.gemini_api_key:
             return AIResult(provider=self.name, available=False, error="Gemini is not configured (no API key)")
         masked, counts = mask_pii(message)
         ev_json = json.dumps([{"id": e.id, "category": e.category.value, "status": e.status.value,
                                "finding": e.finding} for e in evidence], ensure_ascii=False)
-        prompt = (f"Identity verification outcome: {outcome}\n\nEVIDENCE:\n{ev_json}\n\n"
+        prompt = (f"Identity verification outcome: {outcome}\n"
+                  f"RAQEEB verdict (already decided by fixed rules; do not change it): {band}\n\nEVIDENCE:\n{ev_json}\n\n"
                   f"<message>\n{masked}\n</message>")
         body = {
             "systemInstruction": {"parts": [{"text": SYSTEM}]},
@@ -197,12 +218,12 @@ def get_provider() -> Provider:
     return MockProvider()
 
 
-async def explain(message: str, evidence: list[Evidence], outcome: str) -> AIResult:
+async def explain(message: str, evidence: list[Evidence], outcome: str, band: str | None = None) -> AIResult:
     """Run the configured provider; fall back to the mock explanation if it fails."""
     provider = get_provider()
-    result = await provider.run(message, evidence, outcome)
+    result = await provider.run(message, evidence, outcome, band)
     if not result.available and provider.name != "mock":
-        fallback = await MockProvider().run(message, evidence, outcome)
+        fallback = await MockProvider().run(message, evidence, outcome, band)
         fallback.error = f"{result.error}; showing RAQEEB's built-in explanation instead"
         fallback.masked_items = result.masked_items
         fallback.sent_to_external_ai = result.sent_to_external_ai

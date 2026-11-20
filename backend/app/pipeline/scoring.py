@@ -103,8 +103,18 @@ def score_investigation(
                   IdentityOutcome.no_relationship: "The link is not an official domain of the organization named.",
                   IdentityOutcome.verified_match: "The link is an official domain of the organization (verified source)."}[outcome]
         results[Category.identity] = (True, True, IDENTITY_RISK[outcome], reason)
+    elif has_urls and not claimed_any:
+        # We did compare the link with every organization in the registry and found no imitation.
+        # That is real (if limited) evidence: covered, with a small residual risk.
+        registry_match = any(e.status == S.unverified and "official_domain" in e.raw for e in by_cat[Category.identity])
+        results[Category.identity] = (True, True, 10 if registry_match else 15,
+                                      "The link matches a registry domain that isn't confirmed yet." if registry_match else
+                                      "The link doesn't imitate any organization in RAQEEB's UAE registry. Who runs it isn't verified.")
+    elif has_urls and claimed_any:
+        results[Category.identity] = (True, True, 10,
+                                      "The link matches the organization's domain listed in RAQEEB's registry, but that domain isn't confirmed by an authoritative source yet.")
     else:
-        results[Category.identity] = (True, False, None, "Identity could not be verified.")
+        results[Category.identity] = (True, False, None, "Identity could not be verified (no link to compare).")
 
     # Domain and URL
     if not has_urls:
@@ -112,7 +122,7 @@ def score_investigation(
     else:
         ud = [e for e in by_cat[Category.url_domain] if e.status != S.missing]
         sus = sum(1 for e in ud if e.status == S.suspicious)
-        weak = sum(1 for e in ud if e.status == S.unverified and not e.id.endswith((".tls", ".age")))
+        weak = sum(1 for e in ud if e.status == S.unverified and not e.id.endswith((".tls", ".age", ".dns")))
         risk = min(100, sus * 30 + weak * 8)
         reason = (f"{sus} suspicious and {weak} weak indicator(s) in the link." if sus or weak
                   else "No structural or technical warning signs in the link.")
@@ -159,6 +169,10 @@ def score_investigation(
     if results[Category.threat_intel][2] == 100 and score < 75:
         score = 75
         overrides.append("Raised to at least 75 because a security service confirmed the link as malicious.")
+    bad_tls = any(e.id.endswith(".tls") and e.status == S.suspicious for e in by_cat[Category.url_domain])
+    if bad_tls and score < 30:
+        score = 30
+        overrides.append("Raised to at least Moderate because the site's HTTPS certificate is invalid; browsers will warn about it.")
     if outcome == IdentityOutcome.possible_impersonation and score < 50:
         score = 50
         overrides.append("Raised to at least 50 because the link imitates a known organization.")
@@ -180,10 +194,35 @@ def score_investigation(
 
     low_conf = coverage < settings.min_coverage_for_verdict
     band = RiskBand.unknown if low_conf else _band(score_i)
+
+    # ---- refine the low end: Likely Safe / Low / Inactive / Unknown ----
     ti_applicable, ti_covered = results[Category.threat_intel][0], results[Category.threat_intel][1]
-    if band == RiskBand.low and ti_applicable and not ti_covered:
-        # Never call a link low risk when threat-intel checks failed or didn't run.
-        band, low_conf = RiskBand.unknown, True
-        overrides.append("Shown as Unknown Risk: threat-intelligence checks did not run, so RAQEEB will not call this link low risk.")
+    warnings = [e for e in evidence if e.status in (S.confirmed, S.suspicious, S.contradictory)]
+    # "Traces" = live technical facts about the site itself (DNS, certificate, age, redirects).
+    traces = [e for e in by_cat[Category.url_domain]
+              if e.status != S.missing and e.id.rsplit(".", 1)[-1] in ("dns", "tls", "age", "redirects", "ssrf")]
+    inactive = any(e.raw.get("dns_exists") is False for e in by_cat[Category.url_domain])
+    old_domain = any(e.id.endswith(".age") and int(e.raw.get("age_days", 0)) >= 365 for e in by_cat[Category.url_domain])
+    valid_tls = any(e.id.endswith(".tls") and e.status == S.unverified for e in by_cat[Category.url_domain])
+
+    if band in (RiskBand.low, RiskBand.unknown) and not warnings and has_urls and inactive:
+        band, low_conf = RiskBand.inactive, False
+        overrides.append("The domain doesn't exist right now, so nothing would load. If someone sent you this "
+                         "claiming to be an organization, treat it as suspicious.")
+    elif band == RiskBand.low and not warnings:
+        if outcome == IdentityOutcome.verified_match:
+            band = RiskBand.likely_safe
+            if ti_applicable and not ti_covered:
+                overrides.append("Threat-intelligence checks were unavailable; this verdict rests on the verified official domain.")
+        elif ti_covered and old_domain and valid_tls:
+            band = RiskBand.likely_safe
+        elif has_urls and not traces and not ti_covered:
+            # Nothing about the site itself could be checked: no real traces, so no verdict.
+            band, low_conf = RiskBand.unknown, True
+            overrides.append("Shown as Unknown Risk: RAQEEB couldn't check the site itself (no network or "
+                             "threat-intelligence results), so it won't call this link low risk.")
+        elif ti_applicable and not ti_covered:
+            overrides.append("Threat-intelligence checks were unavailable; this verdict rests on the domain and "
+                             "certificate checks only.")
     return ScoreResult(score=score_i, band=band, coverage=coverage, low_confidence=low_conf,
                        categories=categories, overrides=overrides, contradictions=contradictions)

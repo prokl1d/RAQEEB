@@ -87,9 +87,11 @@ export function LinkMore({ href, children }: { href: string; children: ReactNode
   );
 }
 
-export type RiskLevel = "low" | "moderate" | "high" | "unknown";
+export type RiskLevel = "safe" | "low" | "inactive" | "moderate" | "high" | "unknown";
 
 const riskStyles: Record<RiskLevel, { label: string; cls: string; dot: string }> = {
+  safe: { label: "Likely Safe", cls: "bg-risk-safe-bg text-risk-safe", dot: "bg-risk-safe" },
+  inactive: { label: "Inactive Link", cls: "bg-risk-inactive-bg text-risk-inactive", dot: "bg-risk-inactive" },
   low: { label: "Low Risk", cls: "bg-risk-low-bg text-risk-low", dot: "bg-risk-low" },
   moderate: {
     label: "Moderate Risk",

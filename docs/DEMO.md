@@ -21,7 +21,9 @@ Use the **Try an example** buttons under the message box.
 |---|---|---|---|
 | 1 | **Bank impersonation** (Emirates NBD) | High Risk (~83) · Possible Impersonation | `emiratesnbd-secure.co` is not `emiratesnbd.com`; domain 3 days old; redirects to another domain; Safe Browsing + VirusTotal hits (fixture); OTP + urgency + threat highlighted |
 | 2 | **Delivery fee** (Emirates Post) | High Risk (~51) · Possible Impersonation | No threat-intel listing yet, but identity + "pay AED 4.50" + lookalike domain still make it high. "Not listed" is never "safe" |
-| 3 | **Legitimate-looking** (DEWA) | Low Risk (~6) · Verified Match | `dewa.gov.ae` verified via the dubai.ae directory; score is low but never 0, and the report lists its limitations |
+| 3 | **Legitimate-looking** (DEWA) | **Likely Safe** (~5) · Verified Match | `dewa.gov.ae` verified via the dubai.ae directory; "Likely" safe, never "100% safe", and the report lists its limitations |
+
+**Bonus:** paste a made-up link like `https://totally-made-up-shop-xyz8812.com` to show **Inactive Link**, or a real site like `https://www.wikipedia.org` to show **Low Risk**. In demo mode, links other than the three scenarios are checked live.
 
 ## Live mode (optional, needs internet)
 

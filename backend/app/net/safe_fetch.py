@@ -20,6 +20,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from urllib.parse import urljoin
 
+import certifi
 import httpx
 
 from app.config import settings
@@ -178,7 +179,9 @@ def _cert_time(value: str) -> datetime:
 
 
 def _tls_blocking(ip: str, host: str, port: int) -> TlsInfo:
-    ctx = ssl.create_default_context()
+    # Use Mozilla's CA bundle (certifi), like httpx does. The OS store on some Windows machines is
+    # out of date and wrongly reports valid Let's Encrypt certificates as expired.
+    ctx = ssl.create_default_context(cafile=certifi.where())
     try:
         with socket.create_connection((ip, port), timeout=settings.http_timeout_seconds) as sock:
             with ctx.wrap_socket(sock, server_hostname=host) as tls:

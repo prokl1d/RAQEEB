@@ -106,7 +106,15 @@ async def run_checks(urls: list[ParsedUrl]) -> list[TechReport]:
     if m == "disabled":
         return [TechReport(u, "disabled") for u in urls]
     if m == "fixture":
-        return [_from_fixture(u) for u in urls]
+        # Demo domains replay labelled fixtures; any other link is checked live when the network
+        # is allowed, so testing with other links still gives real results.
+        async def one(u: ParsedUrl) -> TechReport:
+            if u.registrable_domain in _fixtures():
+                return _from_fixture(u)
+            if settings.network_checks:
+                return await _live(u)
+            return TechReport(u, "disabled")
+        return list(await asyncio.gather(*(one(u) for u in urls)))
     return list(await asyncio.gather(*(_live(u) for u in urls)))
 
 
@@ -123,7 +131,7 @@ def to_evidence(rep: TechReport, idx: int) -> list[Evidence]:
                            status=status, source=f"{source} · {FIXTURE_LABEL}" if fixture else source,
                            raw={"url": u.url, "fixture": fixture, **(raw or {})}))
 
-    if rep.mode == "disabled" or (fixture and rep.dns is None):
+    if rep.mode == "disabled":
         reason = "network checks are turned off" if rep.mode == "disabled" else "offline demo mode has no recorded data for this domain"
         add(Category.threat_intel, "intel-missing", f"Threat-intelligence checks were not run for {label} ({reason}).",
             "Without these checks RAQEEB cannot say whether the link is already known to be malicious.",
@@ -137,7 +145,11 @@ def to_evidence(rep: TechReport, idx: int) -> list[Evidence]:
         if rep.dns.exists is False:
             add(Category.url_domain, "dns", f"{label} does not exist in DNS.",
                 "The link cannot load right now. Scam domains are often taken down or not yet active.",
-                EvidenceStatus.unverified, "DNS lookup", {"dns": rep.dns.records})
+                EvidenceStatus.unverified, "DNS lookup", {"dns": rep.dns.records, "dns_exists": False})
+        elif rep.dns.exists:
+            add(Category.url_domain, "dns", f"{label} is an active domain (DNS records found).",
+                "The site exists. This says nothing about who runs it.",
+                EvidenceStatus.unverified, "DNS lookup", {"dns": rep.dns.records, "dns_exists": True})
         elif rep.dns.exists is None:
             add(Category.url_domain, "dns", f"DNS lookup for {label} failed.", "RAQEEB could not confirm the domain is active.",
                 EvidenceStatus.missing, "DNS lookup")
