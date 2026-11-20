@@ -19,7 +19,7 @@ class Settings(BaseSettings):
 
     # External services (all optional; missing keys mean that check is reported as unavailable)
     gemini_api_key: str | None = None
-    gemini_model: str = "gemini-2.5-flash"
+    gemini_model: str = "gemini-3.5-flash-lite"
     safe_browsing_api_key: str | None = None
     virustotal_api_key: str | None = None
     urlscan_api_key: str | None = None
@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     ai_provider: str = "mock"  # "gemini" | "mock"
     offline_demo: bool = False  # replay labelled fixtures instead of calling external APIs
     network_checks: bool = True  # False disables all outbound checks (used by tests)
-    ai_timeout_seconds: float = 15.0
+    ai_timeout_seconds: float = 45.0
 
     # Limits
     max_message_chars: int = 5000
