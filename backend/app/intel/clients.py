@@ -76,18 +76,33 @@ async def rdap_lookup(domain: str, transport: httpx.AsyncBaseTransport | None = 
 SB_URL = "https://safebrowsing.googleapis.com/v5/urls:search"
 
 
+def _google_error_reason(r: httpx.Response) -> str | None:
+    """Google's machine-readable error reason (e.g. ACCESS_DENIED, SERVICE_DISABLED). Never includes the key."""
+    try:
+        err = r.json().get("error", {})
+    except ValueError:
+        return None
+    for d in err.get("details", []):
+        if d.get("reason"):
+            return str(d["reason"])[:60]
+    return str(err.get("status"))[:60] if err.get("status") else None
+
+
 async def safe_browsing(url: str, transport: httpx.AsyncBaseTransport | None = None) -> IntelResult:
     svc = "Google Safe Browsing"
     if not settings.safe_browsing_api_key:
         return IntelResult(svc, "missing", "not configured (no API key)")
     try:
         async with _client(transport) as c:
-            r = await c.get(SB_URL, params=[("urls", url)],
+            # alt=json: v5 answers in protobuf by default; ask for JSON.
+            r = await c.get(SB_URL, params=[("urls", url), ("alt", "json")],
                             headers={"X-Goog-Api-Key": settings.safe_browsing_api_key})
     except httpx.HTTPError as exc:
         return IntelResult(svc, "missing", f"lookup failed ({type(exc).__name__})")
-    if r.status_code in (401, 403):
-        return IntelResult(svc, "missing", "the API key was rejected (check that the Safe Browsing API is enabled for it)")
+    if r.status_code in (400, 401, 403):
+        reason = _google_error_reason(r)
+        return IntelResult(svc, "missing", f"Google refused the request (HTTP {r.status_code}"
+                           + (f", {reason}" if reason else "") + ")", {"http_status": r.status_code, "reason": reason})
     if r.status_code == 429:
         return IntelResult(svc, "missing", "Safe Browsing quota reached")
     if r.status_code != 200:

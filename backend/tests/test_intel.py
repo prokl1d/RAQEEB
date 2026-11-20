@@ -21,7 +21,10 @@ async def test_safe_browsing_match_and_no_match():
     clean = await safe_browsing("https://ok.example", mock(200, {"cacheDuration": "300s"}))
     assert clean.state == "not_found" and "does not prove" in clean.detail
     assert (await safe_browsing("https://ok.example", mock(503))).state == "missing"
-    assert "rejected" in (await safe_browsing("https://ok.example", mock(403))).detail
+    denied = {"error": {"code": 403, "status": "PERMISSION_DENIED",
+                        "details": [{"@type": "type.googleapis.com/google.rpc.ErrorInfo", "reason": "ACCESS_DENIED"}]}}
+    r403 = await safe_browsing("https://ok.example", mock(403, denied))
+    assert r403.state == "missing" and "HTTP 403, ACCESS_DENIED" in r403.detail
 
 
 async def test_safe_browsing_uses_v5_and_keeps_key_out_of_url():
@@ -35,6 +38,7 @@ async def test_safe_browsing_uses_v5_and_keeps_key_out_of_url():
     await safe_browsing("https://ok.example/a?b=1", httpx.MockTransport(handler))
     assert seen["method"] == "GET"
     assert seen["url"].startswith("https://safebrowsing.googleapis.com/v5/urls:search?urls=")
+    assert "alt=json" in seen["url"]
     assert "test-key" not in seen["url"] and seen["key"] == "test-key"
 
 
