@@ -8,7 +8,7 @@ RAQEEB is an evidence-based investigation platform for suspicious links, message
 
 ## Status
 
-Phase 2 (project skeleton and design system). The dashboard UI and the `/api/health` endpoint work. The investigation engine arrives in Phase 3.
+Phase 3 (investigation engine core). `POST /api/investigate` handles links and messages: link extraction (including defanged links), URL structure checks, the UAE organization registry, identity verification (Verified Match / Possible Impersonation / No Verified Relationship Found / Unable to Verify) and message red-flag rules. Network checks, threat intelligence, AI and scoring come next. The website does not call the engine yet.
 
 ## Run it locally (Windows)
 

@@ -1,0 +1,211 @@
+# Curated UAE organization registry. See docs/PLAN.md section 9.
+#
+# verification.status:
+#   verified   - official domain confirmed by an authoritative source (gov portal, regulator, gov directory)
+#   unverified - candidate domain; NOT yet confirmed. Can still be used to spot lookalikes,
+#                but can never produce a "Verified Match".
+# Every "verified" entry must have source_url and checked date.
+
+organizations:
+  # ---------- Government ----------
+  - id: uae-gov-portal
+    name: UAE Government Portal (u.ae)
+    aliases: ["u.ae", "UAE Government Portal", "TDRA portal"]
+    category: government
+    domains: ["u.ae"]
+    verification:
+      status: verified
+      source_name: The official portal of the UAE Government
+      source_url: https://u.ae/
+      checked: 2026-11-20
+
+  - id: dewa
+    name: Dubai Electricity and Water Authority (DEWA)
+    aliases: ["DEWA", "Dubai Electricity and Water Authority", "Dubai Electricity & Water Authority"]
+    category: government
+    domains: ["dewa.gov.ae"]
+    verification:
+      status: verified
+      source_name: Dubai.ae government departments directory
+      source_url: https://dubai.ae/en/Lists/GovernmentDepartments/DispForm.aspx?ID=1&category=
+      checked: 2026-11-20
+
+  - id: icp
+    name: Federal Authority for Identity, Citizenship, Customs and Port Security (ICP)
+    aliases: ["ICP", "Federal Authority for Identity", "Emirates ID"]
+    category: government
+    domains: ["icp.gov.ae"]
+    verification: { status: unverified }
+
+  - id: moi
+    name: Ministry of Interior
+    aliases: ["Ministry of Interior", "MOI UAE"]
+    category: government
+    domains: ["moi.gov.ae"]
+    verification: { status: unverified }
+
+  - id: dubai-police
+    name: Dubai Police
+    aliases: ["Dubai Police"]
+    category: government
+    domains: ["dubaipolice.gov.ae"]
+    verification: { status: unverified }
+
+  - id: ad-police
+    name: Abu Dhabi Police
+    aliases: ["Abu Dhabi Police", "AD Police", "ADPolice"]
+    category: government
+    domains: ["adpolice.gov.ae"]
+    verification: { status: unverified }
+
+  - id: rta
+    name: Roads and Transport Authority (RTA)
+    aliases: ["RTA", "Roads and Transport Authority"]
+    category: government
+    domains: ["rta.ae"]
+    verification: { status: unverified }
+
+  - id: salik
+    name: Salik
+    aliases: ["Salik"]
+    category: government
+    domains: ["salik.ae"]
+    verification: { status: unverified }
+
+  - id: fta
+    name: Federal Tax Authority
+    aliases: ["Federal Tax Authority", "FTA UAE"]
+    category: government
+    domains: ["tax.gov.ae"]
+    verification: { status: unverified }
+
+  - id: mohre
+    name: Ministry of Human Resources and Emiratisation (MOHRE)
+    aliases: ["MOHRE", "Ministry of Human Resources and Emiratisation"]
+    category: government
+    domains: ["mohre.gov.ae"]
+    verification: { status: unverified }
+
+  # ---------- Regulator ----------
+  - id: cbuae
+    name: Central Bank of the UAE
+    aliases: ["Central Bank of the UAE", "CBUAE", "UAE Central Bank"]
+    category: regulator
+    domains: ["centralbank.ae"]
+    verification: { status: unverified }
+
+  - id: tdra
+    name: Telecommunications and Digital Government Regulatory Authority (TDRA)
+    aliases: ["TDRA"]
+    category: regulator
+    domains: ["tdra.gov.ae"]
+    verification: { status: unverified }
+
+  # ---------- Banks (entity licensing: CBUAE register) ----------
+  - id: emirates-nbd
+    name: Emirates NBD
+    aliases: ["Emirates NBD", "EmiratesNBD", "ENBD"]
+    category: bank
+    domains: ["emiratesnbd.com"]
+    verification:
+      status: unverified
+      note: Listed as a licensed national bank in the CBUAE register (Sept 2023); domain not yet confirmed by an authoritative source.
+      source_url: https://centralbank.ae/media/busbnghu/cb-register-september-2023.pdf
+
+  - id: fab
+    name: First Abu Dhabi Bank
+    aliases: ["First Abu Dhabi Bank", "FAB", "BankFAB"]
+    category: bank
+    domains: ["bankfab.com"]
+    verification: { status: unverified }
+
+  - id: adcb
+    name: Abu Dhabi Commercial Bank (ADCB)
+    aliases: ["ADCB", "Abu Dhabi Commercial Bank"]
+    category: bank
+    domains: ["adcb.com"]
+    verification: { status: unverified }
+
+  - id: dib
+    name: Dubai Islamic Bank
+    aliases: ["Dubai Islamic Bank", "DIB"]
+    category: bank
+    domains: ["dib.ae"]
+    verification: { status: unverified }
+
+  - id: mashreq
+    name: Mashreq
+    aliases: ["Mashreq", "Mashreq Bank", "Mashreqbank"]
+    category: bank
+    domains: ["mashreq.com"]
+    verification: { status: unverified }
+
+  - id: adib
+    name: Abu Dhabi Islamic Bank (ADIB)
+    aliases: ["ADIB", "Abu Dhabi Islamic Bank"]
+    category: bank
+    domains: ["adib.ae"]
+    verification: { status: unverified }
+
+  - id: rakbank
+    name: RAKBANK
+    aliases: ["RAKBANK", "RAK Bank", "National Bank of Ras Al Khaimah"]
+    category: bank
+    domains: ["rakbank.ae"]
+    verification: { status: unverified }
+
+  # ---------- Delivery ----------
+  - id: emirates-post
+    name: Emirates Post
+    aliases: ["Emirates Post", "EmiratesPost", "Empost"]
+    category: delivery
+    domains: ["emiratespost.ae"]
+    verification:
+      status: verified
+      source_name: u.ae, Mail services
+      source_url: https://u.ae/en/information-and-services/infrastructure/mail-services
+      checked: 2026-11-20
+
+  - id: aramex
+    name: Aramex
+    aliases: ["Aramex"]
+    category: delivery
+    domains: ["aramex.com"]
+    verification: { status: unverified }
+
+  - id: dhl
+    name: DHL
+    aliases: ["DHL", "DHL Express"]
+    category: delivery
+    domains: ["dhl.com"]
+    verification: { status: unverified }
+
+  # ---------- Telecom ----------
+  - id: etisalat
+    name: e& (Etisalat)
+    aliases: ["Etisalat", "e&", "etisalat by e&"]
+    category: telecom
+    domains: ["etisalat.ae", "eand.com"]
+    verification: { status: unverified }
+
+  - id: du
+    name: du
+    aliases: ["du telecom", "du mobile"]
+    category: telecom
+    domains: ["du.ae"]
+    verification: { status: unverified }
+
+  # ---------- Payments / BNPL ----------
+  - id: tabby
+    name: Tabby
+    aliases: ["Tabby"]
+    category: payments
+    domains: ["tabby.ai"]
+    verification: { status: unverified }
+
+  - id: tamara
+    name: Tamara
+    aliases: ["Tamara"]
+    category: payments
+    domains: ["tamara.co"]
+    verification: { status: unverified }

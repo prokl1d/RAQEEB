@@ -1,10 +1,13 @@
 """RAQEEB API entry point. Run: uvicorn app.main:app --reload (from backend/)."""
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
 
 from app.config import settings
-from app.models import HealthResponse
+from app.models import HealthResponse, InvestigationType
+from app.pipeline.extract import InputError
+from app.pipeline.investigate import InvestigationResult, investigate
 
 VERSION = "0.1.0"
 
@@ -33,3 +36,20 @@ def health() -> HealthResponse:
             "urlscan": settings.urlscan_enabled and bool(settings.urlscan_api_key),
         },
     )
+
+
+class InvestigateRequest(BaseModel):
+    type: InvestigationType
+    message: str | None = None
+    url: str | None = None
+
+
+@app.post("/api/investigate", response_model=InvestigationResult)
+def investigate_endpoint(req: InvestigateRequest) -> InvestigationResult:
+    """Runs the investigation in memory. Nothing is stored or logged beyond status."""
+    if req.type == InvestigationType.screenshot:
+        raise HTTPException(status_code=501, detail="Screenshot investigations arrive in Phase 6.")
+    try:
+        return investigate(req.type, message=req.message, url=req.url)
+    except InputError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from None
