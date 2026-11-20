@@ -38,3 +38,6 @@ desktop.ini
 
 # Third-party site screenshots from design research (kept locally only)
 docs/design-research/*.jpeg
+*.egg-info/
+.pytest_cache/
+*.tsbuildinfo
