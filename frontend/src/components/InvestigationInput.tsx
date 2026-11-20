@@ -23,7 +23,7 @@ export function InvestigationInput() {
     (tab === "screenshot" && file !== null);
 
   return (
-    <div className="rounded-card border border-white/10 bg-surface p-2 text-left shadow-[0_24px_60px_-20px_rgba(7,12,23,0.6)]">
+    <div className="rounded-card border border-line bg-surface p-2 text-left shadow-[0_18px_48px_-24px_rgba(27,29,36,0.25)]">
       <div role="tablist" aria-label="Investigation type" className="flex gap-1 p-1">
         {tabs.map((t) => (
           <button
@@ -32,7 +32,7 @@ export function InvestigationInput() {
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
             className={`rounded-control px-4 py-2 text-[14px] font-semibold transition-colors duration-150 ${
-              tab === t.id ? "bg-navy-900 text-white" : "text-ink-2 hover:bg-canvas"
+              tab === t.id ? "bg-shell-900 text-white" : "text-ink-2 hover:bg-canvas"
             }`}
           >
             {t.label}

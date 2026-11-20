@@ -40,19 +40,19 @@ export function Dashboard() {
   return (
     <>
       {/* Hero */}
-      <section className="bg-navy-900 text-white">
+      <section className="bg-canvas bg-[radial-gradient(60%_55%_at_50%_0%,#f6efd9_0%,transparent_70%)]">
         <div className="mx-auto max-w-[1120px] px-4 pb-20 pt-16 sm:px-6 sm:pt-24">
           <div className="mx-auto max-w-[760px] text-center">
-            <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/15 px-3 py-1 text-[13px] text-white/75">
-              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent-bright" />
+            <p className="mb-5 inline-flex items-center gap-2 rounded-md bg-accent-soft px-2.5 py-1 text-[13px] font-medium text-accent-strong">
+              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
               Digital trust investigation for the UAE
             </p>
-            <h1 className="text-[40px] font-extrabold leading-[1.08] tracking-[-0.02em] sm:text-[56px]">
-              Verify the claim,
+            <h1 className="text-[40px] font-extrabold leading-[1.08] tracking-[-0.025em] text-ink sm:text-[58px]">
+              Verify the <span className="text-accent">claim</span>,
               <br />
-              <span className="text-accent-bright">not just the link.</span>
+              not just the <span className="text-accent">link</span>.
             </h1>
-            <p className="mx-auto mt-5 max-w-[600px] text-[17px] leading-7 text-white/70">
+            <p className="mx-auto mt-5 max-w-[600px] text-[18px] leading-[27px] text-ink-2">
               Paste a suspicious message, link or screenshot. RAQEEB checks who it claims to be from,
               gathers evidence and shows you exactly why it reached its verdict.
             </p>

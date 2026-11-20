@@ -1,6 +1,6 @@
 # RAQEEB: implementation plan (Phase 1)
 
-Status: **draft for owner approval.** No application code has been written.
+Status: **approved 2026-11-20** (see "Decisions" at the end).
 Written 2026-11-20. It answers the 20 items in section 20 of [MASTER_PLAN.md](MASTER_PLAN.md).
 Facts about third-party services were checked on that date and carry a source link. Where a source didn't settle something, it says **unconfirmed**.
 
@@ -215,7 +215,12 @@ Full analyses: [designsystem.gov.ae](design-research/designsystem.gov.ae.md), [d
 - **No stock photography.** Show the product (a sample report) instead.
 
 **RAQEEB's own identity, distinct from both sites:**
-- Dark navy (#0B1220) for the shell and navigation, light (#F7F8FA / #FFFFFF) content surfaces, and one **teal accent (#14B8A6 family)**. Gold isn't used, to avoid looking like a government site.
+- **Owner decision (2026-11-20): follow the UAE Design System palette.**
+  - AE gold accent (#92722A; dark #6C5121; tint #F2ECCF; light #C9A55A on dark).
+  - Charcoal bands (#1B1D24) for the header and footer.
+  - Warm off-white canvas (#FCFCFC) with white surfaces.
+  - Text in #282A33 / #4D525E / #6B6F7B.
+  - The footer disclaimer makes clear RAQEEB isn't a government service.
 - Risk colours used only for risk: Low emerald, Moderate amber, High red, Unknown slate grey. Each always comes with a text label, never colour alone.
 - Type: **Inter** (headings 600–800, body 400) + **JetBrains Mono** for domains, URLs and technical evidence. Monospace makes lookalike characters easier to spot.
 - 4px spacing base, 8/12/16/24/32/48/96 scale, 8–12px radii, 1px borders.
@@ -339,12 +344,12 @@ Local installs:
 
 ---
 
-## Decisions needed from you
+## Decisions (approved 2026-11-20)
 
-1. **Approve the stack:** React + TypeScript + Tailwind with Python FastAPI?
-2. **AI provider:** Gemini free tier with message masking and a disclosure, and no DeepSeek for now?
-3. **urlscan.io:** leave it off for the MVP?
-4. **Scoring:** OK with the coverage rule (under 40% gives Unknown) and the two overrides (malicious intel ≥75, impersonation ≥50)?
-5. **Brand direction:** navy + teal + Inter/JetBrains Mono, with no gold or government look?
-6. **Timeline:** when is the hackathon? It decides whether screenshots stay in scope.
-7. **Starting point:** OK to begin Phase 2 (project skeleton + design system) once you approve?
+1. **Stack:** React + TypeScript + Tailwind with Python FastAPI. ✅
+2. **AI provider:** Gemini free tier with masking and a disclosure, and no DeepSeek for now. ✅
+3. **urlscan.io:** off for the MVP. ✅
+4. **Scoring:** coverage rule (under 40% gives Unknown) and both overrides. ✅
+5. **Brand:** changed by the owner to the **UAE Design System palette** (gold + charcoal + off-white), with Inter / JetBrains Mono. ✅
+6. **Timeline:** event is **AD Police x 42AD Hackathon, 24–30 Nov 2026**. The posted deadline is **25 Nov 2026 08:00**. Work is prioritised so a demoable build exists before then: engine and identity verification first, screenshots last (see the "Smaller MVP" note in section 16).
+7. **Phase 2** approved and done. ✅

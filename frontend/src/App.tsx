@@ -5,8 +5,8 @@ function Logo() {
     <a href="/" className="flex items-center gap-2.5 text-white" aria-label="RAQEEB home">
       <svg width="28" height="28" viewBox="0 0 28 28" aria-hidden>
         <rect x="1" y="1" width="26" height="26" rx="7" fill="none" stroke="currentColor" strokeOpacity="0.35" />
-        <circle cx="12.5" cy="12.5" r="5.5" fill="none" stroke="#2dd4bf" strokeWidth="2.2" />
-        <path d="M16.6 16.6 21 21" stroke="#2dd4bf" strokeWidth="2.2" strokeLinecap="round" />
+        <circle cx="12.5" cy="12.5" r="5.5" fill="none" stroke="#c9a55a" strokeWidth="2.2" />
+        <path d="M16.6 16.6 21 21" stroke="#c9a55a" strokeWidth="2.2" strokeLinecap="round" />
       </svg>
       <span className="text-[17px] font-extrabold tracking-[0.06em]">RAQEEB</span>
       <span className="text-[15px] font-medium text-white/50" lang="ar">
@@ -19,7 +19,7 @@ function Logo() {
 export default function App() {
   return (
     <div className="min-h-screen">
-      <header className="bg-navy-900">
+      <header className="bg-shell-900">
         <div className="mx-auto flex h-16 max-w-[1120px] items-center justify-between border-b border-white/10 px-4 sm:px-6">
           <Logo />
           <nav className="flex items-center gap-1 text-[14px] font-medium text-white/70">
