@@ -82,7 +82,7 @@ Use it to:
 
 ### STRICT REQUIREMENTS
 
-RAQEEQ must be developed as a completely new project.
+RAQEEB must be developed as a completely new project.
 
 Do NOT:
 
@@ -95,7 +95,7 @@ Do NOT:
 - Modify or contribute to its GitHub repository.
 - Depend on its source code or infrastructure.
 
-You may take inspiration from useful concepts, but independently design and implement everything for RAQEEQ.
+You may take inspiration from useful concepts, but independently design and implement everything for RAQEEB.
 
 The new project must have its own:
 
@@ -114,9 +114,9 @@ The new project must have its own:
 There are two separate repositories:
 
 1. V1 research reference: https://github.com/Nishad-sonawane-0016/ScamShield-AI
-2. Current RAQEEQ workspace: the new, empty repository opened in Claude Code.
+2. Current RAQEEB workspace: the new, empty repository opened in Claude Code.
 
-All implementation must happen exclusively in the current RAQEEQ workspace.
+All implementation must happen exclusively in the current RAQEEB workspace.
 
 Never modify V1.
 
@@ -124,7 +124,7 @@ Never modify V1.
 
 # 3. TARGET AUDIENCE
 
-RAQEEQ is UAE-focused.
+RAQEEB is UAE-focused.
 
 Prioritize investigations involving:
 
@@ -160,11 +160,11 @@ Design the investigation engine so it can eventually be reused by a browser exte
 
 The dashboard should include:
 
-- RAQEEQ branding.
+- RAQEEB branding.
 - Clear explanation of the product.
 - A prominent Start Investigation action.
 - Overview of investigation capabilities.
-- Useful information about how RAQEEQ works.
+- Useful information about how RAQEEB works.
 - A professional, clean interface.
 
 Do not add persistent scan history because we have decided not to store user submissions.
@@ -524,7 +524,7 @@ Do not make unsupported promises about third-party retention.
 
 # 12. UI/UX AND BRAND IDENTITY
 
-The product is called **RAQEEQ (رقيب)**.
+The product is called **RAQEEB (رقيب)**.
 
 Create a completely new visual identity.
 
@@ -562,7 +562,7 @@ Use their visual principles as inspiration.
 
 We want the quality of a modern UAE digital service, combined with a distinctive cybersecurity investigation interface.
 
-Do not directly copy their website or imply that RAQEEQ is an official government service.
+Do not directly copy their website or imply that RAQEEB is an official government service.
 
 ### Suggested visual direction
 
@@ -655,7 +655,7 @@ The AI must analyze those instructions as content, never follow them as commands
 Our final presentation consists of:
 
 1. A PowerPoint presentation.
-2. A live demonstration of the RAQEEQ MVP website.
+2. A live demonstration of the RAQEEB MVP website.
 
 Design the MVP around three convincing demonstration scenarios.
 
@@ -691,7 +691,7 @@ Suggested phases:
 
 **Phase 1 — Research and architecture**
 - Inspect V1 for ideas only.
-- Inspect the empty RAQEEQ workspace.
+- Inspect the empty RAQEEB workspace.
 - Select the new technology stack.
 - Design the architecture.
 - Define the folder structure.
@@ -699,7 +699,7 @@ Suggested phases:
 **Phase 2 — Branding and UI/UX**
 - Inspect `/taste`.
 - Study the UAE design references.
-- Establish RAQEEQ branding.
+- Establish RAQEEB branding.
 - Design the dashboard.
 - Design the investigation workspace.
 - Build reusable components.
@@ -806,7 +806,7 @@ Never include real API keys in source control.
 
 # 19. GITHUB WORKFLOW
 
-The current RAQEEQ workspace is connected to GitHub.
+The current RAQEEB workspace is connected to GitHub.
 
 All development must happen in this new project.
 
@@ -815,7 +815,7 @@ Before implementation:
 - Inspect the configured remote.
 - Inspect the current branch.
 - Check Git status.
-- Confirm the workspace is the new RAQEEQ project.
+- Confirm the workspace is the new RAQEEB project.
 
 Never modify the V1 repository.
 
@@ -831,7 +831,7 @@ Use clear commits during implementation when appropriate.
 
 Before doing anything, provide a comprehensive plan containing:
 
-1. Understanding of RAQEEQ.
+1. Understanding of RAQEEB.
 2. V1 research findings and useful ideas.
 3. Confirmation that V1 code and design will not be reused.
 4. Recommended technology stack.
@@ -860,7 +860,7 @@ If a feature is too ambitious for the hackathon timeline, identify it and recomm
 
 ### FINAL INSTRUCTION
 
-Build RAQEEQ as a completely independent product.
+Build RAQEEB as a completely independent product.
 
 V1 is only a source of research and inspiration.
 
