@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { EASE_OUT, RiskGauge, fadeUp, stagger } from "./motion";
 import type { Evidence, EvidenceStatus, InvestigationResult, RiskBand } from "../lib/api";
 import { Badge, Card, Mono, RiskBadge, type RiskLevel } from "./ui";
 
@@ -48,11 +50,11 @@ function EvidenceRow({ e, note }: { e: Evidence; note?: string }) {
   const [open, setOpen] = useState(false);
   const technical = Object.entries(e.raw).filter(([k]) => !["start", "end"].includes(k));
   return (
-    <li className="border-t border-line first:border-t-0">
+    <div>
       <button
         onClick={() => setOpen(!open)}
         aria-expanded={open}
-        className="flex w-full items-start justify-between gap-4 px-5 py-4 text-left hover:bg-canvas"
+        className="flex w-full cursor-pointer items-start justify-between gap-4 px-5 py-4 text-left transition-colors duration-200 hover:bg-canvas"
       >
         <span>
           <span className="block text-body font-medium text-ink">{e.finding}</span>
@@ -62,24 +64,35 @@ function EvidenceRow({ e, note }: { e: Evidence; note?: string }) {
           <span className="hidden rounded-control bg-canvas px-1.5 py-0.5 text-badge text-ink-3 sm:inline">
             {categoryLabel[e.category]}
           </span>
-          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden className={`text-ink-3 transition-transform ${open ? "rotate-90" : ""}`}>
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden className={`text-ink-3 transition-transform duration-200 ease-out ${open ? "rotate-90 text-accent" : ""}`}>
             <path d="m6 3.5 4.5 4.5L6 12.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
           </svg>
         </span>
       </button>
-      {open && (
-        <div className="space-y-2 px-5 pb-4 text-small text-ink-2">
-          <p>
-            <span className="font-medium text-ink">Source:</span> {e.source}
-          </p>
-          {technical.length > 0 && (
-            <pre className="overflow-x-auto rounded-panel border border-line bg-canvas p-3 font-mono text-[12px] leading-5 text-ink-2">
-              {JSON.stringify(Object.fromEntries(technical), null, 2)}
-            </pre>
-          )}
-        </div>
-      )}
-    </li>
+      <AnimatePresence initial={false}>
+        {open && (
+          <motion.div
+            key="details"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: EASE_OUT }}
+            className="overflow-hidden"
+          >
+            <div className="space-y-2 px-5 pb-4 text-small text-ink-2">
+              <p>
+                <span className="font-medium text-ink">Source:</span> {e.source}
+              </p>
+              {technical.length > 0 && (
+                <pre className="overflow-x-auto rounded-panel border border-line bg-canvas p-3 font-mono text-[12px] leading-5 text-ink-2">
+                  {JSON.stringify(Object.fromEntries(technical), null, 2)}
+                </pre>
+              )}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }
 
@@ -100,9 +113,16 @@ function HighlightedMessage({ text, evidence }: { text: string; evidence: Eviden
     <p className="whitespace-pre-wrap break-words text-body leading-7 text-ink">
       {parts.map((p, k) =>
         p.mark ? (
-          <mark key={k} className="rounded bg-risk-moderate-bg px-0.5 text-risk-moderate">
+          <motion.mark
+            key={k}
+            className="rounded bg-risk-moderate-bg px-0.5 text-risk-moderate"
+            initial={{ backgroundColor: "rgba(253,238,230,0)" }}
+            whileInView={{ backgroundColor: "rgba(253,238,230,1)" }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.1 * k }}
+          >
             {p.t}
-          </mark>
+          </motion.mark>
         ) : (
           <span key={k}>{p.t}</span>
         ),
@@ -120,17 +140,23 @@ export function Report({ result, message }: { result: InvestigationResult; messa
   const firstUrl = result.urls[0];
 
   return (
-    <section aria-label="Investigation report" className="space-y-6">
+    <motion.section aria-label="Investigation report" className="space-y-6" initial="hidden" animate="show" variants={stagger(0.08)}>
       {result.check_mode === "fixture" && (
-        <div className="rounded-panel border border-accent/30 bg-accent-cream px-4 py-3 text-small text-accent-strong">
+        <motion.div variants={fadeUp} className="rounded-panel border border-accent/30 bg-accent-cream px-4 py-3 text-small text-accent-strong">
           <strong className="font-semibold">Demo mode:</strong> network and threat-intelligence results below are
           recorded demo fixtures, not live results.
-        </div>
+        </motion.div>
       )}
 
       {/* Verdict */}
-      <Card className="overflow-hidden">
-        <div className={`h-1.5 ${bandBar[level]}`} />
+      <motion.div variants={fadeUp}>
+      <Card className="overflow-hidden shadow-[0_24px_60px_-36px_rgba(27,29,36,0.4)]">
+        <motion.div
+          className={`h-1.5 origin-left ${bandBar[level]}`}
+          initial={{ scaleX: 0 }}
+          animate={{ scaleX: 1 }}
+          transition={{ duration: 0.7, ease: EASE_OUT }}
+        />
         <div className="grid gap-6 p-6 sm:p-8 md:grid-cols-[1fr_auto] md:items-start">
           <div>
             <div className="flex flex-wrap items-center gap-3">
@@ -147,11 +173,12 @@ export function Report({ result, message }: { result: InvestigationResult; messa
               <span className="font-normal text-ink-2"> · {identity.summary}</span>
             </p>
           </div>
-          <div className="flex items-baseline gap-1 md:flex-col md:items-end">
-            <span className="font-display text-[56px] font-extrabold leading-none tracking-[-2px] text-ink">
-              {score.band === "Unknown Risk" || score.band === "Inactive Link" ? "–" : score.score}
-            </span>
-            <span className="text-small text-ink-3">/ 100 risk score</span>
+          <div className="flex justify-center md:justify-end">
+            <RiskGauge
+              score={score.score}
+              level={level}
+              noScore={score.band === "Unknown Risk" || score.band === "Inactive Link"}
+            />
           </div>
         </div>
         {(score.overrides.length > 0 || score.contradictions.length > 0) && (
@@ -167,8 +194,9 @@ export function Report({ result, message }: { result: InvestigationResult; messa
           </div>
         )}
       </Card>
+      </motion.div>
 
-      <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
+      <motion.div variants={fadeUp} className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
         {/* Identity */}
         <Card className="p-6">
           <Badge>Organization identity</Badge>
@@ -180,7 +208,7 @@ export function Report({ result, message }: { result: InvestigationResult; messa
                 claimed ? <Mono key="o">{claimed.official_domains.join(", ")}</Mono> : "—",
               ],
               ["Link goes to", firstUrl ? <Mono key="l">{firstUrl.registrable_domain || firstUrl.host}</Mono> : "No link found"],
-              ...(firstUrl?.final_url && firstUrl.final_url !== firstUrl.url
+              ...(firstUrl?.final_url && new URL(firstUrl.final_url).host !== new URL(firstUrl.url).host
                 ? [["Redirects to", <Mono key="r">{new URL(firstUrl.final_url).host}</Mono>]]
                 : []),
               ["Result", <span key="res" className={`font-semibold ${outcomeTone[identity.outcome]}`}>{identity.outcome}</span>],
@@ -204,7 +232,7 @@ export function Report({ result, message }: { result: InvestigationResult; messa
           <ul className="mt-4 space-y-4">
             {score.categories
               .filter((c) => c.applicable)
-              .map((c) => (
+              .map((c, idx) => (
                 <li key={c.category}>
                   <div className="flex items-baseline justify-between gap-3 text-small">
                     <span className="font-medium text-ink">
@@ -216,11 +244,14 @@ export function Report({ result, message }: { result: InvestigationResult; messa
                   </div>
                   <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-canvas ring-1 ring-line">
                     {c.covered && (
-                      <div
-                        className={`h-full rounded-full ${
+                      <motion.div
+                        className={`h-full origin-left rounded-full ${
                           (c.risk ?? 0) >= 50 ? "bg-risk-high" : (c.risk ?? 0) >= 25 ? "bg-risk-moderate" : "bg-risk-low"
                         }`}
-                        style={{ width: `${Math.max(c.risk ?? 0, 2)}%` }}
+                        style={{ width: "100%" }}
+                        initial={{ scaleX: 0 }}
+                        animate={{ scaleX: Math.max(c.risk ?? 0, 2) / 100 }}
+                        transition={{ duration: 0.8, ease: EASE_OUT, delay: 0.25 + idx * 0.08 }}
                       />
                     )}
                   </div>
@@ -229,9 +260,10 @@ export function Report({ result, message }: { result: InvestigationResult; messa
               ))}
           </ul>
         </Card>
-      </div>
+      </motion.div>
 
       {/* Evidence */}
+      <motion.div variants={fadeUp}>
       <Card>
         <div className="border-b border-line px-6 py-5">
           <Badge>Evidence</Badge>
@@ -249,17 +281,20 @@ export function Report({ result, message }: { result: InvestigationResult; messa
                 </h3>
                 <span className="hidden text-small text-ink-3 sm:inline">· {g.hint}</span>
               </div>
-              <ul>
+              <motion.ul initial="hidden" animate="show" variants={stagger(0.05, 0.2)}>
                 {items.map((e) => (
-                  <EvidenceRow key={e.id} e={e} note={aiNotes.get(e.id)} />
+                  <motion.li key={e.id} variants={fadeUp} className="border-t border-line first:border-t-0">
+                    <EvidenceRow e={e} note={aiNotes.get(e.id)} />
+                  </motion.li>
                 ))}
-              </ul>
+              </motion.ul>
             </div>
           );
         })}
       </Card>
+      </motion.div>
 
-      <div className="grid gap-6 lg:grid-cols-2">
+      <motion.div variants={fadeUp} className="grid gap-6 lg:grid-cols-2">
         {message && (
           <Card className="p-6">
             <Badge>The message, with red flags highlighted</Badge>
@@ -277,9 +312,10 @@ export function Report({ result, message }: { result: InvestigationResult; messa
             ))}
           </ul>
         </Card>
-      </div>
+      </motion.div>
 
       {/* Limitations and disclosures */}
+      <motion.div variants={fadeUp}>
       <Card className="p-6">
         <Badge>Limitations and privacy</Badge>
         <ul className="mt-4 list-disc space-y-1.5 pl-5 text-small text-ink-2">
@@ -298,6 +334,7 @@ export function Report({ result, message }: { result: InvestigationResult; messa
           <li>Nothing you submitted was stored.</li>
         </ul>
       </Card>
-    </section>
+      </motion.div>
+    </motion.section>
   );
 }

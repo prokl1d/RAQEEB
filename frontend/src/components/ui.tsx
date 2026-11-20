@@ -21,11 +21,11 @@ export function Button({
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant; arrow?: boolean }) {
   return (
     <button
-      className={`inline-flex h-11 items-center justify-center gap-2 rounded-control px-4 text-body font-semibold transition-colors duration-200 disabled:cursor-not-allowed ${buttonStyles[variant]} ${className}`}
+      className={`group inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-control px-4 text-body font-semibold transition-[background-color,border-color,color,transform,box-shadow] duration-200 ease-out enabled:hover:shadow-[0_6px_18px_-8px_rgba(146,114,42,0.55)] enabled:active:scale-[0.98] disabled:cursor-not-allowed ${buttonStyles[variant]} ${className}`}
       {...props}
     >
       {children}
-      {arrow && <ArrowRight />}
+      {arrow && <ArrowRight className="transition-transform duration-200 ease-out group-enabled:group-hover:translate-x-0.5" />}
     </button>
   );
 }
@@ -51,15 +51,22 @@ export function Card({
   children,
   className = "",
   highlight = false,
+  interactive = false,
 }: {
   children: ReactNode;
   className?: string;
   highlight?: boolean;
+  /** Lift slightly and pick up a gold edge on hover (for browsable cards, not report panels). */
+  interactive?: boolean;
 }) {
   return (
     <div
       className={`rounded-card border ${
         highlight ? "border-transparent bg-accent-cream" : "border-line bg-surface"
+      } ${
+        interactive
+          ? "transition-[transform,box-shadow,border-color] duration-300 ease-out hover:-translate-y-1 hover:border-accent/40 hover:shadow-[0_18px_40px_-24px_rgba(27,29,36,0.35)]"
+          : ""
       } ${className}`}
     >
       {children}

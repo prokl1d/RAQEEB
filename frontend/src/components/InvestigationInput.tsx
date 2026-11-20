@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { EASE_OUT } from "./motion";
 import type { InvestigateRequest } from "../lib/api";
 import { Button } from "./ui";
 
@@ -59,7 +61,7 @@ export function InvestigationInput({
   }
 
   return (
-    <div className="rounded-card border border-line bg-surface text-left">
+    <div className="rounded-card border border-line bg-surface text-left shadow-[0_24px_60px_-36px_rgba(27,29,36,0.35)] transition-shadow duration-300 focus-within:shadow-[0_28px_70px_-34px_rgba(146,114,42,0.45)]">
       {/* Underline tabs */}
       <div role="tablist" aria-label="Investigation type" className="flex gap-6 border-b border-line px-6">
         {tabs.map((t) => (
@@ -68,11 +70,19 @@ export function InvestigationInput({
             role="tab"
             aria-selected={tab === t.id}
             onClick={() => setTab(t.id)}
-            className={`-mb-px border-b-[3px] py-4 text-body font-semibold transition-colors duration-200 ${
-              tab === t.id ? "border-accent text-ink" : "border-transparent text-ink-3 hover:text-ink"
+            className={`relative -mb-px min-h-11 cursor-pointer py-4 text-body font-semibold transition-colors duration-200 ${
+              tab === t.id ? "text-ink" : "text-ink-3 hover:text-ink"
             }`}
           >
             {t.label}
+            {tab === t.id && (
+              <motion.span
+                layoutId="tab-underline"
+                aria-hidden
+                className="absolute inset-x-0 -bottom-px h-[3px] rounded-full bg-accent"
+                transition={{ type: "spring", stiffness: 500, damping: 40 }}
+              />
+            )}
           </button>
         ))}
       </div>
@@ -84,6 +94,14 @@ export function InvestigationInput({
           submit();
         }}
       >
+        <AnimatePresence mode="wait" initial={false}>
+        <motion.div
+          key={tab}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.18, ease: EASE_OUT }}
+        >
         {tab === "message" && (
           <label className="block">
             <span className="mb-2 block text-small font-medium text-ink">Message text</span>
@@ -130,6 +148,8 @@ export function InvestigationInput({
             </p>
           </div>
         )}
+        </motion.div>
+        </AnimatePresence>
 
         {tab !== "screenshot" && (
           <div className="mt-4 flex flex-wrap items-center gap-2">
@@ -143,7 +163,7 @@ export function InvestigationInput({
                   if (ex.tab === "url") setUrl(ex.value);
                   else setMessage(ex.value);
                 }}
-                className="rounded-control border border-line px-2.5 py-1 text-small text-ink-2 hover:border-accent hover:text-accent"
+                className="min-h-9 cursor-pointer rounded-control border border-line px-2.5 py-1 text-small text-ink-2 transition-[color,border-color,background-color,transform] duration-200 ease-out hover:-translate-y-px hover:border-accent hover:bg-accent-cream hover:text-accent-strong active:translate-y-0"
               >
                 {ex.label}
               </button>

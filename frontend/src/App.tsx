@@ -1,11 +1,24 @@
+import { useEffect, useState } from "react";
+import { motion } from "motion/react";
 import { Dashboard } from "./pages/Dashboard";
+import { EASE_OUT } from "./components/motion";
 import { Container } from "./components/ui";
 
 function Logo() {
   return (
-    <a href="/" className="flex items-center gap-3" aria-label="RAQEEB home">
-      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden>
-        <circle cx="22" cy="22" r="20" fill="none" stroke="#92722a" strokeWidth="2.5" />
+    <a href="/" className="group flex items-center gap-3" aria-label="RAQEEB home">
+      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden className="transition-transform duration-300 ease-out group-hover:rotate-[-8deg]">
+        <motion.circle
+          cx="22"
+          cy="22"
+          r="20"
+          fill="none"
+          stroke="#92722a"
+          strokeWidth="2.5"
+          initial={{ pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1, ease: EASE_OUT }}
+        />
         <circle cx="20" cy="20" r="8" fill="none" stroke="#282a33" strokeWidth="2.5" />
         <path d="m26 26 6.5 6.5" stroke="#282a33" strokeWidth="2.5" strokeLinecap="round" />
       </svg>
@@ -27,6 +40,13 @@ const nav = [
 ] as const;
 
 export default function App() {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   return (
     <div className="min-h-screen">
       {/* Top band */}
@@ -41,18 +61,28 @@ export default function App() {
 
       {/* Floating header card */}
       <div className="sticky top-0 z-20 px-2 pt-3 sm:px-6 sm:pt-5">
-        <header className="mx-auto flex h-[72px] max-w-[1376px] items-center justify-between rounded-panel border border-line bg-surface px-4 shadow-float sm:h-24 sm:px-5">
+        <header
+          className={`mx-auto flex max-w-[1376px] items-center justify-between rounded-panel border bg-surface/90 px-4 backdrop-blur-md transition-[height,box-shadow,border-color] duration-300 ease-out sm:px-5 ${
+            scrolled
+              ? "h-[64px] border-line shadow-[0_14px_40px_-18px_rgba(27,29,36,0.28)] sm:h-[76px]"
+              : "h-[72px] border-line shadow-float sm:h-24"
+          }`}
+        >
           <Logo />
           <nav className="hidden items-center gap-8 md:flex">
             {nav.map(([label, href]) => (
-              <a key={href} href={href} className="text-body font-semibold text-ink hover:text-accent">
+              <a
+                key={href}
+                href={href}
+                className="relative py-2 text-body font-semibold text-ink transition-colors duration-200 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:bg-accent after:transition-transform after:duration-300 after:ease-out hover:text-accent hover:after:scale-x-100"
+              >
                 {label}
               </a>
             ))}
           </nav>
           <a
             href="#investigate"
-            className="inline-flex h-10 items-center rounded-control bg-accent px-4 text-small font-semibold text-white hover:bg-accent-hover"
+            className="inline-flex h-10 items-center rounded-control bg-accent px-4 text-small font-semibold text-white transition-[background-color,transform,box-shadow] duration-200 hover:bg-accent-hover hover:shadow-[0_6px_18px_-8px_rgba(146,114,42,0.6)] active:scale-[0.97]"
           >
             Start
           </a>
