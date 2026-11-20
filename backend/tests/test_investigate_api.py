@@ -19,7 +19,8 @@ def test_message_investigation_bank_scenario():
     assert body["identity"]["outcome"] == "Possible Impersonation"
     rules = {e["raw"].get("rule") for e in body["evidence"] if e["category"] == "content"}
     assert {"otp", "urgency", "threat"} <= rules
-    assert body["pending"]  # honest about steps not built yet
+    assert body["score"]["band"] == "High Risk"
+    assert body["score"]["coverage"] >= 40
 
 
 def test_url_investigation_verified():

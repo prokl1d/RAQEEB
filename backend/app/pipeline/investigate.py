@@ -2,7 +2,7 @@
 
 Order (docs/PLAN.md section 5): validate -> extract -> URL structure -> technical checks and
 threat intel -> identity verification (including redirect destinations) -> message rules ->
-AI explanation. Scoring is added in Phase 5.
+scoring -> AI explanation.
 Everything runs in memory per request; nothing is stored.
 """
 
@@ -17,6 +17,7 @@ from app.pipeline.content import analyze_content
 from app.pipeline.domains import analyze_url_structure
 from app.pipeline.extract import ParsedUrl, extract_urls, validate_message, validate_url
 from app.pipeline.technical import mode as check_mode, run_checks, to_evidence
+from app.pipeline.scoring import ScoreResult, score_investigation
 from app.pipeline.verify import IdentityOutcome, detect_claimed_orgs, verify_identity
 
 
@@ -53,12 +54,13 @@ class InvestigationResult(BaseModel):
     urls: list[UrlRef]
     identity: IdentitySummary
     evidence: list[Evidence]
+    score: ScoreResult
     ai: AIResult
     disclosures: list[Disclosure]
     pending: list[str]
 
 
-PENDING = ["Risk score"]
+PENDING: list[str] = []
 
 
 async def investigate(kind: InvestigationType, *, message: str | None = None, url: str | None = None) -> InvestigationResult:
@@ -92,6 +94,9 @@ async def investigate(kind: InvestigationType, *, message: str | None = None, ur
     if text:
         evidence += analyze_content(text)
 
+    score = score_investigation(evidence, identity.outcome, has_urls=bool(parsed), has_text=bool(text),
+                                claimed_any=bool(claimed))
+
     ai = await explain(text or (parsed[0].url if parsed else ""), evidence, identity.outcome.value)
 
     mode = check_mode()
@@ -119,6 +124,7 @@ async def investigate(kind: InvestigationType, *, message: str | None = None, ur
                             verified=o.is_verified) for o in claimed],
         ),
         evidence=evidence,
+        score=score,
         ai=ai,
         disclosures=disclosures,
         pending=PENDING,

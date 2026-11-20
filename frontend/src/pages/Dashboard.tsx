@@ -1,5 +1,36 @@
+import { useRef, useState } from "react";
 import { InvestigationInput } from "../components/InvestigationInput";
+import { Report } from "../components/Report";
 import { Badge, Card, Container, LinkMore, Mono, RiskBadge } from "../components/ui";
+import { investigate, type InvestigateRequest, type InvestigationResult } from "../lib/api";
+
+const PROGRESS = [
+  "Extracting links and the claimed organization",
+  "Checking the domain against official UAE domains",
+  "Checking DNS, certificate, redirects and domain age",
+  "Checking threat intelligence",
+  "Scoring the evidence and writing the explanation",
+];
+
+function Progress() {
+  return (
+    <Card className="p-6" >
+      <p className="text-small font-semibold text-ink">Investigating…</p>
+      <ul className="mt-3 space-y-2" aria-live="polite">
+        {PROGRESS.map((s, i) => (
+          <li key={s} className="flex items-center gap-3 text-small text-ink-2">
+            <span
+              aria-hidden
+              className="h-2.5 w-2.5 animate-pulse rounded-full bg-marker"
+              style={{ animationDelay: `${i * 150}ms` }}
+            />
+            {s}
+          </li>
+        ))}
+      </ul>
+    </Card>
+  );
+}
 
 const checks = [
   {
@@ -49,6 +80,26 @@ function SectionHead({ badge, title, lead }: { badge: string; title: string; lea
 }
 
 export function Dashboard() {
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [result, setResult] = useState<{ data: InvestigationResult; message?: string } | null>(null);
+  const reportRef = useRef<HTMLDivElement>(null);
+
+  async function run(req: InvestigateRequest) {
+    setBusy(true);
+    setError(null);
+    setResult(null);
+    setTimeout(() => reportRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 50);
+    try {
+      const data = await investigate(req);
+      setResult({ data, message: req.type === "message" ? req.message : undefined });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Something went wrong.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <>
       {/* Hero */}
@@ -78,7 +129,17 @@ export function Dashboard() {
           </div>
 
           <div id="investigate" className="mx-auto mt-12 max-w-[800px] scroll-mt-32">
-            <InvestigationInput />
+            <InvestigationInput onSubmit={run} busy={busy} />
+          </div>
+
+          <div ref={reportRef} className="mx-auto mt-8 max-w-[1100px] scroll-mt-32">
+            {busy && <Progress />}
+            {error && (
+              <div role="alert" className="rounded-panel border border-risk-high/30 bg-risk-high-bg px-4 py-3 text-body text-risk-high">
+                {error}
+              </div>
+            )}
+            {result && <Report result={result.data} message={result.message} />}
           </div>
         </Container>
       </section>
