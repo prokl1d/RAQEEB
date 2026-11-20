@@ -8,7 +8,15 @@ RAQEEB is an evidence-based investigation platform for suspicious links, message
 
 ## Status
 
-Phase 3 (investigation engine core). `POST /api/investigate` handles links and messages: link extraction (including defanged links), URL structure checks, the UAE organization registry, identity verification (Verified Match / Possible Impersonation / No Verified Relationship Found / Unable to Verify) and message red-flag rules. Network checks, threat intelligence, AI and scoring come next. The website does not call the engine yet.
+Phase 4 done. `POST /api/investigate` (links and messages) now runs:
+- link extraction and URL structure checks
+- SSRF-safe live checks: DNS, TLS certificate, redirect chain, domain age (RDAP)
+- threat intelligence: Google Safe Browsing and VirusTotal (lookup only), when keys are set
+- identity verification against the UAE registry, including where redirects really lead
+- message red-flag rules
+- an AI explanation (built-in mock by default, Gemini when `AI_PROVIDER=gemini`), with personal data masked first
+
+Set `OFFLINE_DEMO=true` to replay the clearly labelled demo fixtures (no internet needed). The risk score (Phase 5) and the report page come next.
 
 ## Run it locally (Windows)
 

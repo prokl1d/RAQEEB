@@ -28,6 +28,8 @@ class Settings(BaseSettings):
     # Modes
     ai_provider: str = "mock"  # "gemini" | "mock"
     offline_demo: bool = False  # replay labelled fixtures instead of calling external APIs
+    network_checks: bool = True  # False disables all outbound checks (used by tests)
+    ai_timeout_seconds: float = 15.0
 
     # Limits
     max_message_chars: int = 5000

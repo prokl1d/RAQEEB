@@ -45,11 +45,11 @@ class InvestigateRequest(BaseModel):
 
 
 @app.post("/api/investigate", response_model=InvestigationResult)
-def investigate_endpoint(req: InvestigateRequest) -> InvestigationResult:
+async def investigate_endpoint(req: InvestigateRequest) -> InvestigationResult:
     """Runs the investigation in memory. Nothing is stored or logged beyond status."""
     if req.type == InvestigationType.screenshot:
         raise HTTPException(status_code=501, detail="Screenshot investigations arrive in Phase 6.")
     try:
-        return investigate(req.type, message=req.message, url=req.url)
+        return await investigate(req.type, message=req.message, url=req.url)
     except InputError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from None
