@@ -5,7 +5,7 @@ type ButtonVariant = "primary" | "secondary" | "ghost";
 const buttonStyles: Record<ButtonVariant, string> = {
   // Solid gold fill, white text
   primary:
-    "bg-accent text-white hover:bg-accent-hover disabled:bg-line-strong disabled:text-white",
+    "bg-accent text-on-accent hover:bg-accent-hover disabled:bg-line-strong disabled:text-surface",
   // 2px gold outline, gold text
   secondary:
     "border-2 border-accent text-accent hover:bg-accent-cream disabled:border-line-strong disabled:text-ink-3",

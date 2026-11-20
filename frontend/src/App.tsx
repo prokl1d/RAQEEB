@@ -5,28 +5,68 @@ import { EASE_OUT } from "./components/motion";
 import { Container } from "./components/ui";
 import Magnet from "./components/bits/Magnet";
 import { useSmoothScroll } from "./lib/smooth";
+import { useTheme } from "./lib/theme";
+
+function ThemeToggle({ onDark }: { onDark: boolean }) {
+  const { theme, toggle } = useTheme();
+  const next = theme === "dark" ? "light" : "dark";
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      aria-label={`Switch to ${next} mode`}
+      title={`Switch to ${next} mode`}
+      className={`relative flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full border transition-colors duration-300 ${
+        onDark ? "border-white/15 text-white/85 hover:border-champagne/60 hover:text-champagne" : "border-line text-ink-2 hover:border-accent hover:text-accent"
+      }`}
+    >
+        <motion.svg
+          key={theme}
+          width="18"
+          height="18"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinecap="round"
+          aria-hidden
+          initial={{ rotate: -90, opacity: 0, scale: 0.6 }}
+          animate={{ rotate: 0, opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3, ease: EASE_OUT }}
+        >
+          {theme === "dark" ? (
+            <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z" />
+          ) : (
+            <>
+              <circle cx="12" cy="12" r="4" />
+              <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+            </>
+          )}
+        </motion.svg>
+    </button>
+  );
+}
 
 function Logo({ dark }: { dark: boolean }) {
-  const ink = dark ? "#ffffff" : "#282a33";
   return (
-    <a href="/" className="group flex items-center gap-3" aria-label="RAQEEB home">
+    <a href="/" className={`group flex items-center gap-3 transition-colors duration-500 ${dark ? "text-white" : "text-ink"}`} aria-label="RAQEEB home">
       <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden className="transition-transform duration-300 ease-out group-hover:rotate-[-8deg]">
         <motion.circle
           cx="22"
           cy="22"
           r="20"
           fill="none"
-          stroke={dark ? "#d8b773" : "#92722a"}
+          stroke={dark ? "#d9b76e" : "var(--color-accent)"}
           strokeWidth="2.5"
           initial={{ pathLength: 0 }}
           animate={{ pathLength: 1 }}
           transition={{ duration: 1.2, ease: EASE_OUT }}
         />
-        <circle cx="20" cy="20" r="8" fill="none" stroke={ink} strokeWidth="2.5" className="transition-[stroke] duration-500" />
-        <path d="m26 26 6.5 6.5" stroke={ink} strokeWidth="2.5" strokeLinecap="round" className="transition-[stroke] duration-500" />
+        <circle cx="20" cy="20" r="8" fill="none" stroke="currentColor" strokeWidth="2.5" />
+        <path d="m26 26 6.5 6.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
       </svg>
       <span className="flex flex-col leading-none">
-        <span className={`font-display text-[20px] font-extrabold tracking-[0.06em] transition-colors duration-500 ${dark ? "text-white" : "text-ink"}`}>
+        <span className="font-display text-[20px] font-extrabold tracking-[0.06em]">
           RAQEEB
         </span>
         <span className={`mt-1 text-[13px] font-medium transition-colors duration-500 ${dark ? "text-white/50" : "text-ink-3"}`} lang="ar">
@@ -65,19 +105,9 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-      <a href="#investigate" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-control focus:bg-accent focus:px-4 focus:py-2 focus:text-white">
+      <a href="#investigate" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-control focus:bg-accent focus:px-4 focus:py-2 focus:text-on-accent">
         Skip to the investigation
       </a>
-
-      {/* Top band */}
-      <div className="relative z-30 bg-black text-small text-white/80">
-        <Container className="flex h-7 items-center justify-between">
-          <p className="truncate">RAQEEB · Student hackathon project, not a government service</p>
-          <a href="#privacy" className="hidden hover:text-white sm:block">
-            Privacy notice
-          </a>
-        </Container>
-      </div>
 
       {/* Floating header */}
       <div id="site-header" className="sticky top-0 z-20 px-2 pt-3 sm:px-6 sm:pt-5">
@@ -97,21 +127,24 @@ export default function App() {
                 key={href}
                 href={href}
                 className={`relative py-2 text-body font-semibold transition-colors duration-300 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100 ${
-                  dark ? "text-white/80 after:bg-[#d8b773] hover:text-white" : "text-ink after:bg-accent hover:text-accent"
+                  dark ? "text-white/80 after:bg-champagne hover:text-white" : "text-ink after:bg-accent hover:text-accent"
                 }`}
               >
                 {label}
               </a>
             ))}
           </nav>
+          <div className="flex items-center gap-2 sm:gap-3">
+          <ThemeToggle onDark={dark} />
           <Magnet padding={40} magnetStrength={4}>
             <a
               href="#investigate"
-              className="inline-flex h-10 items-center rounded-control bg-accent px-4 text-small font-semibold text-white transition-[background-color,box-shadow] duration-200 hover:bg-accent-hover hover:shadow-[0_8px_24px_-8px_rgba(216,183,115,0.7)]"
+              className="inline-flex h-10 items-center rounded-control bg-accent px-4 text-small font-semibold text-on-accent transition-[background-color,box-shadow] duration-200 hover:bg-accent-hover hover:shadow-[0_8px_24px_-8px_rgba(216,183,115,0.7)]"
             >
               Start
             </a>
           </Magnet>
+          </div>
         </header>
       </div>
 

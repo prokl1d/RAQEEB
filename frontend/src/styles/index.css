@@ -33,41 +33,45 @@
   --text-badge: 12px;
   --text-badge--line-height: 16px;
 
-  --color-shell-950: #121318;
-  --color-shell-900: #1b1d24;
-  --color-shell-800: #262833;
-  --color-shell-700: #33363f;
-  --color-shell-500: #5a5e69;
+  /* Onyx: always-dark luxury sections (hero, privacy, footer) in both themes */
+  --color-shell-950: #0a0a0c;
+  --color-shell-900: #111216;
+  --color-shell-800: #1b1c21;
+  --color-shell-700: #2a2b31;
+  --color-shell-500: #5c5d64;
 
-  --color-surface: #ffffff;
-  --color-canvas: #fcfcfc;
-  --color-line: #e1e3e8;
-  --color-line-strong: #c9ccd3;
-  --color-ink: #282a33;
-  --color-ink-2: #4d525e;
-  --color-ink-3: #6b6f7b;
+  /* Theme-switchable tokens: values live in :root (light) and .dark below */
+  --color-surface: var(--t-surface);
+  --color-canvas: var(--t-canvas);
+  --color-line: var(--t-line);
+  --color-line-strong: var(--t-line-strong);
+  --color-ink: var(--t-ink);
+  --color-ink-2: var(--t-ink-2);
+  --color-ink-3: var(--t-ink-3);
 
-  --color-accent: #92722a;
-  --color-accent-hover: #7c6024;
-  --color-accent-strong: #6c5121;
-  --color-accent-soft: #f2eccf;
-  --color-accent-cream: #fdf9ee;
-  --color-accent-bright: #c9a55a;
-  --color-marker: #e9a15e;
+  --color-accent: var(--t-accent);
+  --color-accent-hover: var(--t-accent-hover);
+  --color-accent-strong: var(--t-accent-strong);
+  --color-accent-soft: var(--t-accent-soft);
+  --color-accent-cream: var(--t-accent-cream);
+  --color-accent-bright: #d9b76e;
+  --color-on-accent: var(--t-on-accent);
+  --color-champagne: #d9b76e;
+  --color-marker: #e2a560;
   --color-marker-active: #b4580f;
 
-  --color-risk-safe: #065f46;
-  --color-risk-safe-bg: #d7f2e5;
-  --color-risk-inactive: #3f5873;
-  --color-risk-inactive-bg: #e8eef5;
-  --color-risk-low: #047857;
-  --color-risk-low-bg: #e7f6ef;
-  --color-risk-moderate: #c2410c;
-  --color-risk-moderate-bg: #fdeee6;
-  --color-risk-high: #b91c1c;
-  --color-risk-high-bg: #fdecec;
-  --color-risk-unknown: #4d525e;
-  --color-risk-unknown-bg: #eef0f3;
+  --color-risk-safe: var(--t-safe);
+  --color-risk-safe-bg: var(--t-safe-bg);
+  --color-risk-inactive: var(--t-inactive);
+  --color-risk-inactive-bg: var(--t-inactive-bg);
+  --color-risk-low: var(--t-low);
+  --color-risk-low-bg: var(--t-low-bg);
+  --color-risk-moderate: var(--t-moderate);
+  --color-risk-moderate-bg: var(--t-moderate-bg);
+  --color-risk-high: var(--t-high);
+  --color-risk-high-bg: var(--t-high-bg);
+  --color-risk-unknown: var(--t-unknown);
+  --color-risk-unknown-bg: var(--t-unknown-bg);
 
   --radius-card: 16px;
   --radius-panel: 12px;
@@ -76,10 +80,74 @@
   --shadow-float: 0 8px 30px -6px rgba(27, 29, 36, 0.10);
 }
 
+/* Dark mode is class-based: <html class="dark"> (see src/lib/theme.ts and index.html) */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Light: champagne gold on warm ivory */
+:root {
+  color-scheme: light;
+  --t-canvas: #f8f5ef;
+  --t-surface: #fffdf9;
+  --t-line: #e8e1d4;
+  --t-line-strong: #d3c9b7;
+  --t-ink: #16161a;
+  --t-ink-2: #4b4840;
+  --t-ink-3: #75716a;
+  --t-accent: #8c6b2a;
+  --t-accent-hover: #765a22;
+  --t-accent-strong: #67501f;
+  --t-accent-soft: #f2e8cf;
+  --t-accent-cream: #fbf5e7;
+  --t-on-accent: #ffffff;
+  --t-safe: #065f46;
+  --t-safe-bg: #d6f1e3;
+  --t-inactive: #3f5873;
+  --t-inactive-bg: #e6edf5;
+  --t-low: #047857;
+  --t-low-bg: #e5f5ed;
+  --t-moderate: #c2410c;
+  --t-moderate-bg: #fcebe1;
+  --t-high: #b91c1c;
+  --t-high-bg: #fbe7e7;
+  --t-unknown: #4b4840;
+  --t-unknown-bg: #efebe3;
+}
+
+/* Dark: gold on deep onyx */
+.dark {
+  color-scheme: dark;
+  --t-canvas: #0b0b0e;
+  --t-surface: #141519;
+  --t-line: #26272d;
+  --t-line-strong: #3a3b42;
+  --t-ink: #f4f1ea;
+  --t-ink-2: #bdb8ae;
+  --t-ink-3: #8b877e;
+  --t-accent: #d9b76e;
+  --t-accent-hover: #e8ca88;
+  --t-accent-strong: #ecd6a3;
+  --t-accent-soft: #2a2417;
+  --t-accent-cream: #1b1812;
+  --t-on-accent: #1a1408;
+  --t-safe: #6ee7b7;
+  --t-safe-bg: #0f2e24;
+  --t-inactive: #a3b8d3;
+  --t-inactive-bg: #1a2432;
+  --t-low: #4ade80;
+  --t-low-bg: #10291f;
+  --t-moderate: #fdba74;
+  --t-moderate-bg: #3a2414;
+  --t-high: #fca5a5;
+  --t-high-bg: #3b1616;
+  --t-unknown: #c9c4ba;
+  --t-unknown-bg: #24252b;
+}
+
 html {
   background: var(--color-canvas);
   color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s ease;
 }
 
 body {
@@ -95,7 +163,7 @@ h1, h2, h3, h4 {
 
 :focus-visible {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(146, 114, 42, 0.35);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 45%, transparent);
   border-radius: 6px;
 }
 

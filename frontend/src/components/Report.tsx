@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { EASE_OUT, RiskGauge, fadeUp, stagger } from "./motion";
 import type { Evidence, EvidenceStatus, InvestigationResult, RiskBand } from "../lib/api";
 import { Badge, Card, Mono, RiskBadge, type RiskLevel } from "./ui";
@@ -69,29 +69,23 @@ function EvidenceRow({ e, note }: { e: Evidence; note?: string }) {
           </svg>
         </span>
       </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            key="details"
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: EASE_OUT }}
-            className="overflow-hidden"
-          >
-            <div className="space-y-2 px-5 pb-4 text-small text-ink-2">
-              <p>
-                <span className="font-medium text-ink">Source:</span> {e.source}
-              </p>
-              {technical.length > 0 && (
-                <pre className="overflow-x-auto rounded-panel border border-line bg-canvas p-3 font-mono text-[12px] leading-5 text-ink-2">
-                  {JSON.stringify(Object.fromEntries(technical), null, 2)}
-                </pre>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <div
+        className={`grid transition-[grid-template-rows,opacity] duration-300 ease-out ${open ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}
+        aria-hidden={!open}
+      >
+        <div className="overflow-hidden">
+          <div className="space-y-2 px-5 pb-4 text-small text-ink-2">
+            <p>
+              <span className="font-medium text-ink">Source:</span> {e.source}
+            </p>
+            {technical.length > 0 && (
+              <pre className="overflow-x-auto rounded-panel border border-line bg-canvas p-3 font-mono text-[12px] leading-5 text-ink-2">
+                {JSON.stringify(Object.fromEntries(technical), null, 2)}
+              </pre>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -113,16 +107,9 @@ function HighlightedMessage({ text, evidence }: { text: string; evidence: Eviden
     <p className="whitespace-pre-wrap break-words text-body leading-7 text-ink">
       {parts.map((p, k) =>
         p.mark ? (
-          <motion.mark
-            key={k}
-            className="rounded bg-risk-moderate-bg px-0.5 text-risk-moderate"
-            initial={{ backgroundColor: "rgba(253,238,230,0)" }}
-            whileInView={{ backgroundColor: "rgba(253,238,230,1)" }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 * k }}
-          >
+          <mark key={k} className="rounded bg-risk-moderate-bg px-0.5 text-risk-moderate">
             {p.t}
-          </motion.mark>
+          </mark>
         ) : (
           <span key={k}>{p.t}</span>
         ),

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText as GsapSplitText } from "gsap/SplitText";
@@ -9,6 +9,9 @@ import { Report } from "../components/Report";
 import { Badge, Card, Container, Mono, RiskBadge } from "../components/ui";
 import { CountUp, EASE_OUT, Reveal, RevealGroup, fadeUp } from "../components/motion";
 import LightRays from "../components/bits/LightRays";
+import Particles from "../components/bits/Particles";
+import ScrollVelocity from "../components/bits/ScrollVelocity";
+import { useIsDark } from "../lib/theme";
 import DecryptedText from "../components/bits/DecryptedText";
 import SpotlightCard from "../components/bits/SpotlightCard";
 import ScrollReveal from "../components/bits/ScrollReveal";
@@ -74,7 +77,7 @@ function Progress() {
                       transition={{ duration: 0.25, ease: EASE_OUT }}
                     >
                       <circle cx="10" cy="10" r="9" fill="currentColor" />
-                      <path d="m6 10.2 2.6 2.6L14 7.6" fill="none" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                      <path d="m6 10.2 2.6 2.6L14 7.6" fill="none" stroke="var(--color-on-accent)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                     </motion.svg>
                   )}
                   {state === "active" && (
@@ -112,8 +115,8 @@ function HeroHeadline() {
       ref={ref}
       className="text-balance font-display text-[44px] font-extrabold leading-[1.02] tracking-[-0.035em] text-white sm:text-[72px] lg:text-[88px]"
     >
-      Verify the <span className="text-[#d8b773]">claim</span>,<br />
-      not just the <span className="text-[#d8b773]">link</span>.
+      Verify the <span className="text-[#d9b76e]">claim</span>,<br />
+      not just the <span className="text-[#d9b76e]">link</span>.
     </h1>
   );
 }
@@ -131,9 +134,11 @@ function LiveScan() {
   const [done, setDone] = useState(Boolean(reduce));
   useEffect(() => {
     if (reduce) return;
-    setDone(false);
     const reveal = setTimeout(() => setDone(true), 1300);
-    const next = setTimeout(() => setI((n) => (n + 1) % SCANS.length), 5200);
+    const next = setTimeout(() => {
+      setDone(false); // clear the old verdict in the same render as the new domain
+      setI((n) => (n + 1) % SCANS.length);
+    }, 5200);
     return () => {
       clearTimeout(reveal);
       clearTimeout(next);
@@ -145,8 +150,8 @@ function LiveScan() {
       <div className="flex items-center justify-between text-[12px] uppercase tracking-[0.14em] text-white/50">
         <span className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
-            {!reduce && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#d8b773] opacity-60" />}
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#d8b773]" />
+            {!reduce && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#d9b76e] opacity-60" />}
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#d9b76e]" />
           </span>
           Live identity check · example
         </span>
@@ -166,14 +171,13 @@ function LiveScan() {
             maxIterations={14}
             characters="abcdefghijklmnopqrstuvwxyz0123456789-."
             className="text-white"
-            encryptedClassName="text-[#d8b773]/70"
+            encryptedClassName="text-[#d9b76e]/70"
           />
         )}
       </div>
       <div className="mt-3 min-h-[52px]">
-        <AnimatePresence mode="wait">
           {done && (
-            <motion.div key={s.domain} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.35, ease: EASE_OUT }}>
+            <motion.div key={s.domain} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: EASE_OUT }}>
               <span className={`inline-flex items-center gap-1.5 rounded-control px-2 py-1 text-small font-medium ${s.level === "high" ? "bg-[#3a1414] text-[#ff8a80]" : "bg-[#0f2e24] text-[#6ee7b7]"}`}>
                 <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-current" />
                 {s.verdict}
@@ -181,7 +185,6 @@ function LiveScan() {
               <p className="mt-2 text-small text-white/60">{s.note}</p>
             </motion.div>
           )}
-        </AnimatePresence>
       </div>
     </div>
   );
@@ -263,7 +266,7 @@ function HowItWorks() {
                   on ? "border-accent bg-accent" : "border-line-strong bg-canvas"
                 }`}
               >
-                {on && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+                {on && <span className="h-1.5 w-1.5 rounded-full bg-on-accent" />}
               </span>
               <div className="flex items-baseline gap-3">
                 <span className="font-mono text-badge text-accent">{num}</span>
@@ -318,6 +321,34 @@ export function Dashboard() {
   const [initial] = useState(requestFromQuery);
   const started = useRef(false);
   const reduce = useReducedMotion();
+  const isDark = useIsDark();
+  const heroRef = useRef<HTMLElement>(null);
+  const pageRef = useRef<HTMLDivElement>(null);
+
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Hero parallax: copy drifts up and fades, rays dim, particles linger.
+        const hero = { trigger: heroRef.current, start: "top top", end: "bottom top", scrub: true };
+        gsap.to(".hero-copy", { yPercent: -22, opacity: 0.1, ease: "none", scrollTrigger: hero });
+        gsap.to(".hero-rays", { opacity: 0, ease: "none", scrollTrigger: hero });
+        gsap.to(".hero-particles", { yPercent: 12, ease: "none", scrollTrigger: hero });
+        // Sample report tilts up into place.
+        gsap.fromTo(
+          ".tilt-in",
+          { rotateX: 14, scale: 0.92, opacity: 0.4, transformPerspective: 1200, transformOrigin: "50% 100%" },
+          { rotateX: 0, scale: 1, opacity: 1, ease: "none", scrollTrigger: { trigger: ".tilt-in", start: "top bottom", end: "top 45%", scrub: true } },
+        );
+        // Privacy cards rise in sequence while scrolling.
+        gsap.utils.toArray<HTMLElement>(".rise-scrub").forEach((el, i) => {
+          gsap.fromTo(el, { y: 60 + i * 18, opacity: 0 }, { y: 0, opacity: 1, ease: "none", scrollTrigger: { trigger: el, start: "top bottom", end: "top 70%", scrub: true } });
+        });
+      });
+      return () => mm.revert();
+    },
+    { scope: pageRef },
+  );
 
   async function run(req: InvestigateRequest) {
     setBusy(true);
@@ -349,13 +380,29 @@ export function Dashboard() {
   const showResults = busy || error || result;
 
   return (
-    <>
+    <div ref={pageRef}>
       {/* ───────── Hero (dark) ───────── */}
-      <section data-theme="dark" className="grain relative -mt-[84px] overflow-hidden bg-shell-950 pb-20 pt-[140px] sm:-mt-[116px] sm:pb-28 sm:pt-[200px]">
-        <div aria-hidden className="absolute inset-0">
+      <section ref={heroRef} data-theme="dark" className="grain relative -mt-[84px] overflow-hidden bg-shell-950 pb-20 pt-[140px] sm:-mt-[116px] sm:pb-28 sm:pt-[200px]">
+        <div aria-hidden className="hero-particles absolute inset-0">
+          <Particles
+            particleColors={["#d9b76e", "#f3dfae", "#a8863f"]}
+            particleCount={180}
+            particleSpread={11}
+            speed={0.06}
+            particleBaseSize={70}
+            sizeRandomness={0.9}
+            alphaParticles
+            moveParticlesOnHover
+            particleHoverFactor={0.4}
+            glow={0.7}
+            twinkle={0.45}
+            pixelRatio={1}
+          />
+        </div>
+        <div aria-hidden className="hero-rays absolute inset-0">
           <LightRays
             raysOrigin="top-center"
-            raysColor="#d8b773"
+            raysColor="#d9b76e"
             raysSpeed={0.55}
             lightSpread={0.85}
             rayLength={1.5}
@@ -371,14 +418,14 @@ export function Dashboard() {
         <div aria-hidden className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-shell-950" />
 
         <Container className="relative">
-          <div className="mx-auto max-w-[1040px] text-center">
+          <div className="hero-copy mx-auto max-w-[1040px] text-center">
             <motion.p
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: EASE_OUT }}
-              className="mx-auto inline-flex items-center gap-2 rounded-full border border-[#d8b773]/30 bg-[#d8b773]/[0.08] px-3.5 py-1.5 text-[13px] font-medium tracking-[0.02em] text-[#e9d3a1]"
+              className="mx-auto inline-flex items-center gap-2 rounded-full border border-[#d9b76e]/30 bg-[#d9b76e]/[0.08] px-3.5 py-1.5 text-[13px] font-medium tracking-[0.02em] text-[#ecd6a3]"
             >
-              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#d8b773]" />
+              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#d9b76e]" />
               Digital trust investigation for the UAE<span className="hidden sm:inline"> · AD Police x 42AD Hackathon 2026</span>
             </motion.p>
             <div className="mt-8">
@@ -403,7 +450,7 @@ export function Dashboard() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.9, ease: EASE_OUT, delay: 0.95 }}
             >
-              <div className="rounded-[20px] bg-gradient-to-b from-[#d8b773]/50 via-[#d8b773]/10 to-transparent p-px shadow-[0_40px_120px_-40px_rgba(216,183,115,0.45)]">
+              <div className="rounded-[20px] bg-gradient-to-b from-[#d9b76e]/50 via-[#d9b76e]/10 to-transparent p-px shadow-[0_40px_120px_-40px_rgba(216,183,115,0.45)]">
                 <InvestigationInput onSubmit={run} busy={busy} initial={initial} />
               </div>
             </motion.div>
@@ -421,23 +468,22 @@ export function Dashboard() {
       <div ref={reportRef} className={showResults ? "bg-canvas py-12 sm:py-16" : ""}>
         <Container>
           <div className="mx-auto max-w-[1100px]">
-            <AnimatePresence mode="wait">
-              {busy && (
-                <motion.div key="progress" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EASE_OUT }}>
-                  <Progress />
-                </motion.div>
-              )}
-              {!busy && error && (
-                <motion.div key="error" role="alert" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="rounded-panel border border-risk-high/30 bg-risk-high-bg px-4 py-3 text-body text-risk-high">
-                  {error}
-                </motion.div>
-              )}
-              {!busy && result && (
-                <motion.div key={result.data.urls.map((u) => u.url).join() + (result.message ?? "")} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
-                  <Report result={result.data} message={result.message} />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {/* No exit-wait: the report must never depend on an exit animation finishing. */}
+            {busy && (
+              <motion.div key="progress" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.3, ease: EASE_OUT }}>
+                <Progress />
+              </motion.div>
+            )}
+            {!busy && error && (
+              <motion.div key="error" role="alert" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-panel border border-risk-high/30 bg-risk-high-bg px-4 py-3 text-body text-risk-high">
+                {error}
+              </motion.div>
+            )}
+            {!busy && result && (
+              <motion.div key={result.data.urls.map((u) => u.url).join() + (result.message ?? "")} initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.25 }}>
+                <Report result={result.data} message={result.message} />
+              </motion.div>
+            )}
           </div>
         </Container>
       </div>
@@ -459,6 +505,19 @@ export function Dashboard() {
         </Container>
       </section>
 
+      {/* ───────── Scroll-velocity marquee ───────── */}
+      <section aria-hidden className="overflow-hidden border-b border-line bg-canvas py-10 sm:py-14">
+        <ScrollVelocity
+          texts={["Verify the claim", "Not just the link"]}
+          velocity={40}
+          numCopies={6}
+          outlineAlternate
+          separator={<span className="mx-6 text-[0.45em] align-middle text-accent">◆</span>}
+          className="font-display font-extrabold tracking-[-0.04em] text-accent"
+          fontSize="clamp(44px, 8vw, 112px)"
+        />
+      </section>
+
       {/* ───────── What RAQEEB checks ───────── */}
       <section id="checks" className="scroll-mt-32 py-24 sm:py-32">
         <Container>
@@ -471,8 +530,8 @@ export function Dashboard() {
             {checks.map((c, i) => (
               <motion.div key={c.title} variants={fadeUp} className="flex">
                 <SpotlightCard
-                  theme="light"
-                  spotlightColor="rgba(201, 165, 90, 0.28)"
+                  theme={isDark ? "dark" : "light"}
+                  spotlightColor={isDark ? "rgba(217, 183, 110, 0.22)" : "rgba(201, 165, 90, 0.28)"}
                   className={`flex w-full flex-col rounded-card border p-7 ${i === 1 ? "border-accent/30 !bg-accent-cream" : "border-line !bg-surface"}`}
                 >
                   <div className="flex items-center justify-between">
@@ -513,8 +572,8 @@ export function Dashboard() {
       <section className="py-24 sm:py-32">
         <Container>
           <SectionTitle badge="Sample report" title="When the claim doesn't match the link." />
-          <Reveal className="mt-12">
-            <div className="grid overflow-hidden rounded-[20px] border border-line bg-surface shadow-[0_40px_100px_-60px_rgba(27,29,36,0.5)] lg:grid-cols-[1fr_1.1fr]">
+          <div className="mt-12 [perspective:1200px]">
+            <div className="tilt-in grid overflow-hidden rounded-[20px] border border-line bg-surface shadow-[0_40px_100px_-60px_rgba(27,29,36,0.5)] lg:grid-cols-[1fr_1.1fr]">
               <div className="p-8 sm:p-10">
                 <div className="flex flex-wrap items-center gap-3">
                   <Badge>Illustration</Badge>
@@ -539,18 +598,21 @@ export function Dashboard() {
                 ))}
               </dl>
             </div>
-          </Reveal>
+          </div>
         </Container>
       </section>
 
       {/* ───────── Privacy (dark) ───────── */}
       <section id="privacy" data-theme="dark" className="grain relative scroll-mt-32 overflow-hidden bg-shell-950 py-24 text-white sm:py-32">
-        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(50%_60%_at_80%_0%,rgba(216,183,115,0.14),transparent_70%)]" />
+        <div aria-hidden className="absolute inset-0 opacity-70">
+          <Particles particleColors={["#d9b76e", "#f3dfae", "#a8863f"]} particleCount={110} particleSpread={12} speed={0.04} particleBaseSize={60} alphaParticles moveParticlesOnHover={false} glow={0.6} twinkle={0.5} pixelRatio={1} />
+        </div>
+        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(50%_60%_at_80%_0%,rgba(217,183,110,0.14),transparent_70%)]" />
         <Container className="relative">
           <div className="max-w-[760px]">
-            <span className="inline-flex rounded-control bg-[#d8b773]/10 px-1.5 py-0.5 text-small text-[#e9d3a1]">Privacy</span>
+            <span className="inline-flex rounded-control bg-[#d9b76e]/10 px-1.5 py-0.5 text-small text-[#ecd6a3]">Privacy</span>
             <h2 className="mt-4 font-display text-[34px] font-extrabold leading-[1.08] tracking-[-0.03em] sm:text-[48px]">
-              Nothing is stored. <span className="text-[#d8b773]">Here's what is shared.</span>
+              Nothing is stored. <span className="text-[#d9b76e]">Here's what is shared.</span>
             </h2>
           </div>
           <RevealGroup className="mt-14 grid gap-px overflow-hidden rounded-[20px] border border-white/10 bg-white/10 md:grid-cols-2">
@@ -560,7 +622,7 @@ export function Dashboard() {
               ["AI explanation", "Message text goes to Google Gemini only after names, phone numbers, emails, cards, Emirates ID and OTPs are masked."],
               ["Browser extension", "Only the link you click is checked, on four messaging and email sites. Message text is never read."],
             ].map(([title, body]) => (
-              <motion.div key={title} variants={fadeUp} className="bg-shell-950 p-8">
+              <motion.div key={title} variants={fadeUp} className="rise-scrub bg-shell-950/90 p-8 backdrop-blur-sm">
                 <h3 className="font-display text-card font-semibold text-white">{title}</h3>
                 <p className="mt-2 text-body text-white/60">{body}</p>
               </motion.div>
@@ -568,6 +630,6 @@ export function Dashboard() {
           </RevealGroup>
         </Container>
       </section>
-    </>
+    </div>
   );
 }

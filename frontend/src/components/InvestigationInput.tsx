@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 import { EASE_OUT } from "./motion";
 import type { InvestigateRequest } from "../lib/api";
 import { Button } from "./ui";
@@ -94,13 +94,11 @@ export function InvestigationInput({
           submit();
         }}
       >
-        <AnimatePresence mode="wait" initial={false}>
         <motion.div
           key={tab}
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -4 }}
-          transition={{ duration: 0.18, ease: EASE_OUT }}
+          transition={{ duration: 0.2, ease: EASE_OUT }}
         >
         {tab === "message" && (
           <label className="block">
@@ -149,7 +147,6 @@ export function InvestigationInput({
           </div>
         )}
         </motion.div>
-        </AnimatePresence>
 
         {tab !== "screenshot" && (
           <div className="mt-4 flex flex-wrap items-center gap-2">

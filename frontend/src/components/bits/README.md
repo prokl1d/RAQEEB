@@ -14,6 +14,9 @@ the application; the components themselves are not sold or redistributed as a pr
 | `SpotlightCard.tsx` | `src/ts-tailwind/Components/SpotlightCard` |
 | `Magnet.tsx` | `src/ts-tailwind/Animations/Magnet` |
 | `LightRays.tsx` | `src/ts-tailwind/Backgrounds/LightRays` |
+| `Particles.tsx` | `src/ts-tailwind/Backgrounds/Particles` |
+| `ScrollVelocity.tsx` | `src/ts-tailwind/TextAnimations/ScrollVelocity` (one unused parameter renamed) |
+| `ScrollFloat.tsx` | `src/ts-tailwind/TextAnimations/ScrollFloat` |
 
 Other libraries: **GSAP** (Standard "no charge" license, https://gsap.com/standard-license),
 **Lenis** (MIT, https://github.com/darkroomengineering/lenis), **Motion** (MIT).
