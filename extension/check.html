@@ -3,42 +3,55 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
   <title>RAQEEB · Checking link</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="band">RAQEEB Link Guard · Student hackathon project, not a government service</div>
+  <div class="backdrop" aria-hidden="true"><div class="dust"></div></div>
   <main class="wrap">
     <header class="brand">
-      <svg width="40" height="40" viewBox="0 0 44 44" aria-hidden="true">
-        <circle cx="22" cy="22" r="20" fill="none" stroke="#92722a" stroke-width="2.5" />
-        <circle cx="20" cy="20" r="8" fill="none" stroke="#282a33" stroke-width="2.5" />
-        <path d="m26 26 6.5 6.5" stroke="#282a33" stroke-width="2.5" stroke-linecap="round" />
-      </svg>
-      <div><strong>RAQEEB</strong><span lang="ar">رقيب</span></div>
+      <span class="logo">
+        <svg width="40" height="40" viewBox="0 0 44 44" aria-hidden="true">
+          <circle class="logo-ring" cx="22" cy="22" r="20" fill="none" stroke="var(--champagne)" stroke-width="2.5" />
+          <circle cx="20" cy="20" r="8" fill="none" stroke="currentColor" stroke-width="2.5" />
+          <path d="m26 26 6.5 6.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+        </svg>
+        <span><strong>RAQEEB</strong><small lang="ar">رقيب · Link Guard</small></span>
+      </span>
+      <span class="tag">Verify the claim</span>
     </header>
 
-    <section class="card" id="card">
+    <section class="card" id="card" aria-live="polite">
       <div class="bar" id="bar"></div>
       <div class="body">
         <p class="eyebrow" id="eyebrow">Checking this link before it opens</p>
         <p class="url" id="url"></p>
 
-        <div id="checking">
-          <ul class="steps">
-            <li>Comparing the domain with official UAE organizations</li>
+        <div id="checking" class="scan" aria-busy="true">
+          <div class="radar" aria-hidden="true"></div>
+          <ul class="steps" id="steps">
+            <li class="on">Comparing the domain with official UAE organizations</li>
             <li>Checking certificate, redirects and domain age</li>
             <li>Checking threat intelligence</li>
           </ul>
         </div>
 
         <div id="result" hidden>
-          <div class="verdict">
-            <span class="badge" id="badge"></span>
-            <span class="score" id="score"></span>
+          <div class="result-grid">
+            <div>
+              <span class="badge" id="badge"></span>
+              <h1 id="headline"></h1>
+              <p class="identity" id="identity"></p>
+            </div>
+            <div class="gauge" id="gauge" aria-hidden="true">
+              <svg viewBox="0 0 150 86">
+                <path class="track" d="M 12 78 A 63 63 0 0 1 138 78" fill="none" stroke-width="10" stroke-linecap="round" />
+                <path class="arc" id="arc" d="M 12 78 A 63 63 0 0 1 138 78" fill="none" stroke-width="10" stroke-linecap="round" />
+              </svg>
+              <div class="num"><b id="scoreNum">–</b><span id="scoreLabel">risk score / 100</span></div>
+            </div>
           </div>
-          <h1 id="headline"></h1>
-          <p class="identity" id="identity"></p>
           <ul class="findings" id="findings"></ul>
           <p class="note" id="note"></p>
         </div>

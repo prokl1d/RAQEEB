@@ -46,19 +46,51 @@ const LEVEL = {
   "Likely Safe": "safe", "Low Risk": "low", "Inactive Link": "inactive",
   "Moderate Risk": "moderate", "High Risk": "high", "Unknown Risk": "unknown",
 };
-const BAR = { safe: "#065f46", low: "var(--low)", inactive: "#3f5873", moderate: "var(--mod)", high: "var(--high)", unknown: "var(--unk)" };
+const COLOR = { safe: "var(--safe)", low: "var(--low)", inactive: "var(--inactive)", moderate: "var(--mod)", high: "var(--high)", unknown: "var(--unk)" };
+const REDUCE = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Gauge: arc fills to the score while the number counts up (instant with reduced motion).
+function gauge(score, level, noScore) {
+  const arc = $("arc");
+  const len = arc.getTotalLength();
+  arc.style.stroke = COLOR[level];
+  arc.style.strokeDasharray = String(len);
+  arc.style.strokeDashoffset = String(len);
+  const num = $("scoreNum");
+  if (noScore) {
+    num.textContent = "–";
+    $("scoreLabel").textContent = "no score";
+    return;
+  }
+  arc.getBoundingClientRect(); // commit the start state so the transition runs (no frame callback needed)
+  arc.style.strokeDashoffset = String(len * (1 - Math.max(score, 2) / 100));
+  num.textContent = String(score); // final value first, so it's always right even if frames are paused
+  if (REDUCE) return;
+  num.textContent = "0";
+  const t0 = performance.now();
+  const dur = 1100;
+  const step = (t) => {
+    const p = Math.min(1, (t - t0) / dur);
+    num.textContent = String(Math.round(score * (1 - Math.pow(1 - p, 3))));
+    if (p < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+  setTimeout(() => (num.textContent = String(score)), dur + 200); // guarantee the final number
+}
 
 function show(result, cfg) {
   const level = LEVEL[result.score.band] || "unknown";
   $("checking").hidden = true;
   $("result").hidden = false;
   $("actions").hidden = false;
-  $("bar").className = "bar";
-  $("bar").style.background = BAR[level];
+  $("checking").setAttribute("aria-busy", "false");
+  $("bar").className = "bar done";
+  $("bar").style.background = COLOR[level];
+  $("eyebrow").textContent = "RAQEEB checked this link";
 
   $("badge").className = "badge " + level;
   $("badge").textContent = result.score.band;
-  $("score").textContent = level === "unknown" || level === "inactive" ? `Evidence coverage ${result.score.coverage}%` : `Risk score ${result.score.score}/100`;
+  gauge(result.score.score, level, level === "unknown" || level === "inactive");
   $("identity").textContent = `${result.identity.outcome} · ${result.identity.summary}`;
 
   const headline = {
@@ -78,8 +110,9 @@ function show(result, cfg) {
     .slice(0, 4);
   const list = $("findings");
   list.replaceChildren();
-  for (const e of important) {
+  for (const [i, e] of important.entries()) {
     const li = document.createElement("li");
+    li.style.animationDelay = `${0.25 + i * 0.08}s`;
     const b = document.createElement("b");
     b.textContent = e.finding;
     const s = document.createElement("span");
@@ -158,9 +191,20 @@ function fail(message) {
   );
 }
 
+function tickSteps() {
+  const items = [...$("steps").children];
+  let i = 0;
+  return setInterval(() => {
+    i = Math.min(i + 1, items.length - 1);
+    items[i].classList.add("on");
+  }, 450);
+}
+
 (async () => {
   $("url").textContent = target;
   $("bar").className = "bar checking";
+  const ticker = tickSteps();
+  const minScan = new Promise((r) => setTimeout(r, REDUCE ? 0 : 1100)); // long enough to read the steps
   if (!safeTarget()) return fail("This isn't a web link RAQEEB can check.");
   const cfg = await settings();
   try {
@@ -179,8 +223,12 @@ function fail(message) {
       }
       return fail(detail);
     }
-    show(await res.json(), cfg);
+    const data = await res.json();
+    await minScan;
+    show(data, cfg);
   } catch {
     fail("RAQEEB isn't reachable. Is the RAQEEB server running on this computer?");
+  } finally {
+    clearInterval(ticker);
   }
 })();

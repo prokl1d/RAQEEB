@@ -2,35 +2,60 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
+  <meta name="color-scheme" content="light dark" />
   <title>RAQEEB Link Guard</title>
   <link rel="stylesheet" href="style.css" />
   <style>
-    body { width: 320px; }
-    .p { padding: 16px; }
-    label { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
-    input[type=text] { width: 100%; margin-top: 6px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; font: 13px "JetBrains Mono", monospace; }
-    .status { font-size: 13px; margin: 12px 0 0; }
-    .ok { color: var(--low); } .bad { color: var(--high); }
-    small { color: var(--ink3); display: block; margin-top: 10px; line-height: 18px; }
+    body { width: 340px; }
+    .p { position: relative; padding: 18px; }
+    .brand { margin-bottom: 14px; }
+    .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 4px 14px; }
+    label.row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; font-size: 14px; color: var(--ink); cursor: pointer; }
+    label.row + label.row { border-top: 1px solid var(--line); }
+    /* Gold switch */
+    .switch { position: relative; flex: none; width: 40px; height: 22px; }
+    .switch input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+    .switch span { position: absolute; inset: 0; border-radius: 999px; background: var(--line-strong); transition: background .25s; }
+    .switch span::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--surface); box-shadow: 0 1px 3px rgba(0,0,0,.25); transition: transform .25s cubic-bezier(.22,1,.36,1); }
+    .switch input:checked + span { background: var(--gold); }
+    .switch input:checked + span::after { transform: translateX(18px); }
+    .switch input:focus-visible + span { box-shadow: 0 0 0 3px color-mix(in oklab, var(--gold) 45%, transparent); }
+    .field { margin-top: 12px; font-size: 13px; color: var(--ink3); }
+    input[type=text] { width: 100%; margin-top: 6px; padding: 9px 11px; border: 1px solid var(--line-strong); border-radius: 8px; background: var(--surface); color: var(--ink); font: 13px "JetBrains Mono", monospace; }
+    input[type=text]:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px color-mix(in oklab, var(--gold) 30%, transparent); }
+    .status { display: flex; align-items: center; gap: 8px; margin: 14px 0 0; font-size: 13px; color: var(--ink2); }
+    .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--line-strong); }
+    .status.ok::before { background: var(--low); box-shadow: 0 0 0 4px var(--low-bg); }
+    .status.bad::before { background: var(--high); box-shadow: 0 0 0 4px var(--high-bg); }
+    small.info { color: var(--ink3); display: block; margin-top: 12px; font-size: 12px; line-height: 18px; }
   </style>
 </head>
 <body>
+  <div class="backdrop" aria-hidden="true"></div>
   <div class="p">
-    <header class="brand" style="margin-bottom:8px">
-      <svg width="32" height="32" viewBox="0 0 44 44" aria-hidden="true">
-        <circle cx="22" cy="22" r="20" fill="none" stroke="#92722a" stroke-width="2.5" />
-        <circle cx="20" cy="20" r="8" fill="none" stroke="#282a33" stroke-width="2.5" />
-        <path d="m26 26 6.5 6.5" stroke="#282a33" stroke-width="2.5" stroke-linecap="round" />
-      </svg>
-      <div><strong>RAQEEB</strong><span>Link Guard</span></div>
+    <header class="brand">
+      <span class="logo">
+        <svg width="34" height="34" viewBox="0 0 44 44" aria-hidden="true">
+          <circle class="logo-ring" cx="22" cy="22" r="20" fill="none" stroke="var(--champagne)" stroke-width="2.5" />
+          <circle cx="20" cy="20" r="8" fill="none" stroke="currentColor" stroke-width="2.5" />
+          <path d="m26 26 6.5 6.5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+        </svg>
+        <span><strong>RAQEEB</strong><small>Link Guard</small></span>
+      </span>
     </header>
-    <label>Check links before they open <input type="checkbox" id="enabled" /></label>
-    <label>Open low-risk links automatically <input type="checkbox" id="autoContinue" /></label>
-    <div style="padding:10px 0; font-size:14px">RAQEEB server
+    <div class="panel">
+      <label class="row">Check links before they open
+        <span class="switch"><input type="checkbox" id="enabled" /><span></span></span>
+      </label>
+      <label class="row">Open low-risk links automatically
+        <span class="switch"><input type="checkbox" id="autoContinue" /><span></span></span>
+      </label>
+    </div>
+    <div class="field">RAQEEB server
       <input type="text" id="backend" spellcheck="false" />
     </div>
     <p class="status" id="status">Checking connection…</p>
-    <small>Works in WhatsApp Web, Gmail, Outlook and Telegram Web. Only the clicked link is sent to the RAQEEB server above. Message text is never read.</small>
+    <small class="info">Works in WhatsApp Web, Gmail, Outlook and Telegram Web. Only the clicked link is sent to the RAQEEB server above. Message text is never read.</small>
   </div>
   <script src="popup.js"></script>
 </body>
