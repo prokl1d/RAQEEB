@@ -1,10 +1,21 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { SplitText as GsapSplitText } from "gsap/SplitText";
+import { useGSAP } from "@gsap/react";
 import { InvestigationInput } from "../components/InvestigationInput";
-import { EASE_OUT, Reveal, RevealGroup, fadeUp, stagger } from "../components/motion";
 import { Report } from "../components/Report";
-import { Badge, Card, Container, LinkMore, Mono, RiskBadge } from "../components/ui";
+import { Badge, Card, Container, Mono, RiskBadge } from "../components/ui";
+import { CountUp, EASE_OUT, Reveal, RevealGroup, fadeUp } from "../components/motion";
+import LightRays from "../components/bits/LightRays";
+import DecryptedText from "../components/bits/DecryptedText";
+import SpotlightCard from "../components/bits/SpotlightCard";
+import ScrollReveal from "../components/bits/ScrollReveal";
 import { investigate, type InvestigateRequest, type InvestigationResult } from "../lib/api";
+import { scrollToTarget } from "../lib/smooth";
+
+gsap.registerPlugin(ScrollTrigger, GsapSplitText, useGSAP);
 
 /** Links from the RAQEEB Link Guard extension: /?url=... or /?message=... start an investigation. */
 function requestFromQuery(): InvestigateRequest | null {
@@ -81,73 +92,223 @@ function Progress() {
   );
 }
 
-/** Gold word with an underline that draws itself once. */
-function Underlined({ children, delay }: { children: ReactNode; delay: number }) {
+/** Hero headline: GSAP SplitText, characters rise out of a mask (nested gold spans are preserved). */
+function HeroHeadline() {
+  const ref = useRef<HTMLHeadingElement>(null);
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const split = GsapSplitText.create(ref.current!, { type: "words,chars", mask: "words", charsClass: "hero-char" });
+        gsap.from(split.chars, { yPercent: 115, duration: 1.1, ease: "expo.out", stagger: 0.022, delay: 0.15 });
+        return () => split.revert();
+      });
+      return () => mm.revert();
+    },
+    { scope: ref },
+  );
   return (
-    <span className="relative inline-block text-accent">
-      {children}
-      <svg aria-hidden viewBox="0 0 200 12" preserveAspectRatio="none" className="absolute -bottom-1.5 left-0 h-2.5 w-full sm:-bottom-2 sm:h-3">
-        <motion.path
-          d="M2 8 C 50 2, 150 2, 198 7"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="4"
-          strokeLinecap="round"
-          initial={{ pathLength: 0, opacity: 0 }}
-          animate={{ pathLength: 1, opacity: 0.55 }}
-          transition={{ duration: 0.7, ease: EASE_OUT, delay }}
-        />
-      </svg>
-    </span>
+    <h1
+      ref={ref}
+      className="text-balance font-display text-[44px] font-extrabold leading-[1.02] tracking-[-0.035em] text-white sm:text-[72px] lg:text-[88px]"
+    >
+      Verify the <span className="text-[#d8b773]">claim</span>,<br />
+      not just the <span className="text-[#d8b773]">link</span>.
+    </h1>
+  );
+}
+
+const SCANS = [
+  { domain: "emiratesnbd-secure.co", level: "high" as const, verdict: "Possible Impersonation", note: "“emiratesnbd” plus extra words. The real domain is emiratesnbd.com" },
+  { domain: "emiratesp0st.ae", level: "high" as const, verdict: "Possible Impersonation", note: "A zero instead of the letter “o”. The real domain is emiratespost.ae" },
+  { domain: "dewa.gov.ae", level: "safe" as const, verdict: "Verified Match", note: "Official domain, confirmed by the Dubai government directory" },
+];
+
+/** Showpiece: domains "decrypt" and RAQEEB's verdict appears. Static under reduced motion. */
+function LiveScan() {
+  const reduce = useReducedMotion();
+  const [i, setI] = useState(0);
+  const [done, setDone] = useState(Boolean(reduce));
+  useEffect(() => {
+    if (reduce) return;
+    setDone(false);
+    const reveal = setTimeout(() => setDone(true), 1300);
+    const next = setTimeout(() => setI((n) => (n + 1) % SCANS.length), 5200);
+    return () => {
+      clearTimeout(reveal);
+      clearTimeout(next);
+    };
+  }, [i, reduce]);
+  const s = SCANS[i];
+  return (
+    <div className="relative overflow-hidden rounded-card border border-white/10 bg-white/[0.04] p-5 backdrop-blur-md sm:p-6" aria-label="Example domain checks">
+      <div className="flex items-center justify-between text-[12px] uppercase tracking-[0.14em] text-white/50">
+        <span className="flex items-center gap-2">
+          <span className="relative flex h-2 w-2">
+            {!reduce && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#d8b773] opacity-60" />}
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-[#d8b773]" />
+          </span>
+          Live identity check · example
+        </span>
+        <span className="font-mono normal-case tracking-normal text-white/40">{i + 1}/{SCANS.length}</span>
+      </div>
+      <div className="mt-4 min-h-[36px] font-mono text-[20px] text-white sm:text-[24px]" aria-live="polite">
+        {reduce ? (
+          s.domain
+        ) : (
+          <DecryptedText
+            key={s.domain}
+            text={s.domain}
+            animateOn="view"
+            sequential
+            revealDirection="start"
+            speed={38}
+            maxIterations={14}
+            characters="abcdefghijklmnopqrstuvwxyz0123456789-."
+            className="text-white"
+            encryptedClassName="text-[#d8b773]/70"
+          />
+        )}
+      </div>
+      <div className="mt-3 min-h-[52px]">
+        <AnimatePresence mode="wait">
+          {done && (
+            <motion.div key={s.domain} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }} transition={{ duration: 0.35, ease: EASE_OUT }}>
+              <span className={`inline-flex items-center gap-1.5 rounded-control px-2 py-1 text-small font-medium ${s.level === "high" ? "bg-[#3a1414] text-[#ff8a80]" : "bg-[#0f2e24] text-[#6ee7b7]"}`}>
+                <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-current" />
+                {s.verdict}
+              </span>
+              <p className="mt-2 text-small text-white/60">{s.note}</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
   );
 }
 
 const checks = [
-  {
-    title: "Threat intelligence",
-    weight: 30,
-    body: "Looks the link up in Google Safe Browsing and existing VirusTotal reports. A failed lookup is reported as missing, never as clean.",
-  },
-  {
-    title: "Organization identity",
-    weight: 25,
-    body: "Compares the claimed sender with a curated registry of official UAE domains, each backed by an authoritative source.",
-  },
-  {
-    title: "Domain and URL",
-    weight: 20,
-    body: "Checks lookalike spellings, swapped characters, odd subdomains, domain age, TLS and every redirect hop.",
-  },
-  {
-    title: "Message content",
-    weight: 15,
-    body: "Finds requests for OTPs, card details or fees, and pressure tactics like deadlines and threats.",
-  },
-  {
-    title: "Context",
-    weight: 10,
-    body: "Weighs how the pieces fit together, such as a bank that asks for payment through a courier link.",
-  },
+  { title: "Threat intelligence", weight: 30, body: "Google Safe Browsing and existing VirusTotal reports. A failed lookup is reported as missing, never as clean." },
+  { title: "Organization identity", weight: 25, body: "The claimed sender against a curated registry of official UAE domains, each backed by an authoritative source." },
+  { title: "Domain and URL", weight: 20, body: "Lookalike spellings, swapped characters, odd subdomains, domain age, the certificate and every redirect hop." },
+  { title: "Message content", weight: 15, body: "Requests for OTPs, card details or fees, and pressure tactics like deadlines and threats." },
+  { title: "Context", weight: 10, body: "How the pieces fit together, like a bank that asks for payment through a courier link." },
 ];
 
 const steps = [
-  ["01", "Extract", "Pull out links, the claimed organization and what the message asks you to do."],
-  ["02", "Verify", "Match the claim against official domains, not search results or social media."],
-  ["03", "Check", "Query threat intelligence and inspect the domain's technical signals."],
-  ["04", "Explain", "Score the evidence with fixed rules, then explain every finding in plain English."],
+  ["01", "Extract", "Links, the claimed organization and what the message asks you to do, including disguised links like hxxps://site[.]com."],
+  ["02", "Verify", "The claim against official domains from authoritative sources. Never search results or social media."],
+  ["03", "Check", "DNS, certificate, domain age and the full redirect chain, safely. Then Google Safe Browsing and VirusTotal."],
+  ["04", "Explain", "Fixed rules score the evidence. The AI only explains it, and it can't invent findings."],
 ];
 
-function SectionHead({ badge, title, lead }: { badge: string; title: string; lead?: string }) {
+/** Pinned on desktop: the section holds while you scroll and the steps light up one by one. */
+function HowItWorks() {
+  const root = useRef<HTMLDivElement>(null);
+  // Only the pinned desktop version steps through; elsewhere every step is shown as complete.
+  const [pinned] = useState(() => window.matchMedia("(min-width: 1024px) and (prefers-reduced-motion: no-preference)").matches);
+  const [active, setActive] = useState(pinned ? 0 : steps.length - 1);
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+        const st = ScrollTrigger.create({
+          trigger: root.current,
+          start: "top top+=110",
+          end: "+=1400",
+          pin: true,
+          scrub: true,
+          onUpdate: (self) => setActive(Math.min(steps.length - 1, Math.floor(self.progress * steps.length))),
+        });
+        gsap.fromTo(".how-progress", { scaleY: 0 }, { scaleY: 1, ease: "none", scrollTrigger: { trigger: root.current, start: "top top+=110", end: "+=1400", scrub: true } });
+        return () => st.kill();
+      });
+      return () => mm.revert();
+    },
+    { scope: root },
+  );
   return (
-    <Reveal className="max-w-[720px]">
-      <Badge>{badge}</Badge>
-      <h2 className="mt-4 text-[32px] font-extrabold leading-[40px] tracking-[-0.8px] text-ink sm:text-section">
-        {title}
-      </h2>
-      {lead && <p className="mt-4 text-lead text-ink-2">{lead}</p>}
-    </Reveal>
+    <div ref={root} className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+      <div>
+        <Badge>How it works</Badge>
+        <h2 className="mt-4 font-display text-[36px] font-extrabold leading-[1.05] tracking-[-0.03em] text-ink sm:text-[52px]">
+          Evidence first.
+          <br />
+          <span className="text-accent">AI second.</span>
+        </h2>
+        <p className="mt-5 max-w-[460px] text-lead text-ink-2">
+          Every verdict comes from fixed, published rules. The same input always gets the same answer, and every
+          finding shows its source.
+        </p>
+      </div>
+      <ol className="relative space-y-3 pl-8">
+        <span aria-hidden className="absolute bottom-2 left-[11px] top-2 w-px bg-line" />
+        <span aria-hidden className="how-progress absolute bottom-2 left-[11px] top-2 hidden w-px origin-top bg-accent lg:block" />
+        {steps.map(([num, title, body], i) => {
+          const on = i <= active;
+          return (
+            <li
+              key={title}
+              className={`relative rounded-card border p-6 transition-[background-color,border-color,box-shadow,opacity] duration-500 ease-out ${
+                !pinned
+                  ? "border-line bg-surface"
+                  : i === active
+                    ? "border-accent/40 bg-surface shadow-[0_24px_60px_-34px_rgba(146,114,42,0.55)]"
+                    : "border-line bg-surface/60 opacity-60"
+              }`}
+            >
+              <span
+                aria-hidden
+                className={`absolute -left-[29px] top-7 flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 transition-colors duration-500 ${
+                  on ? "border-accent bg-accent" : "border-line-strong bg-canvas"
+                }`}
+              >
+                {on && <span className="h-1.5 w-1.5 rounded-full bg-white" />}
+              </span>
+              <div className="flex items-baseline gap-3">
+                <span className="font-mono text-badge text-accent">{num}</span>
+                <h3 className="font-display text-card font-semibold text-ink">{title}</h3>
+              </div>
+              <p className="mt-2 text-body text-ink-2">{body}</p>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
   );
 }
+
+function SectionTitle({ badge, title, lead }: { badge: string; title: string; lead?: string }) {
+  return (
+    <div className="max-w-[760px]">
+      <Reveal>
+        <Badge>{badge}</Badge>
+      </Reveal>
+      <ScrollReveal
+        containerClassName="mt-4"
+        textClassName="font-display text-[34px] font-extrabold leading-[1.08] tracking-[-0.03em] text-ink sm:text-[48px]"
+        baseOpacity={0.12}
+        enableBlur
+        blurStrength={6}
+        baseRotation={0}
+      >
+        {title}
+      </ScrollReveal>
+      {lead && (
+        <Reveal delay={0.1}>
+          <p className="mt-4 text-lead text-ink-2">{lead}</p>
+        </Reveal>
+      )}
+    </div>
+  );
+}
+
+const STATS = [
+  { value: 26, suffix: "", label: "UAE organizations in the identity registry" },
+  { value: 5, suffix: "", label: "kinds of evidence behind every score" },
+  { value: 102, suffix: "", label: "automated tests, including SSRF and prompt injection" },
+  { value: 0, suffix: "", label: "messages stored. Ever." },
+];
 
 export function Dashboard() {
   const [busy, setBusy] = useState(false);
@@ -162,12 +323,13 @@ export function Dashboard() {
     setBusy(true);
     setError(null);
     setResult(null);
-    setTimeout(() => reportRef.current?.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }), 50);
+    setTimeout(() => reportRef.current && scrollToTarget(reportRef.current, -110), 60);
     try {
       // Keep the progress panel up long enough to read (avoids a flash on near-instant demo answers).
       const minShow = reduce ? 0 : 1400;
       const [data] = await Promise.all([investigate(req), new Promise((r) => setTimeout(r, minShow))]);
       setResult({ data, message: req.type === "message" ? req.message : undefined });
+      setTimeout(() => ScrollTrigger.refresh(), 100);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
     } finally {
@@ -184,134 +346,148 @@ export function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const showResults = busy || error || result;
+
   return (
     <>
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <motion.div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(45%_50%_at_30%_35%,rgba(233,161,94,0.14),transparent_70%),radial-gradient(40%_45%_at_72%_40%,rgba(146,170,90,0.11),transparent_70%)]"
-          initial={{ opacity: 0, scale: 1.08 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1.4, ease: EASE_OUT }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,rgba(27,29,36,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(27,29,36,0.035)_1px,transparent_1px)] bg-[size:56px_56px] [mask-image:radial-gradient(60%_55%_at_50%_30%,black,transparent_75%)]"
-        />
-        <Container className="relative pb-16 pt-14 sm:pb-24 sm:pt-20">
-          <motion.div className="mx-auto max-w-[860px] text-center" initial="hidden" animate="show" variants={stagger(0.09, 0.05)}>
-            <motion.div variants={fadeUp}>
-            <Badge className="font-medium">
-              <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden>
-                <circle cx="7" cy="7" r="5.5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-                <path d="M7 4v3.2l2 1.3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-              </svg>
-              AD Police x 42AD Hackathon 2026
-            </Badge>
-            </motion.div>
-            <motion.h1 variants={fadeUp} className="mt-6 text-balance text-[40px] font-extrabold leading-[48px] tracking-[-1px] text-ink sm:text-hero">
-              Verify the <Underlined delay={0.55}>claim</Underlined>,{" "}
-              <br className="hidden sm:block" />
-              not just the <Underlined delay={0.75}>link</Underlined>
-            </motion.h1>
-            <motion.p variants={fadeUp} className="mx-auto mt-6 max-w-[607px] text-lead text-ink-2">
-              Paste a suspicious message, link or screenshot. RAQEEB checks who it claims to be from,
-              gathers evidence and shows you exactly why it reached its verdict.
+      {/* ───────── Hero (dark) ───────── */}
+      <section data-theme="dark" className="grain relative -mt-[84px] overflow-hidden bg-shell-950 pb-20 pt-[140px] sm:-mt-[116px] sm:pb-28 sm:pt-[200px]">
+        <div aria-hidden className="absolute inset-0">
+          <LightRays
+            raysOrigin="top-center"
+            raysColor="#d8b773"
+            raysSpeed={0.55}
+            lightSpread={0.85}
+            rayLength={1.5}
+            followMouse
+            mouseInfluence={0.06}
+            noiseAmount={0.06}
+            distortion={0.04}
+            opacity={0.85}
+            maxDevicePixelRatio={1.5}
+          />
+        </div>
+        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_50%_at_50%_0%,transparent,rgba(18,19,24,0.4)_60%,#121318_100%)]" />
+        <div aria-hidden className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-shell-950" />
+
+        <Container className="relative">
+          <div className="mx-auto max-w-[1040px] text-center">
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: EASE_OUT }}
+              className="mx-auto inline-flex items-center gap-2 rounded-full border border-[#d8b773]/30 bg-[#d8b773]/[0.08] px-3.5 py-1.5 text-[13px] font-medium tracking-[0.02em] text-[#e9d3a1]"
+            >
+              <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#d8b773]" />
+              Digital trust investigation for the UAE<span className="hidden sm:inline"> · AD Police x 42AD Hackathon 2026</span>
             </motion.p>
-          </motion.div>
+            <div className="mt-8">
+              <HeroHeadline />
+            </div>
+            <motion.p
+              initial={{ opacity: 0, y: 14, filter: "blur(6px)" }}
+              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+              transition={{ duration: 0.9, ease: EASE_OUT, delay: 0.75 }}
+              className="mx-auto mt-8 max-w-[620px] text-[18px] leading-[30px] text-white/65 sm:text-[20px]"
+            >
+              Paste a suspicious message or link. RAQEEB checks who it claims to be from, gathers the evidence, and
+              shows you exactly why it reached its verdict.
+            </motion.p>
+          </div>
 
-          <motion.div
-            id="investigate"
-            className="mx-auto mt-12 max-w-[800px] scroll-mt-32"
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: EASE_OUT, delay: 0.35 }}
-          >
-            <InvestigationInput onSubmit={run} busy={busy} initial={initial} />
-          </motion.div>
+          <div className="mx-auto mt-14 grid max-w-[1120px] gap-6 lg:grid-cols-[1.35fr_0.65fr] lg:items-start">
+            <motion.div
+              id="investigate"
+              className="scroll-mt-32"
+              initial={{ opacity: 0, y: 36, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.9, ease: EASE_OUT, delay: 0.95 }}
+            >
+              <div className="rounded-[20px] bg-gradient-to-b from-[#d8b773]/50 via-[#d8b773]/10 to-transparent p-px shadow-[0_40px_120px_-40px_rgba(216,183,115,0.45)]">
+                <InvestigationInput onSubmit={run} busy={busy} initial={initial} />
+              </div>
+            </motion.div>
+            <motion.div initial={{ opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE_OUT, delay: 1.1 }} className="space-y-4">
+              <LiveScan />
+              <p className="px-1 text-[13px] leading-5 text-white/40">
+                Examples only. The scam domains are fictional; dewa.gov.ae is the real DEWA site.
+              </p>
+            </motion.div>
+          </div>
+        </Container>
+      </section>
 
-          <div ref={reportRef} className="mx-auto mt-8 max-w-[1100px] scroll-mt-32">
+      {/* ───────── Results (light) ───────── */}
+      <div ref={reportRef} className={showResults ? "bg-canvas py-12 sm:py-16" : ""}>
+        <Container>
+          <div className="mx-auto max-w-[1100px]">
             <AnimatePresence mode="wait">
               {busy && (
-                <motion.div
-                  key="progress"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }}
-                  transition={{ duration: 0.3, ease: EASE_OUT }}
-                >
+                <motion.div key="progress" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8, transition: { duration: 0.15 } }} transition={{ duration: 0.3, ease: EASE_OUT }}>
                   <Progress />
                 </motion.div>
               )}
               {!busy && error && (
-                <motion.div
-                  key="error"
-                  role="alert"
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  className="rounded-panel border border-risk-high/30 bg-risk-high-bg px-4 py-3 text-body text-risk-high"
-                >
+                <motion.div key="error" role="alert" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="rounded-panel border border-risk-high/30 bg-risk-high-bg px-4 py-3 text-body text-risk-high">
                   {error}
                 </motion.div>
               )}
               {!busy && result && (
-                <motion.div
-                  key={result.data.urls.map((u) => u.url).join() + (result.message ?? "")}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
+                <motion.div key={result.data.urls.map((u) => u.url).join() + (result.message ?? "")} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
                   <Report result={result.data} message={result.message} />
                 </motion.div>
               )}
             </AnimatePresence>
           </div>
         </Container>
+      </div>
+
+      {/* ───────── Stats strip ───────── */}
+      <section className="border-b border-line bg-surface">
+        <Container>
+          <RevealGroup className="grid grid-cols-2 divide-line lg:grid-cols-4 lg:divide-x">
+            {STATS.map((s) => (
+              <motion.div key={s.label} variants={fadeUp} className="px-2 py-10 sm:px-8">
+                <p className="font-display text-[44px] font-extrabold leading-none tracking-[-0.04em] text-ink sm:text-[56px]">
+                  <CountUp value={s.value} duration={1.4} />
+                  <span className="text-accent">{s.suffix}</span>
+                </p>
+                <p className="mt-3 max-w-[220px] text-small text-ink-2">{s.label}</p>
+              </motion.div>
+            ))}
+          </RevealGroup>
+        </Container>
       </section>
 
-      {/* What RAQEEB checks */}
-      <section id="checks" className="scroll-mt-32 py-20 sm:py-28">
+      {/* ───────── What RAQEEB checks ───────── */}
+      <section id="checks" className="scroll-mt-32 py-24 sm:py-32">
         <Container>
-          <SectionHead
+          <SectionTitle
             badge="What we check"
-            title="Five kinds of evidence, one transparent score"
-            lead="Each category adds a weighted share of the score. When too little evidence is available, RAQEEB says Unknown Risk instead of guessing. A link whose domain doesn't exist is shown as Inactive Link."
+            title="Five kinds of evidence. One transparent score."
+            lead="Each category adds a weighted share of the score. With too little evidence, RAQEEB says Unknown Risk instead of guessing."
           />
-          <RevealGroup className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <RevealGroup className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {checks.map((c, i) => (
               <motion.div key={c.title} variants={fadeUp} className="flex">
-              <Card highlight={i === 1} interactive className="flex w-full flex-col p-6">
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`rounded-control px-1.5 py-0.5 font-mono text-badge ${
-                      i === 1 ? "bg-accent-strong text-white" : "bg-accent-soft text-accent-strong"
-                    }`}
-                  >
-                    {c.weight}%
-                  </span>
-                  <span className="text-small text-ink-3">of the score</span>
-                </div>
-                <h3
-                  className={`mt-4 font-display text-card font-semibold ${
-                    i === 1 ? "text-accent-strong" : "text-ink"
-                  }`}
+                <SpotlightCard
+                  theme="light"
+                  spotlightColor="rgba(201, 165, 90, 0.28)"
+                  className={`flex w-full flex-col rounded-card border p-7 ${i === 1 ? "border-accent/30 !bg-accent-cream" : "border-line !bg-surface"}`}
                 >
-                  {c.title}
-                </h3>
-                <p className={`mt-2 text-body ${i === 1 ? "text-accent-strong/90" : "text-ink-2"}`}>
-                  {c.body}
-                </p>
-              </Card>
+                  <div className="flex items-center justify-between">
+                    <span className="font-display text-[40px] font-extrabold leading-none tracking-[-0.04em] text-accent">{c.weight}<span className="text-[22px]">%</span></span>
+                    <span className="font-mono text-badge text-ink-3">0{i + 1}</span>
+                  </div>
+                  <h3 className="mt-6 font-display text-card font-semibold text-ink">{c.title}</h3>
+                  <p className="mt-2 text-body text-ink-2">{c.body}</p>
+                </SpotlightCard>
               </motion.div>
             ))}
             <motion.div variants={fadeUp} className="flex">
-            <Card interactive className="flex w-full flex-col justify-between gap-4 p-6">
-              <div>
-                <h3 className="font-display text-card font-semibold text-ink">Every report ends in one of</h3>
-                <div className="mt-4 flex flex-wrap gap-2">
+              <div className="flex w-full flex-col justify-between gap-6 rounded-card bg-shell-900 p-7 text-white">
+                <h3 className="font-display text-card font-semibold">Every report ends in one of six verdicts</h3>
+                <div className="flex flex-wrap gap-2">
                   <RiskBadge level="safe" />
                   <RiskBadge level="low" />
                   <RiskBadge level="inactive" />
@@ -319,102 +495,74 @@ export function Dashboard() {
                   <RiskBadge level="high" />
                   <RiskBadge level="unknown" />
                 </div>
+                <p className="text-small text-white/60">“Likely Safe” is the strongest RAQEEB ever says. It never claims 100%.</p>
               </div>
-              <LinkMore href="#how">How the score works</LinkMore>
-            </Card>
             </motion.div>
           </RevealGroup>
         </Container>
       </section>
 
-      {/* How it works: timeline */}
-      <section id="how" className="scroll-mt-32 border-y border-line bg-surface py-20 sm:py-28">
+      {/* ───────── How it works (pinned on desktop) ───────── */}
+      <section id="how" className="scroll-mt-32 border-y border-line bg-surface py-24 sm:py-32">
         <Container>
-          <SectionHead badge="How it works" title="Evidence first, AI second" />
+          <HowItWorks />
+        </Container>
+      </section>
 
-          <RevealGroup as="ol" each={0.12} className="relative mt-14 grid gap-8 md:grid-cols-4 md:gap-6">
-            <motion.span
-              aria-hidden
-              className="absolute left-0 right-0 top-[7px] hidden h-px origin-left bg-line-strong md:block"
-              variants={{ hidden: { scaleX: 0 }, show: { scaleX: 1, transition: { duration: 0.9, ease: EASE_OUT } } }}
-            />
-            {steps.map(([num, title, body], i) => (
-              <motion.li key={title} className="relative" variants={fadeUp}>
-                <motion.span
-                  aria-hidden
-                  className={`relative block h-3.5 w-3.5 rounded-full ring-4 ring-surface ${
-                    i === 0 ? "bg-marker-active" : "bg-marker"
-                  }`}
-                  variants={{ hidden: { scale: 0 }, show: { scale: 1, transition: { duration: 0.3, ease: EASE_OUT } } }}
-                />
-                <div className="mt-6">
-                  <span className="rounded-control bg-accent-soft px-1.5 py-0.5 font-mono text-badge text-accent-strong">
-                    {num}
-                  </span>
-                  <h3 className="mt-3 font-display text-card font-semibold text-ink">{title}</h3>
-                  <p className="mt-2 text-body text-ink-2">{body}</p>
+      {/* ───────── Sample report ───────── */}
+      <section className="py-24 sm:py-32">
+        <Container>
+          <SectionTitle badge="Sample report" title="When the claim doesn't match the link." />
+          <Reveal className="mt-12">
+            <div className="grid overflow-hidden rounded-[20px] border border-line bg-surface shadow-[0_40px_100px_-60px_rgba(27,29,36,0.5)] lg:grid-cols-[1fr_1.1fr]">
+              <div className="p-8 sm:p-10">
+                <div className="flex flex-wrap items-center gap-3">
+                  <Badge>Illustration</Badge>
+                  <RiskBadge level="high" />
                 </div>
-              </motion.li>
-            ))}
-          </RevealGroup>
-
-          {/* Static sample report preview (illustrative, clearly labelled) */}
-          <Reveal className="mt-16">
-          <Card interactive className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[1fr_1.1fr] lg:items-center">
-            <div>
-              <div className="flex flex-wrap items-center gap-3">
-                <Badge>Sample report · illustration</Badge>
-                <RiskBadge level="high" />
+                <p className="mt-6 font-display text-[26px] font-semibold leading-[34px] tracking-[-0.02em] text-ink">
+                  The message claims to be from <span className="text-accent">Emirates NBD</span>. The link points somewhere else.
+                </p>
+                <p className="mt-4 text-small text-ink-3">Example domains for illustration only. Not a real investigation result.</p>
               </div>
-              <h3 className="mt-4 text-[26px] font-semibold leading-[34px] tracking-[-0.5px] text-ink">
-                The claim doesn't match the link
-              </h3>
-              <p className="mt-3 text-body text-ink-2">
-                The message claims to be from <strong className="font-semibold text-ink">Emirates NBD</strong>,
-                but the link points to a domain that is not one of the bank's official domains.
-              </p>
-              <p className="mt-4 text-small text-ink-3">
-                Example domains for illustration only. Not a real investigation result.
-              </p>
+              <dl className="grid content-center gap-px bg-line">
+                {[
+                  ["Official domain", <Mono key="a">emiratesnbd.com</Mono>],
+                  ["Link in message", <Mono key="b">emiratesnbd<span className="rounded bg-risk-high-bg px-0.5 text-risk-high">-secure</span>.co</Mono>],
+                  ["Domain age", <span key="c">3 days</span>],
+                  ["Verification", <span key="d" className="font-semibold text-risk-high">Possible Impersonation</span>],
+                ].map(([k, v]) => (
+                  <div key={String(k)} className="flex items-center justify-between gap-4 bg-canvas px-8 py-5">
+                    <dt className="text-ink-3">{k}</dt>
+                    <dd className="text-right text-body">{v}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
-            <dl className="grid gap-px overflow-hidden rounded-panel border border-line bg-line text-body">
-              {[
-                ["Official domain", <Mono key="a">emiratesnbd.com</Mono>],
-                [
-                  "Link in message",
-                  <Mono key="b">
-                    emiratesnbd<span className="rounded bg-risk-high-bg px-0.5 text-risk-high">-secure</span>.co
-                  </Mono>,
-                ],
-                ["Verification", <span key="c" className="font-semibold text-risk-high">Possible Impersonation</span>],
-              ].map(([k, v]) => (
-                <div key={String(k)} className="flex items-center justify-between gap-4 bg-surface px-5 py-4">
-                  <dt className="text-ink-3">{k}</dt>
-                  <dd className="text-right">{v}</dd>
-                </div>
-              ))}
-            </dl>
-          </Card>
           </Reveal>
         </Container>
       </section>
 
-      {/* Privacy summary */}
-      <section id="privacy" className="scroll-mt-32 py-20 sm:py-28">
-        <Container>
-          <SectionHead badge="Privacy" title="Nothing is stored. Here's what is shared." />
-          <RevealGroup className="mt-12 grid gap-6 md:grid-cols-2">
+      {/* ───────── Privacy (dark) ───────── */}
+      <section id="privacy" data-theme="dark" className="grain relative scroll-mt-32 overflow-hidden bg-shell-950 py-24 text-white sm:py-32">
+        <div aria-hidden className="absolute inset-0 bg-[radial-gradient(50%_60%_at_80%_0%,rgba(216,183,115,0.14),transparent_70%)]" />
+        <Container className="relative">
+          <div className="max-w-[760px]">
+            <span className="inline-flex rounded-control bg-[#d8b773]/10 px-1.5 py-0.5 text-small text-[#e9d3a1]">Privacy</span>
+            <h2 className="mt-4 font-display text-[34px] font-extrabold leading-[1.08] tracking-[-0.03em] sm:text-[48px]">
+              Nothing is stored. <span className="text-[#d8b773]">Here's what is shared.</span>
+            </h2>
+          </div>
+          <RevealGroup className="mt-14 grid gap-px overflow-hidden rounded-[20px] border border-white/10 bg-white/10 md:grid-cols-2">
             {[
-              ["Stored", "Nothing. No accounts, no scan history, no analytics. Screenshots are deleted as soon as text is extracted."],
-              ["Domain checks", "Links and domains are checked with Google Safe Browsing, VirusTotal and public domain registries."],
-              ["AI explanation", "Message text, with phone numbers, emails and names masked, is sent to Google Gemini. On Gemini's free tier, Google may review it."],
-              ["Not shared", "Screenshots never leave the server. Text is read from them locally."],
+              ["Stored", "Nothing. No accounts, no scan history, no analytics. Every investigation runs in memory and is gone."],
+              ["Domain checks", "Only links and domain names go to DNS, domain registries, Google Safe Browsing and VirusTotal (lookup only)."],
+              ["AI explanation", "Message text goes to Google Gemini only after names, phone numbers, emails, cards, Emirates ID and OTPs are masked."],
+              ["Browser extension", "Only the link you click is checked, on four messaging and email sites. Message text is never read."],
             ].map(([title, body]) => (
-              <motion.div key={title} variants={fadeUp} className="flex">
-              <Card interactive className="w-full p-6">
-                <h3 className="font-display text-card font-semibold text-ink">{title}</h3>
-                <p className="mt-2 text-body text-ink-2">{body}</p>
-              </Card>
+              <motion.div key={title} variants={fadeUp} className="bg-shell-950 p-8">
+                <h3 className="font-display text-card font-semibold text-white">{title}</h3>
+                <p className="mt-2 text-body text-white/60">{body}</p>
               </motion.div>
             ))}
           </RevealGroup>

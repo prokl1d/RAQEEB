@@ -141,3 +141,13 @@ frontend/   React + TypeScript + Tailwind website (dashboard + report)
 extension/  RAQEEB Link Guard (Chrome, Manifest V3)
 docs/       ARCHITECTURE, DEMO, EXTENSION, TEAM_SETUP, PLAN, MASTER_PLAN, design-research
 ```
+
+## 7. Credits and third-party licenses
+
+- **GSAP** and **@gsap/react**: GreenSock Standard "no charge" license (https://gsap.com/standard-license). Used for the hero text split, scroll-pinned sections and the smooth-scroll ticker.
+- **Lenis** (MIT): smooth scrolling, by darkroom.engineering.
+- **React Bits** by David Haz (MIT + Commons Clause): LightRays, DecryptedText, ScrollReveal, SpotlightCard and Magnet, copied into `frontend/src/components/bits/` with attribution (see the README there).
+- **Motion** (MIT): UI transitions. **Tailwind CSS**, **React**, **FastAPI** and the Python libraries listed in `backend/pyproject.toml`, all open-source.
+- Fonts: Inter, Roboto and JetBrains Mono (SIL Open Font License, via Google Fonts).
+
+All animation respects the operating system's "reduce motion" setting: smooth scrolling, pinning and text effects switch off.
