@@ -161,6 +161,17 @@ h1, h2, h3, h4 {
   font-family: var(--font-display);
 }
 
+/* Arabic: Noto Kufi Arabic for headings (as in the UAE Design System), IBM Plex Sans Arabic for body.
+   Latin text inside Arabic (domains, brand names) still falls back to Inter/Roboto. */
+html[lang="ar"] {
+  --font-display: "Noto Kufi Arabic", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "IBM Plex Sans Arabic", "Roboto", ui-sans-serif, system-ui, sans-serif;
+}
+html[lang="ar"] body { font-family: var(--font-sans); line-height: 1.7; }
+/* Arabic letters join: tight Latin tracking would break words apart */
+html[lang="ar"] :not(code):not(.font-mono) { letter-spacing: 0 !important; }
+html[lang="ar"] h1, html[lang="ar"] h2 { line-height: 1.35; }
+
 :focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px color-mix(in oklab, var(--color-accent) 45%, transparent);

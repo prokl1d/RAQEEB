@@ -4,6 +4,7 @@
 // prefers-reduced-motion (MotionConfig reducedMotion="user" in main.tsx + checks below).
 import { animate, motion, useInView, useReducedMotion, type Variants } from "motion/react";
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useI18n } from "../lib/i18n";
 
 export const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 
@@ -82,10 +83,11 @@ const GAUGE_COLOR: Record<string, string> = {
 
 /** Half-circle gauge for the risk score. Decorative: the number and label carry the meaning. */
 export function RiskGauge({ score, level, noScore }: { score: number; level: string; noScore: boolean }) {
+  const { t } = useI18n();
   const r = 70;
   const arc = `M ${90 - r} 90 A ${r} ${r} 0 0 1 ${90 + r} 90`;
   return (
-    <div className="relative h-[104px] w-[180px]">
+    <div className="relative h-[104px] w-[180px]" dir="ltr">
       <svg viewBox="0 0 180 100" className="absolute inset-0 h-full w-full" aria-hidden>
         <path d={arc} fill="none" stroke="var(--color-line)" strokeWidth="12" strokeLinecap="round" />
         {!noScore && (
@@ -105,7 +107,7 @@ export function RiskGauge({ score, level, noScore }: { score: number; level: str
         <span className="font-display text-[44px] font-extrabold leading-none tracking-[-1.5px] text-ink">
           {noScore ? "–" : <CountUp value={score} />}
         </span>
-        <span className="mt-1 text-badge uppercase tracking-[0.08em] text-ink-3">risk score / 100</span>
+        <span className="mt-1 text-badge uppercase tracking-[0.08em] text-ink-3">{noScore ? t.gauge.none : t.gauge.label}</span>
       </div>
     </div>
   );

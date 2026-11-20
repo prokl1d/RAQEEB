@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { EASE_OUT, RiskGauge, fadeUp, stagger } from "./motion";
 import type { Evidence, EvidenceStatus, InvestigationResult, RiskBand } from "../lib/api";
 import { Badge, Card, Mono, RiskBadge, type RiskLevel } from "./ui";
+import { useI18n } from "../lib/i18n";
 
 const bandLevel: Record<RiskBand, RiskLevel> = {
   "Likely Safe": "safe",
@@ -29,42 +30,35 @@ const outcomeTone: Record<string, string> = {
   "Unable to Verify": "text-ink-2",
 };
 
-const statusGroups: { status: EvidenceStatus; title: string; dot: string; hint: string }[] = [
-  { status: "confirmed", title: "Confirmed malicious", dot: "bg-risk-high", hint: "Independent sources say this is malicious." },
-  { status: "contradictory", title: "Contradictory", dot: "bg-risk-moderate", hint: "Findings that disagree with each other." },
-  { status: "suspicious", title: "Suspicious indicators", dot: "bg-risk-moderate", hint: "Warning signs. Each one alone is not proof." },
-  { status: "verified", title: "Verified information", dot: "bg-risk-low", hint: "Confirmed by an authoritative source." },
-  { status: "unverified", title: "Unverified or weak signals", dot: "bg-ink-3", hint: "Information that couldn't be confirmed, or that carries little weight." },
-  { status: "missing", title: "Missing information", dot: "bg-line-strong", hint: "Checks that didn't run. These never count as clean." },
+const statusGroups: { status: EvidenceStatus; dot: string }[] = [
+  { status: "confirmed", dot: "bg-risk-high" },
+  { status: "contradictory", dot: "bg-risk-moderate" },
+  { status: "suspicious", dot: "bg-risk-moderate" },
+  { status: "verified", dot: "bg-risk-low" },
+  { status: "unverified", dot: "bg-ink-3" },
+  { status: "missing", dot: "bg-line-strong" },
 ];
-
-const categoryLabel: Record<string, string> = {
-  threat_intel: "Threat intelligence",
-  identity: "Identity",
-  url_domain: "Domain and URL",
-  content: "Message",
-  context: "Context",
-};
 
 function EvidenceRow({ e, note }: { e: Evidence; note?: string }) {
   const [open, setOpen] = useState(false);
+  const { t, lang } = useI18n();
   const technical = Object.entries(e.raw).filter(([k]) => !["start", "end"].includes(k));
   return (
     <div>
       <button
         onClick={() => setOpen(!open)}
         aria-expanded={open}
-        className="flex w-full cursor-pointer items-start justify-between gap-4 px-5 py-4 text-left transition-colors duration-200 hover:bg-canvas"
+        className="flex w-full cursor-pointer items-start justify-between gap-4 px-5 py-4 text-start transition-colors duration-200 hover:bg-canvas"
       >
-        <span>
+        <span dir={lang === "ar" ? "ltr" : undefined} className={lang === "ar" ? "min-w-0 flex-1 text-right" : undefined}>
           <span className="block text-body font-medium text-ink">{e.finding}</span>
           <span className="mt-1 block text-small text-ink-2">{note ?? e.why_it_matters}</span>
         </span>
         <span className="flex shrink-0 items-center gap-2 pt-0.5">
           <span className="hidden rounded-control bg-canvas px-1.5 py-0.5 text-badge text-ink-3 sm:inline">
-            {categoryLabel[e.category]}
+            {t.report.categoryShort[e.category]}
           </span>
-          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden className={`text-ink-3 transition-transform duration-200 ease-out ${open ? "rotate-90 text-accent" : ""}`}>
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden className={`text-ink-3 transition-transform duration-200 ease-out rtl:-scale-x-100 ${open ? "rotate-90 text-accent rtl:-rotate-90" : ""}`}>
             <path d="m6 3.5 4.5 4.5L6 12.5" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" />
           </svg>
         </span>
@@ -76,7 +70,7 @@ function EvidenceRow({ e, note }: { e: Evidence; note?: string }) {
         <div className="overflow-hidden">
           <div className="space-y-2 px-5 pb-4 text-small text-ink-2">
             <p>
-              <span className="font-medium text-ink">Source:</span> {e.source}
+              <span className="font-medium text-ink">{t.report.evidence.source}</span> <span dir="ltr">{e.source}</span>
             </p>
             {technical.length > 0 && (
               <pre className="overflow-x-auto rounded-panel border border-line bg-canvas p-3 font-mono text-[12px] leading-5 text-ink-2">
@@ -121,17 +115,23 @@ function HighlightedMessage({ text, evidence }: { text: string; evidence: Eviden
 export function Report({ result, message }: { result: InvestigationResult; message?: string }) {
   const { score, identity, ai } = result;
   const level = bandLevel[score.band];
+  const { t, lang } = useI18n();
+  const R = t.report;
+  const ar = lang === "ar";
+  const outcome = R.outcomes[identity.outcome] ?? identity.outcome;
+  // In Arabic, headline and advice come from the translated set (the engine writes English).
+  const headline = ar ? R.headline[level] : (ai.explanation?.summary ?? identity.summary);
+  const actions = ar && R.actions ? R.actions[level] : (ai.explanation?.recommended_actions ?? []);
   const aiNotes = new Map(ai.explanation?.points.map((p) => [p.evidence_id, p.explanation]) ?? []);
   const missing = result.evidence.filter((e) => e.status === "missing");
   const claimed = identity.claimed[0];
   const firstUrl = result.urls[0];
 
   return (
-    <motion.section aria-label="Investigation report" className="space-y-6" initial="hidden" animate="show" variants={stagger(0.08)}>
+    <motion.section aria-label={R.aria} className="space-y-6" initial="hidden" animate="show" variants={stagger(0.08)}>
       {result.check_mode === "fixture" && (
         <motion.div variants={fadeUp} className="rounded-panel border border-accent/30 bg-accent-cream px-4 py-3 text-small text-accent-strong">
-          <strong className="font-semibold">Demo mode:</strong> network and threat-intelligence results below are
-          recorded demo fixtures, not live results.
+          <strong className="font-semibold">{R.demo.strong}</strong>{R.demo.rest}
         </motion.div>
       )}
 
@@ -139,7 +139,7 @@ export function Report({ result, message }: { result: InvestigationResult; messa
       <motion.div variants={fadeUp}>
       <Card className="overflow-hidden shadow-[0_24px_60px_-36px_rgba(27,29,36,0.4)]">
         <motion.div
-          className={`h-1.5 origin-left ${bandBar[level]}`}
+          className={`h-1.5 origin-left rtl:origin-right ${bandBar[level]}`}
           initial={{ scaleX: 0 }}
           animate={{ scaleX: 1 }}
           transition={{ duration: 0.7, ease: EASE_OUT }}
@@ -149,15 +149,15 @@ export function Report({ result, message }: { result: InvestigationResult; messa
             <div className="flex flex-wrap items-center gap-3">
               <RiskBadge level={level} />
               <span className="text-small text-ink-3">
-                Evidence coverage {score.coverage}%{score.low_confidence && " · not enough evidence for a verdict"}
+                {R.coverage(score.coverage)}{score.low_confidence && R.notEnough}
               </span>
             </div>
             <h2 className="mt-4 text-[28px] font-extrabold leading-[36px] tracking-[-0.6px] text-ink sm:text-h3">
-              {ai.explanation?.summary ?? identity.summary}
+              {headline}
             </h2>
             <p className={`mt-3 text-lead font-medium ${outcomeTone[identity.outcome]}`}>
-              {identity.outcome}
-              <span className="font-normal text-ink-2"> · {identity.summary}</span>
+              {outcome}
+              {!ar && <span className="font-normal text-ink-2"> · {identity.summary}</span>}
             </p>
           </div>
           <div className="flex justify-center md:justify-end">
@@ -172,11 +172,11 @@ export function Report({ result, message }: { result: InvestigationResult; messa
           <div className="space-y-1 border-t border-line bg-canvas px-6 py-4 text-small text-ink-2 sm:px-8">
             {score.contradictions.map((c) => (
               <p key={c}>
-                <strong className="font-semibold text-risk-moderate">Contradiction:</strong> {c}
+                <strong className="font-semibold text-risk-moderate">{R.contradiction}</strong> <span dir={ar ? "ltr" : undefined}>{c}</span>
               </p>
             ))}
             {score.overrides.map((o) => (
-              <p key={o}>{o}</p>
+              <p key={o} dir={ar ? "ltr" : undefined} className={ar ? "text-right" : undefined}>{o}</p>
             ))}
           </div>
         )}
@@ -186,36 +186,36 @@ export function Report({ result, message }: { result: InvestigationResult; messa
       <motion.div variants={fadeUp} className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
         {/* Identity */}
         <Card className="p-6">
-          <Badge>Organization identity</Badge>
+          <Badge>{R.identity.badge}</Badge>
           <dl className="mt-4 grid gap-px overflow-hidden rounded-panel border border-line bg-line text-body">
             {[
-              ["Claims to be", claimed ? claimed.name : "No known organization identified"],
+              [R.identity.claims, claimed ? claimed.name : R.identity.none],
               [
-                "Official domain",
+                R.identity.official,
                 claimed ? <Mono key="o">{claimed.official_domains.join(", ")}</Mono> : "—",
               ],
-              ["Link goes to", firstUrl ? <Mono key="l">{firstUrl.registrable_domain || firstUrl.host}</Mono> : "No link found"],
+              [R.identity.goesTo, firstUrl ? <Mono key="l">{firstUrl.registrable_domain || firstUrl.host}</Mono> : R.identity.noLink],
               ...(firstUrl?.final_url && new URL(firstUrl.final_url).host !== new URL(firstUrl.url).host
-                ? [["Redirects to", <Mono key="r">{new URL(firstUrl.final_url).host}</Mono>]]
+                ? [[R.identity.redirects, <Mono key="r">{new URL(firstUrl.final_url).host}</Mono>]]
                 : []),
-              ["Result", <span key="res" className={`font-semibold ${outcomeTone[identity.outcome]}`}>{identity.outcome}</span>],
+              [R.identity.result, <span key="res" className={`font-semibold ${outcomeTone[identity.outcome]}`}>{outcome}</span>],
             ].map(([k, v]) => (
               <div key={String(k)} className="flex items-center justify-between gap-4 bg-surface px-4 py-3">
                 <dt className="shrink-0 text-ink-3">{k}</dt>
-                <dd className="min-w-0 break-all text-right">{v}</dd>
+                <dd className="min-w-0 break-all text-end">{v}</dd>
               </div>
             ))}
           </dl>
           {claimed && !claimed.verified && (
             <p className="mt-3 text-small text-ink-3">
-              {claimed.name}'s domain in RAQEEB's registry is not yet confirmed by an authoritative source.
+              {R.identity.unconfirmed(claimed.name)}
             </p>
           )}
         </Card>
 
         {/* Score breakdown */}
         <Card className="p-6">
-          <Badge>How the score was built</Badge>
+          <Badge>{R.score.badge}</Badge>
           <ul className="mt-4 space-y-4">
             {score.categories
               .filter((c) => c.applicable)
@@ -223,16 +223,16 @@ export function Report({ result, message }: { result: InvestigationResult; messa
                 <li key={c.category}>
                   <div className="flex items-baseline justify-between gap-3 text-small">
                     <span className="font-medium text-ink">
-                      {c.label} <span className="font-normal text-ink-3">· {c.weight}%</span>
+                      {R.categories[c.category] ?? c.label} <span className="font-normal text-ink-3">· {c.weight}%</span>
                     </span>
-                    <span className="font-mono text-ink-2">
-                      {c.covered ? `${c.risk}/100` : "not checked"}
+                    <span className="font-mono text-ink-2" dir="ltr">
+                      {c.covered ? `${c.risk}/100` : R.score.notChecked}
                     </span>
                   </div>
                   <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-canvas ring-1 ring-line">
                     {c.covered && (
                       <motion.div
-                        className={`h-full origin-left rounded-full ${
+                        className={`h-full origin-left rounded-full rtl:origin-right ${
                           (c.risk ?? 0) >= 50 ? "bg-risk-high" : (c.risk ?? 0) >= 25 ? "bg-risk-moderate" : "bg-risk-low"
                         }`}
                         style={{ width: "100%" }}
@@ -242,7 +242,7 @@ export function Report({ result, message }: { result: InvestigationResult; messa
                       />
                     )}
                   </div>
-                  <p className="mt-1 text-small text-ink-3">{c.reason}</p>
+                  <p className="mt-1 text-small text-ink-3" dir={ar ? "ltr" : undefined} style={ar ? { textAlign: "right" } : undefined}>{c.reason}</p>
                 </li>
               ))}
           </ul>
@@ -253,8 +253,9 @@ export function Report({ result, message }: { result: InvestigationResult; messa
       <motion.div variants={fadeUp}>
       <Card>
         <div className="border-b border-line px-6 py-5">
-          <Badge>Evidence</Badge>
-          <p className="mt-2 text-small text-ink-3">Tap a finding to see its source and technical details.</p>
+          <Badge>{R.evidence.badge}</Badge>
+          <p className="mt-2 text-small text-ink-3">{R.evidence.hint}</p>
+          {ar && R.englishNote && <p className="mt-1 text-small text-ink-3">{R.englishNote}</p>}
         </div>
         {statusGroups.map((g) => {
           const items = result.evidence.filter((e) => e.status === g.status);
@@ -264,9 +265,9 @@ export function Report({ result, message }: { result: InvestigationResult; messa
               <div className="flex items-center gap-2 bg-canvas px-5 py-2.5">
                 <span aria-hidden className={`h-2 w-2 rounded-full ${g.dot}`} />
                 <h3 className="text-small font-semibold text-ink">
-                  {g.title} <span className="font-normal text-ink-3">({items.length})</span>
+                  {R.groups[g.status][0]} <span className="font-normal text-ink-3">({items.length})</span>
                 </h3>
-                <span className="hidden text-small text-ink-3 sm:inline">· {g.hint}</span>
+                <span className="hidden text-small text-ink-3 sm:inline">· {R.groups[g.status][1]}</span>
               </div>
               <motion.ul initial="hidden" animate="show" variants={stagger(0.05, 0.2)}>
                 {items.map((e) => (
@@ -284,17 +285,19 @@ export function Report({ result, message }: { result: InvestigationResult; messa
       <motion.div variants={fadeUp} className="grid gap-6 lg:grid-cols-2">
         {message && (
           <Card className="p-6">
-            <Badge>The message, with red flags highlighted</Badge>
+            <Badge>{R.message}</Badge>
             <div className="mt-4">
-              <HighlightedMessage text={message} evidence={result.evidence} />
+              <div dir="auto">
+                <HighlightedMessage text={message} evidence={result.evidence} />
+              </div>
             </div>
           </Card>
         )}
 
         <Card highlight className="p-6">
-          <h3 className="font-display text-card font-semibold text-accent-strong">What to do</h3>
-          <ul className="mt-3 list-disc space-y-2 pl-5 text-body text-accent-strong/90">
-            {(ai.explanation?.recommended_actions ?? []).map((a) => (
+          <h3 className="font-display text-card font-semibold text-accent-strong">{R.todo}</h3>
+          <ul className="mt-3 list-disc space-y-2 ps-5 text-body text-accent-strong/90">
+            {actions.map((a) => (
               <li key={a}>{a}</li>
             ))}
           </ul>
@@ -304,21 +307,25 @@ export function Report({ result, message }: { result: InvestigationResult; messa
       {/* Limitations and disclosures */}
       <motion.div variants={fadeUp}>
       <Card className="p-6">
-        <Badge>Limitations and privacy</Badge>
-        <ul className="mt-4 list-disc space-y-1.5 pl-5 text-small text-ink-2">
-          <li>RAQEEB's score is a risk assessment, not proof. No investigation can guarantee something is safe.</li>
-          {missing.length > 0 && <li>{missing.length} check(s) could not run and were not counted as clean.</li>}
-          {ai.error && <li>AI explanation: {ai.error}.</li>}
+        <Badge>{R.limits.badge}</Badge>
+        <ul className="mt-4 list-disc space-y-1.5 ps-5 text-small text-ink-2">
+          <li>{R.limits.notProof}</li>
+          {missing.length > 0 && <li>{R.limits.missing(missing.length)}</li>}
+          {ai.error && <li>{R.limits.ai(ai.error)}</li>}
           {result.disclosures.length === 0 ? (
-            <li>No outside service received your submission for this investigation.</li>
+            <li>{R.limits.noneShared}</li>
           ) : (
-            result.disclosures.map((d) => (
-              <li key={d.service}>
-                <span className="font-medium text-ink">{d.service}</span> received {d.received}.
-              </li>
-            ))
+            result.disclosures.map((d) => {
+              const [svc, rest] = R.limits.received(d.service, d.received);
+              return (
+                <li key={d.service}>
+                  <span className="font-medium text-ink">{svc}</span>
+                  {rest}
+                </li>
+              );
+            })
           )}
-          <li>Nothing you submitted was stored.</li>
+          <li>{R.limits.notStored}</li>
         </ul>
       </Card>
       </motion.div>

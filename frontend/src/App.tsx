@@ -6,16 +6,44 @@ import { Container } from "./components/ui";
 import Magnet from "./components/bits/Magnet";
 import { useSmoothScroll } from "./lib/smooth";
 import { useTheme } from "./lib/theme";
+import { useI18n } from "./lib/i18n";
+
+/** EN / العربية switch. Shows the *other* language, written in that language. */
+function LangToggle({ onDark }: { onDark: boolean }) {
+  const { lang, t, setLang } = useI18n();
+  return (
+    <button
+      type="button"
+      onClick={() => setLang(lang === "ar" ? "en" : "ar")}
+      aria-label={t.switchLabel}
+      title={t.switchLabel}
+      lang={lang === "ar" ? "en" : "ar"}
+      className={`flex h-10 cursor-pointer items-center gap-1.5 rounded-full border px-3 text-small font-semibold transition-colors duration-300 ${
+        onDark ? "border-white/15 text-white/85 hover:border-champagne/60 hover:text-champagne" : "border-line text-ink-2 hover:border-accent hover:text-accent"
+      }`}
+    >
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden>
+        <circle cx="12" cy="12" r="9" />
+        <path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3Z" />
+      </svg>
+      <span className={lang === "ar" ? "font-[Inter]" : "font-['Noto_Kufi_Arabic']"}>
+        <span className="hidden sm:inline">{t.switchTo}</span>
+        <span className="sm:hidden">{lang === "ar" ? "EN" : "ع"}</span>
+      </span>
+    </button>
+  );
+}
 
 function ThemeToggle({ onDark }: { onDark: boolean }) {
   const { theme, toggle } = useTheme();
-  const next = theme === "dark" ? "light" : "dark";
+  const { t } = useI18n();
+  const label = theme === "dark" ? t.theme.toLight : t.theme.toDark;
   return (
     <button
       type="button"
       onClick={toggle}
-      aria-label={`Switch to ${next} mode`}
-      title={`Switch to ${next} mode`}
+      aria-label={label}
+      title={label}
       className={`relative flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full border transition-colors duration-300 ${
         onDark ? "border-white/15 text-white/85 hover:border-champagne/60 hover:text-champagne" : "border-line text-ink-2 hover:border-accent hover:text-accent"
       }`}
@@ -77,15 +105,11 @@ function Logo({ dark }: { dark: boolean }) {
   );
 }
 
-const nav = [
-  ["Investigate", "#investigate"],
-  ["What we check", "#checks"],
-  ["How it works", "#how"],
-  ["Privacy", "#privacy"],
-] as const;
+const NAV = ["investigate", "checks", "how", "privacy"] as const;
 
 export default function App() {
   useSmoothScroll();
+  const { t } = useI18n();
   // Header is dark glass over the dark hero, and turns into the white card once you scroll past it.
   const [overHero, setOverHero] = useState(true);
   const [scrolled, setScrolled] = useState(false);
@@ -105,8 +129,8 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
-      <a href="#investigate" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-control focus:bg-accent focus:px-4 focus:py-2 focus:text-on-accent">
-        Skip to the investigation
+      <a href="#investigate" className="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-50 focus:rounded-control focus:bg-accent focus:px-4 focus:py-2 focus:text-on-accent">
+        {t.skip}
       </a>
 
       {/* Floating header */}
@@ -122,26 +146,27 @@ export default function App() {
         >
           <Logo dark={dark} />
           <nav className="hidden items-center gap-8 md:flex">
-            {nav.map(([label, href]) => (
+            {NAV.map((k) => (
               <a
-                key={href}
-                href={href}
-                className={`relative py-2 text-body font-semibold transition-colors duration-300 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:origin-left after:scale-x-0 after:rounded-full after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100 ${
+                key={k}
+                href={`#${k}`}
+                className={`relative py-2 text-body font-semibold transition-colors duration-300 after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:origin-left rtl:after:origin-right after:scale-x-0 after:rounded-full after:transition-transform after:duration-300 after:ease-out hover:after:scale-x-100 ${
                   dark ? "text-white/80 after:bg-champagne hover:text-white" : "text-ink after:bg-accent hover:text-accent"
                 }`}
               >
-                {label}
+                {t.nav[k]}
               </a>
             ))}
           </nav>
           <div className="flex items-center gap-2 sm:gap-3">
+          <LangToggle onDark={dark} />
           <ThemeToggle onDark={dark} />
           <Magnet padding={40} magnetStrength={4}>
             <a
               href="#investigate"
               className="inline-flex h-10 items-center rounded-control bg-accent px-4 text-small font-semibold text-on-accent transition-[background-color,box-shadow] duration-200 hover:bg-accent-hover hover:shadow-[0_8px_24px_-8px_rgba(216,183,115,0.7)]"
             >
-              Start
+              {t.nav.start}
             </a>
           </Magnet>
           </div>
@@ -155,17 +180,14 @@ export default function App() {
       <footer data-theme="dark" className="relative overflow-hidden bg-black text-white">
         <Container className="relative grid gap-10 pb-10 pt-20 sm:grid-cols-[1.3fr_1fr]">
           <div>
-            <p className="max-w-[480px] text-body text-white/60">
-              Evidence-based investigation of suspicious links and messages. Built for the AD Police x 42AD
-              Hackathon 2026.
-            </p>
+            <p className="max-w-[480px] text-body text-white/60">{t.footer.blurb}</p>
           </div>
-          <div className="text-small text-white/50 sm:text-right">
-            <p>RAQEEB is a student hackathon project and is not affiliated with any government entity.</p>
-            <p className="mt-2">No investigation can guarantee something is safe.</p>
+          <div className="text-small text-white/50 sm:text-end">
+            <p>{t.footer.d1}</p>
+            <p className="mt-2">{t.footer.d2}</p>
           </div>
         </Container>
-        <div aria-hidden className="pointer-events-none select-none px-4 pb-6 text-center font-display text-[22vw] font-extrabold leading-[0.8] tracking-[-0.05em] text-gold-sheen opacity-90 sm:px-6">
+        <div aria-hidden dir="ltr" className="pointer-events-none select-none px-4 pb-6 text-center font-[Inter] text-[22vw] font-extrabold leading-[0.8] tracking-[-0.05em] text-gold-sheen opacity-90 sm:px-6">
           RAQEEB
         </div>
       </footer>

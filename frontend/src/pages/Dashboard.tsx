@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { Suspense, lazy, useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -17,6 +17,10 @@ import SpotlightCard from "../components/bits/SpotlightCard";
 import ScrollReveal from "../components/bits/ScrollReveal";
 import { investigate, type InvestigateRequest, type InvestigationResult } from "../lib/api";
 import { scrollToTarget } from "../lib/smooth";
+import { useI18n } from "../lib/i18n";
+
+// The 3D flag (Three.js) loads separately so it doesn't slow down the first paint.
+const Flag3D = lazy(() => import("../components/Flag3D"));
 
 gsap.registerPlugin(ScrollTrigger, GsapSplitText, useGSAP);
 
@@ -30,16 +34,10 @@ function requestFromQuery(): InvestigateRequest | null {
   return null;
 }
 
-const PROGRESS = [
-  "Extracting links and the claimed organization",
-  "Checking the domain against official UAE domains",
-  "Checking DNS, certificate, redirects and domain age",
-  "Checking threat intelligence",
-  "Scoring the evidence and writing the explanation",
-];
-
 /** Step-by-step progress. Steps advance on a timer while the request runs; the last step waits for the answer. */
 function Progress() {
+  const { t } = useI18n();
+  const PROGRESS = t.progress.steps;
   const [step, setStep] = useState(0);
   useEffect(() => {
     const t = setInterval(() => setStep((s) => Math.min(s + 1, PROGRESS.length - 1)), 650);
@@ -49,7 +47,7 @@ function Progress() {
     <Card className="overflow-hidden">
       <div className="h-1 bg-accent-soft" aria-hidden>
         <motion.div
-          className="h-full origin-left bg-accent"
+          className="h-full origin-left bg-accent rtl:origin-right"
           initial={{ scaleX: 0.04 }}
           animate={{ scaleX: (step + 1) / (PROGRESS.length + 0.6) }}
           transition={{ duration: 0.6, ease: EASE_OUT }}
@@ -57,7 +55,7 @@ function Progress() {
       </div>
       <div className="p-6" aria-busy="true">
         <p className="text-small font-semibold text-ink" aria-live="polite">
-          Investigating… <span className="font-normal text-ink-3">step {step + 1} of {PROGRESS.length}</span>
+          {t.progress.title} <span className="font-normal text-ink-3">{t.progress.step(step + 1, PROGRESS.length)}</span>
         </p>
         <ul className="mt-4 space-y-3">
           {PROGRESS.map((label, i) => {
@@ -98,38 +96,44 @@ function Progress() {
 /** Hero headline: GSAP SplitText, characters rise out of a mask (nested gold spans are preserved). */
 function HeroHeadline() {
   const ref = useRef<HTMLHeadingElement>(null);
+  const { t, lang } = useI18n();
+  const h = t.hero.h1;
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const split = GsapSplitText.create(ref.current!, { type: "words,chars", mask: "words", charsClass: "hero-char" });
-        gsap.from(split.chars, { yPercent: 115, duration: 1.1, ease: "expo.out", stagger: 0.022, delay: 0.15 });
+        // Arabic letters join to each other, so Arabic animates word by word; Latin letter by letter.
+        const arabic = lang === "ar";
+        const split = GsapSplitText.create(ref.current!, arabic ? { type: "words", mask: "words" } : { type: "words,chars", mask: "words", charsClass: "hero-char" });
+        gsap.from(arabic ? split.words : split.chars, { yPercent: 115, duration: arabic ? 1 : 1.1, ease: "expo.out", stagger: arabic ? 0.08 : 0.022, delay: 0.15 });
         return () => split.revert();
       });
       return () => mm.revert();
     },
-    { scope: ref },
+    { scope: ref, dependencies: [lang], revertOnUpdate: true },
   );
   return (
     <h1
+      key={lang}
       ref={ref}
       className="text-balance font-display text-[44px] font-extrabold leading-[1.02] tracking-[-0.035em] text-white sm:text-[72px] lg:text-[88px]"
     >
-      Verify the <span className="text-[#d9b76e]">claim</span>,<br />
-      not just the <span className="text-[#d9b76e]">link</span>.
+      {h.a}<span className="text-[#d9b76e]">{h.claim}</span>{h.b}<br />
+      {h.c}<span className="text-[#d9b76e]">{h.link}</span>{h.d}
     </h1>
   );
 }
 
 const SCANS = [
-  { domain: "emiratesnbd-secure.co", level: "high" as const, verdict: "Possible Impersonation", note: "“emiratesnbd” plus extra words. The real domain is emiratesnbd.com" },
-  { domain: "emiratesp0st.ae", level: "high" as const, verdict: "Possible Impersonation", note: "A zero instead of the letter “o”. The real domain is emiratespost.ae" },
-  { domain: "dewa.gov.ae", level: "safe" as const, verdict: "Verified Match", note: "Official domain, confirmed by the Dubai government directory" },
+  { domain: "emiratesnbd-secure.co", level: "high" as const },
+  { domain: "emiratesp0st.ae", level: "high" as const },
+  { domain: "dewa.gov.ae", level: "safe" as const },
 ];
 
 /** Showpiece: domains "decrypt" and RAQEEB's verdict appears. Static under reduced motion. */
 function LiveScan() {
   const reduce = useReducedMotion();
+  const { t } = useI18n();
   const [i, setI] = useState(0);
   const [done, setDone] = useState(Boolean(reduce));
   useEffect(() => {
@@ -144,20 +148,20 @@ function LiveScan() {
       clearTimeout(next);
     };
   }, [i, reduce]);
-  const s = SCANS[i];
+  const s = { ...SCANS[i], verdict: SCANS[i].level === "high" ? t.scan.impersonation : t.scan.verified, note: t.scan.notes[i] };
   return (
-    <div className="relative overflow-hidden rounded-card border border-white/10 bg-white/[0.04] p-5 backdrop-blur-md sm:p-6" aria-label="Example domain checks">
+    <div className="relative overflow-hidden rounded-card border border-white/10 bg-white/[0.04] p-5 backdrop-blur-md sm:p-6" aria-label={t.scan.aria}>
       <div className="flex items-center justify-between text-[12px] uppercase tracking-[0.14em] text-white/50">
         <span className="flex items-center gap-2">
           <span className="relative flex h-2 w-2">
             {!reduce && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#d9b76e] opacity-60" />}
             <span className="relative inline-flex h-2 w-2 rounded-full bg-[#d9b76e]" />
           </span>
-          Live identity check · example
+          {t.scan.title}
         </span>
         <span className="font-mono normal-case tracking-normal text-white/40">{i + 1}/{SCANS.length}</span>
       </div>
-      <div className="mt-4 min-h-[36px] font-mono text-[20px] text-white sm:text-[24px]" aria-live="polite">
+      <div dir="ltr" className="mt-4 min-h-[36px] text-start font-mono text-[20px] text-white sm:text-[24px] rtl:text-end" aria-live="polite">
         {reduce ? (
           s.domain
         ) : (
@@ -190,27 +194,17 @@ function LiveScan() {
   );
 }
 
-const checks = [
-  { title: "Threat intelligence", weight: 30, body: "Google Safe Browsing and existing VirusTotal reports. A failed lookup is reported as missing, never as clean." },
-  { title: "Organization identity", weight: 25, body: "The claimed sender against a curated registry of official UAE domains, each backed by an authoritative source." },
-  { title: "Domain and URL", weight: 20, body: "Lookalike spellings, swapped characters, odd subdomains, domain age, the certificate and every redirect hop." },
-  { title: "Message content", weight: 15, body: "Requests for OTPs, card details or fees, and pressure tactics like deadlines and threats." },
-  { title: "Context", weight: 10, body: "How the pieces fit together, like a bank that asks for payment through a courier link." },
-];
-
-const steps = [
-  ["01", "Extract", "Links, the claimed organization and what the message asks you to do, including disguised links like hxxps://site[.]com."],
-  ["02", "Verify", "The claim against official domains from authoritative sources. Never search results or social media."],
-  ["03", "Check", "DNS, certificate, domain age and the full redirect chain, safely. Then Google Safe Browsing and VirusTotal."],
-  ["04", "Explain", "Fixed rules score the evidence. The AI only explains it, and it can't invent findings."],
-];
+const WEIGHTS = [30, 25, 20, 15, 10];
+const STEP_COUNT = 4;
 
 /** Pinned on desktop: the section holds while you scroll and the steps light up one by one. */
 function HowItWorks() {
   const root = useRef<HTMLDivElement>(null);
+  const { t } = useI18n();
+  const steps = t.how.steps;
   // Only the pinned desktop version steps through; elsewhere every step is shown as complete.
   const [pinned] = useState(() => window.matchMedia("(min-width: 1024px) and (prefers-reduced-motion: no-preference)").matches);
-  const [active, setActive] = useState(pinned ? 0 : steps.length - 1);
+  const [active, setActive] = useState(pinned ? 0 : STEP_COUNT - 1);
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
@@ -221,7 +215,7 @@ function HowItWorks() {
           end: "+=1400",
           pin: true,
           scrub: true,
-          onUpdate: (self) => setActive(Math.min(steps.length - 1, Math.floor(self.progress * steps.length))),
+          onUpdate: (self) => setActive(Math.min(STEP_COUNT - 1, Math.floor(self.progress * STEP_COUNT))),
         });
         gsap.fromTo(".how-progress", { scaleY: 0 }, { scaleY: 1, ease: "none", scrollTrigger: { trigger: root.current, start: "top top+=110", end: "+=1400", scrub: true } });
         return () => st.kill();
@@ -233,21 +227,21 @@ function HowItWorks() {
   return (
     <div ref={root} className="grid gap-12 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
       <div>
-        <Badge>How it works</Badge>
+        <Badge>{t.how.badge}</Badge>
         <h2 className="mt-4 font-display text-[36px] font-extrabold leading-[1.05] tracking-[-0.03em] text-ink sm:text-[52px]">
-          Evidence first.
+          {t.how.t1}
           <br />
-          <span className="text-accent">AI second.</span>
+          <span className="text-accent">{t.how.t2}</span>
         </h2>
         <p className="mt-5 max-w-[460px] text-lead text-ink-2">
-          Every verdict comes from fixed, published rules. The same input always gets the same answer, and every
-          finding shows its source.
+          {t.how.body}
         </p>
       </div>
-      <ol className="relative space-y-3 pl-8">
-        <span aria-hidden className="absolute bottom-2 left-[11px] top-2 w-px bg-line" />
-        <span aria-hidden className="how-progress absolute bottom-2 left-[11px] top-2 hidden w-px origin-top bg-accent lg:block" />
-        {steps.map(([num, title, body], i) => {
+      <ol className="relative space-y-3 ps-8">
+        <span aria-hidden className="absolute bottom-2 start-[11px] top-2 w-px bg-line" />
+        <span aria-hidden className="how-progress absolute bottom-2 start-[11px] top-2 hidden w-px origin-top bg-accent lg:block" />
+        {steps.map(({ title, body }, i) => {
+          const num = `0${i + 1}`;
           const on = i <= active;
           return (
             <li
@@ -262,7 +256,7 @@ function HowItWorks() {
             >
               <span
                 aria-hidden
-                className={`absolute -left-[29px] top-7 flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 transition-colors duration-500 ${
+                className={`absolute -start-[29px] top-7 flex h-[18px] w-[18px] items-center justify-center rounded-full border-2 transition-colors duration-500 ${
                   on ? "border-accent bg-accent" : "border-line-strong bg-canvas"
                 }`}
               >
@@ -306,12 +300,53 @@ function SectionTitle({ badge, title, lead }: { badge: string; title: string; le
   );
 }
 
-const STATS = [
-  { value: 26, suffix: "", label: "UAE organizations in the identity registry" },
-  { value: 5, suffix: "", label: "kinds of evidence behind every score" },
-  { value: 102, suffix: "", label: "automated tests, including SSRF and prompt injection" },
-  { value: 0, suffix: "", label: "messages stored. Ever." },
-];
+const STAT_VALUES = [26, 5, 102, 0];
+
+/** "Made for the UAE": 3D waving flag in a dark showcase, beside the registry story. */
+function MadeForUAE() {
+  const { t } = useI18n();
+  return (
+    <section className="relative overflow-hidden py-24 sm:py-32">
+      <Container>
+        <div className="grid items-center gap-12 lg:grid-cols-[1fr_1.05fr]">
+          <div>
+            <Reveal>
+              <Badge>{t.flag.badge}</Badge>
+            </Reveal>
+            <Reveal delay={0.05}>
+              <h2 className="mt-4 font-display text-[34px] font-extrabold leading-[1.1] tracking-[-0.03em] text-ink sm:text-[46px]">{t.flag.title}</h2>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="mt-5 max-w-[560px] text-lead text-ink-2">{t.flag.body}</p>
+            </Reveal>
+            <RevealGroup className="mt-7 flex flex-wrap gap-2" each={0.05}>
+              {t.flag.chips.map((c) => (
+                <motion.span key={c} variants={fadeUp} className="rounded-full border border-line bg-surface px-3.5 py-1.5 text-small font-medium text-ink-2">
+                  {c}
+                </motion.span>
+              ))}
+            </RevealGroup>
+            <Reveal delay={0.15}>
+              <p className="mt-7 flex items-center gap-2 text-small text-ink-3">
+                <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
+                {t.flag.disclaimer}
+              </p>
+            </Reveal>
+          </div>
+          <Reveal delay={0.1}>
+            <div data-theme="dark" className="grain relative aspect-[5/4] overflow-hidden rounded-[24px] border border-white/10 bg-shell-950 shadow-[0_50px_120px_-50px_rgba(217,183,110,0.45)]">
+              <div aria-hidden className="absolute inset-0 bg-[radial-gradient(60%_55%_at_40%_35%,rgba(217,183,110,0.18),transparent_70%)]" />
+              <Suspense fallback={null}>
+                <Flag3D />
+              </Suspense>
+              <div aria-hidden className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-shell-950 to-transparent" />
+            </div>
+          </Reveal>
+        </div>
+      </Container>
+    </section>
+  );
+}
 
 export function Dashboard() {
   const [busy, setBusy] = useState(false);
@@ -324,6 +359,7 @@ export function Dashboard() {
   const isDark = useIsDark();
   const heroRef = useRef<HTMLElement>(null);
   const pageRef = useRef<HTMLDivElement>(null);
+  const { t } = useI18n();
 
   useGSAP(
     () => {
@@ -426,7 +462,7 @@ export function Dashboard() {
               className="mx-auto inline-flex items-center gap-2 rounded-full border border-[#d9b76e]/30 bg-[#d9b76e]/[0.08] px-3.5 py-1.5 text-[13px] font-medium tracking-[0.02em] text-[#ecd6a3]"
             >
               <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-[#d9b76e]" />
-              Digital trust investigation for the UAE<span className="hidden sm:inline"> · AD Police x 42AD Hackathon 2026</span>
+              {t.hero.badge}<span className="hidden sm:inline">{t.hero.event}</span>
             </motion.p>
             <div className="mt-8">
               <HeroHeadline />
@@ -437,8 +473,7 @@ export function Dashboard() {
               transition={{ duration: 0.9, ease: EASE_OUT, delay: 0.75 }}
               className="mx-auto mt-8 max-w-[620px] text-[18px] leading-[30px] text-white/65 sm:text-[20px]"
             >
-              Paste a suspicious message or link. RAQEEB checks who it claims to be from, gathers the evidence, and
-              shows you exactly why it reached its verdict.
+              {t.hero.lead}
             </motion.p>
           </div>
 
@@ -457,7 +492,7 @@ export function Dashboard() {
             <motion.div initial={{ opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE_OUT, delay: 1.1 }} className="space-y-4">
               <LiveScan />
               <p className="px-1 text-[13px] leading-5 text-white/40">
-                Examples only. The scam domains are fictional; dewa.gov.ae is the real DEWA site.
+                {t.scan.footnote}
               </p>
             </motion.div>
           </div>
@@ -492,23 +527,25 @@ export function Dashboard() {
       <section className="border-b border-line bg-surface">
         <Container>
           <RevealGroup className="grid grid-cols-2 divide-line lg:grid-cols-4 lg:divide-x">
-            {STATS.map((s) => (
-              <motion.div key={s.label} variants={fadeUp} className="px-2 py-10 sm:px-8">
+            {STAT_VALUES.map((value, i) => (
+              <motion.div key={i} variants={fadeUp} className="px-2 py-10 sm:px-8">
                 <p className="font-display text-[44px] font-extrabold leading-none tracking-[-0.04em] text-ink sm:text-[56px]">
-                  <CountUp value={s.value} duration={1.4} />
-                  <span className="text-accent">{s.suffix}</span>
+                  <CountUp value={value} duration={1.4} />
                 </p>
-                <p className="mt-3 max-w-[220px] text-small text-ink-2">{s.label}</p>
+                <p className="mt-3 max-w-[220px] text-small text-ink-2">{t.stats[i]}</p>
               </motion.div>
             ))}
           </RevealGroup>
         </Container>
       </section>
 
+      {/* ───────── Made for the UAE (3D flag) ───────── */}
+      <MadeForUAE />
+
       {/* ───────── Scroll-velocity marquee ───────── */}
       <section aria-hidden className="overflow-hidden border-b border-line bg-canvas py-10 sm:py-14">
         <ScrollVelocity
-          texts={["Verify the claim", "Not just the link"]}
+          texts={t.marquee}
           velocity={40}
           numCopies={6}
           outlineAlternate
@@ -522,20 +559,21 @@ export function Dashboard() {
       <section id="checks" className="scroll-mt-32 py-24 sm:py-32">
         <Container>
           <SectionTitle
-            badge="What we check"
-            title="Five kinds of evidence. One transparent score."
-            lead="Each category adds a weighted share of the score. With too little evidence, RAQEEB says Unknown Risk instead of guessing."
+            key={t.checks.title}
+            badge={t.checks.badge}
+            title={t.checks.title}
+            lead={t.checks.lead}
           />
           <RevealGroup className="mt-14 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {checks.map((c, i) => (
-              <motion.div key={c.title} variants={fadeUp} className="flex">
+            {t.checks.items.map((c, i) => (
+              <motion.div key={i} variants={fadeUp} className="flex">
                 <SpotlightCard
                   theme={isDark ? "dark" : "light"}
                   spotlightColor={isDark ? "rgba(217, 183, 110, 0.22)" : "rgba(201, 165, 90, 0.28)"}
                   className={`flex w-full flex-col rounded-card border p-7 ${i === 1 ? "border-accent/30 !bg-accent-cream" : "border-line !bg-surface"}`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-display text-[40px] font-extrabold leading-none tracking-[-0.04em] text-accent">{c.weight}<span className="text-[22px]">%</span></span>
+                    <span className="font-display text-[40px] font-extrabold leading-none tracking-[-0.04em] text-accent"><span dir="ltr">{WEIGHTS[i]}<span className="text-[22px]">%</span></span></span>
                     <span className="font-mono text-badge text-ink-3">0{i + 1}</span>
                   </div>
                   <h3 className="mt-6 font-display text-card font-semibold text-ink">{c.title}</h3>
@@ -545,7 +583,7 @@ export function Dashboard() {
             ))}
             <motion.div variants={fadeUp} className="flex">
               <div className="flex w-full flex-col justify-between gap-6 rounded-card bg-shell-900 p-7 text-white">
-                <h3 className="font-display text-card font-semibold">Every report ends in one of six verdicts</h3>
+                <h3 className="font-display text-card font-semibold">{t.checks.verdictsTitle}</h3>
                 <div className="flex flex-wrap gap-2">
                   <RiskBadge level="safe" />
                   <RiskBadge level="low" />
@@ -554,7 +592,7 @@ export function Dashboard() {
                   <RiskBadge level="high" />
                   <RiskBadge level="unknown" />
                 </div>
-                <p className="text-small text-white/60">“Likely Safe” is the strongest RAQEEB ever says. It never claims 100%.</p>
+                <p className="text-small text-white/60">{t.checks.verdictsNote}</p>
               </div>
             </motion.div>
           </RevealGroup>
@@ -571,29 +609,29 @@ export function Dashboard() {
       {/* ───────── Sample report ───────── */}
       <section className="py-24 sm:py-32">
         <Container>
-          <SectionTitle badge="Sample report" title="When the claim doesn't match the link." />
+          <SectionTitle key={t.sample.title} badge={t.sample.badge} title={t.sample.title} />
           <div className="mt-12 [perspective:1200px]">
             <div className="tilt-in grid overflow-hidden rounded-[20px] border border-line bg-surface shadow-[0_40px_100px_-60px_rgba(27,29,36,0.5)] lg:grid-cols-[1fr_1.1fr]">
               <div className="p-8 sm:p-10">
                 <div className="flex flex-wrap items-center gap-3">
-                  <Badge>Illustration</Badge>
+                  <Badge>{t.sample.illustration}</Badge>
                   <RiskBadge level="high" />
                 </div>
                 <p className="mt-6 font-display text-[26px] font-semibold leading-[34px] tracking-[-0.02em] text-ink">
-                  The message claims to be from <span className="text-accent">Emirates NBD</span>. The link points somewhere else.
+                  {t.sample.text.a}<span className="text-accent">{t.sample.text.org}</span>{t.sample.text.b}
                 </p>
-                <p className="mt-4 text-small text-ink-3">Example domains for illustration only. Not a real investigation result.</p>
+                <p className="mt-4 text-small text-ink-3">{t.sample.disclaimer}</p>
               </div>
               <dl className="grid content-center gap-px bg-line">
                 {[
-                  ["Official domain", <Mono key="a">emiratesnbd.com</Mono>],
-                  ["Link in message", <Mono key="b">emiratesnbd<span className="rounded bg-risk-high-bg px-0.5 text-risk-high">-secure</span>.co</Mono>],
-                  ["Domain age", <span key="c">3 days</span>],
-                  ["Verification", <span key="d" className="font-semibold text-risk-high">Possible Impersonation</span>],
+                  [t.sample.rows[0], <Mono key="a">emiratesnbd.com</Mono>],
+                  [t.sample.rows[1], <Mono key="b">emiratesnbd<span className="rounded bg-risk-high-bg px-0.5 text-risk-high">-secure</span>.co</Mono>],
+                  [t.sample.rows[2], <span key="c">{t.sample.age}</span>],
+                  [t.sample.rows[3], <span key="d" className="font-semibold text-risk-high">{t.scan.impersonation}</span>],
                 ].map(([k, v]) => (
                   <div key={String(k)} className="flex items-center justify-between gap-4 bg-canvas px-8 py-5">
                     <dt className="text-ink-3">{k}</dt>
-                    <dd className="text-right text-body">{v}</dd>
+                    <dd className="text-end text-body">{v}</dd>
                   </div>
                 ))}
               </dl>
@@ -610,18 +648,13 @@ export function Dashboard() {
         <div aria-hidden className="absolute inset-0 bg-[radial-gradient(50%_60%_at_80%_0%,rgba(217,183,110,0.14),transparent_70%)]" />
         <Container className="relative">
           <div className="max-w-[760px]">
-            <span className="inline-flex rounded-control bg-[#d9b76e]/10 px-1.5 py-0.5 text-small text-[#ecd6a3]">Privacy</span>
+            <span className="inline-flex rounded-control bg-[#d9b76e]/10 px-1.5 py-0.5 text-small text-[#ecd6a3]">{t.privacy.badge}</span>
             <h2 className="mt-4 font-display text-[34px] font-extrabold leading-[1.08] tracking-[-0.03em] sm:text-[48px]">
-              Nothing is stored. <span className="text-[#d9b76e]">Here's what is shared.</span>
+              {t.privacy.t1}<span className="text-[#d9b76e]">{t.privacy.t2}</span>
             </h2>
           </div>
           <RevealGroup className="mt-14 grid gap-px overflow-hidden rounded-[20px] border border-white/10 bg-white/10 md:grid-cols-2">
-            {[
-              ["Stored", "Nothing. No accounts, no scan history, no analytics. Every investigation runs in memory and is gone."],
-              ["Domain checks", "Only links and domain names go to DNS, domain registries, Google Safe Browsing and VirusTotal (lookup only)."],
-              ["AI explanation", "Message text goes to Google Gemini only after names, phone numbers, emails, cards, Emirates ID and OTPs are masked."],
-              ["Browser extension", "Only the link you click is checked, on four messaging and email sites. Message text is never read."],
-            ].map(([title, body]) => (
+            {t.privacy.items.map(({ title, body }) => (
               <motion.div key={title} variants={fadeUp} className="rise-scrub bg-shell-950/90 p-8 backdrop-blur-sm">
                 <h3 className="font-display text-card font-semibold text-white">{title}</h3>
                 <p className="mt-2 text-body text-white/60">{body}</p>

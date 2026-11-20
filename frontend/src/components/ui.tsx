@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { useI18n } from "../lib/i18n";
 
 type ButtonVariant = "primary" | "secondary" | "ghost";
 
@@ -25,7 +26,7 @@ export function Button({
       {...props}
     >
       {children}
-      {arrow && <ArrowRight className="transition-transform duration-200 ease-out group-enabled:group-hover:translate-x-0.5" />}
+      {arrow && <ArrowRight className="transition-transform duration-200 ease-out rtl:-scale-x-100 group-enabled:group-hover:translate-x-0.5 rtl:group-enabled:group-hover:-translate-x-0.5" />}
     </button>
   );
 }
@@ -89,7 +90,7 @@ export function LinkMore({ href, children }: { href: string; children: ReactNode
   return (
     <a href={href} className="group inline-flex items-center gap-3 text-body text-accent hover:text-accent-strong">
       {children}
-      <Chevron className="transition-transform duration-200 group-hover:translate-x-0.5" />
+      <Chevron className="transition-transform duration-200 rtl:-scale-x-100 group-hover:translate-x-0.5" />
     </a>
   );
 }
@@ -115,7 +116,8 @@ const riskStyles: Record<RiskLevel, { label: string; cls: string; dot: string }>
 
 /** Risk is always shown as colour + text, never colour alone. */
 export function RiskBadge({ level }: { level: RiskLevel }) {
-  const s = riskStyles[level];
+  const { t } = useI18n();
+  const s = { ...riskStyles[level], label: t.risk[level] };
   return (
     <span
       className={`inline-flex items-center gap-1.5 rounded-control px-2 py-1 text-small font-medium ${s.cls}`}
@@ -127,7 +129,8 @@ export function RiskBadge({ level }: { level: RiskLevel }) {
 }
 
 export function Mono({ children }: { children: ReactNode }) {
-  return <code className="font-mono text-[0.92em]">{children}</code>;
+  // Domains and URLs always read left-to-right, also inside Arabic text.
+  return <code dir="ltr" className="font-mono text-[0.92em] [unicode-bidi:isolate]">{children}</code>;
 }
 
 /** Centred page container with 24px gutters (16px on phones). */

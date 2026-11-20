@@ -1,8 +1,8 @@
 # RAQEEB (رقيب): Verify the claim, not just the link
 
-RAQEEB is an AI-assisted **digital trust investigation** tool for the UAE. Paste a suspicious message or link, or just click a link in WhatsApp Web with the RAQEEB Chrome extension. RAQEEB checks **who the message claims to be from**, gathers evidence about the link, and explains its verdict in plain English.
+RAQEEB is an AI-assisted **digital trust investigation** tool for the UAE. Paste a suspicious message or link, or just click a link in WhatsApp Web with the RAQEEB Chrome extension. RAQEEB checks **who the message claims to be from**, gathers evidence about the link, and explains its verdict in plain English or Arabic.
 
-Built for the **AD Police x 42AD Hackathon 2026** · English-only MVP · Student project, not affiliated with any government entity.
+Built for the **AD Police x 42AD Hackathon 2026** · English and Arabic website (full right-to-left layout) · Student project, not affiliated with any government entity.
 
 - Technical documentation: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 - Presenter script: [docs/DEMO.md](docs/DEMO.md) · Chrome extension: [docs/EXTENSION.md](docs/EXTENSION.md) · Team setup: [docs/TEAM_SETUP.md](docs/TEAM_SETUP.md)
@@ -147,7 +147,10 @@ docs/       ARCHITECTURE, DEMO, EXTENSION, TEAM_SETUP, PLAN, MASTER_PLAN, design
 - **GSAP** and **@gsap/react**: GreenSock Standard "no charge" license (https://gsap.com/standard-license). Used for the hero text split, scroll-pinned sections and the smooth-scroll ticker.
 - **Lenis** (MIT): smooth scrolling, by darkroom.engineering.
 - **React Bits** by David Haz (MIT + Commons Clause): LightRays, Particles, DecryptedText, ScrollReveal, ScrollVelocity, SpotlightCard and Magnet, copied into `frontend/src/components/bits/` with attribution (see the README there).
+- **Three.js** (MIT): the animated 3D UAE flag in the "Made for the UAE" section (the flag is drawn in code; no image assets).
 - **Motion** (MIT): UI transitions. **Tailwind CSS**, **React**, **FastAPI** and the Python libraries listed in `backend/pyproject.toml`, all open-source.
-- Fonts: Inter, Roboto and JetBrains Mono (SIL Open Font License, via Google Fonts).
+- Fonts: Inter, Roboto, JetBrains Mono, Noto Kufi Arabic (Arabic headings) and IBM Plex Sans Arabic (Arabic body text), all SIL Open Font License, via Google Fonts.
+
+Language: English or Arabic (globe button in the header, remembered per browser). In Arabic the whole layout flips right-to-left; links, domains and code stay left-to-right so they read correctly. Verdicts, summaries, labels and advice are translated; the engine's detailed evidence lines are still in English and are marked as such.
 
 Light and dark themes (toggle in the header, remembered per browser, follows the system setting by default). All animation respects the operating system's "reduce motion" setting: smooth scrolling, pinning and text effects switch off.
