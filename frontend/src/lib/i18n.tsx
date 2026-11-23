@@ -1,6 +1,6 @@
 // Language (English / Arabic) with right-to-left layout for Arabic.
 // The initial lang/dir is set by an inline script in index.html before first paint.
-import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { ar, en, type Messages } from "./messages";
 
@@ -26,6 +26,12 @@ export function LangProvider({ children }: { children: ReactNode }) {
     }
     setTimeout(() => ScrollTrigger.refresh(), 150); // layout flips, so scroll positions change
   }, []);
+  // Tab title and description follow the language too.
+  useEffect(() => {
+    const t = lang === "ar" ? ar : en;
+    document.title = t.brand.title;
+    document.querySelector('meta[name="description"]')?.setAttribute("content", t.brand.description);
+  }, [lang]);
   return <Ctx.Provider value={{ lang, t: lang === "ar" ? ar : en, setLang }}>{children}</Ctx.Provider>;
 }
 

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion, useScroll, useSpring } from "motion/react";
 import { Dashboard } from "./pages/Dashboard";
 import { EASE_OUT } from "./components/motion";
 import { Container } from "./components/ui";
@@ -76,9 +76,11 @@ function ThemeToggle({ onDark }: { onDark: boolean }) {
 }
 
 function Logo({ dark }: { dark: boolean }) {
+  const { t, lang } = useI18n();
+  const reduce = useReducedMotion();
   return (
-    <a href="/" className={`group flex items-center gap-3 transition-colors duration-500 ${dark ? "text-white" : "text-ink"}`} aria-label="RAQEEB home">
-      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden className="transition-transform duration-300 ease-out group-hover:rotate-[-8deg]">
+    <a href="/" className={`group flex items-center gap-2 transition-colors duration-500 sm:gap-3 ${dark ? "text-white" : "text-ink"}`} aria-label={t.brand.home}>
+      <svg width="44" height="44" viewBox="0 0 44 44" aria-hidden className="h-9 w-9 shrink-0 transition-transform duration-300 ease-out group-hover:rotate-[-8deg] sm:h-11 sm:w-11">
         <motion.circle
           cx="22"
           cy="22"
@@ -93,23 +95,44 @@ function Logo({ dark }: { dark: boolean }) {
         <circle cx="20" cy="20" r="8" fill="none" stroke="currentColor" strokeWidth="2.5" />
         <path d="m26 26 6.5 6.5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" />
       </svg>
-      <span className="flex flex-col leading-none">
-        <span className="font-display text-[20px] font-extrabold tracking-[0.06em]">
-          RAQEEB
-        </span>
-        <span className={`mt-1 text-[13px] font-medium transition-colors duration-500 ${dark ? "text-white/50" : "text-ink-3"}`} lang="ar">
-          رقيب
-        </span>
-      </span>
+      {/* One name only, in the site's language. It glides in when the language changes. */}
+      <motion.span
+        key={lang}
+        lang={lang}
+        initial={reduce ? false : { opacity: 0, y: 6, filter: "blur(4px)" }}
+        animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+        transition={{ duration: 0.45, ease: EASE_OUT }}
+        className={
+          lang === "ar"
+            ? "font-['Noto_Kufi_Arabic'] text-[20px] font-bold leading-none sm:text-[24px]"
+            : "font-display text-[17px] font-extrabold leading-none tracking-[0.05em] sm:text-[21px] sm:tracking-[0.06em]"
+        }
+      >
+        {t.brand.name}
+      </motion.span>
     </a>
   );
 }
 
 const NAV = ["investigate", "protect", "checks", "how", "privacy"] as const;
 
+/** Thin gold line along the header's bottom edge: how far down the page you are. */
+function ScrollProgress() {
+  const { scrollYProgress } = useScroll();
+  const reduce = useReducedMotion();
+  const spring = useSpring(scrollYProgress, { stiffness: 140, damping: 30, mass: 0.4 });
+  return (
+    <motion.span
+      aria-hidden
+      style={{ scaleX: reduce ? scrollYProgress : spring }}
+      className="pointer-events-none absolute inset-x-5 -bottom-px h-px origin-left rounded-full bg-gradient-to-r from-transparent via-[#d9b76e] to-[#ecd6a3] rtl:origin-right rtl:bg-gradient-to-l"
+    />
+  );
+}
+
 export default function App() {
   useSmoothScroll();
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   // Header is dark glass over the dark hero, and turns into the white card once you scroll past it.
   const [overHero, setOverHero] = useState(true);
   const [scrolled, setScrolled] = useState(false);
@@ -136,7 +159,7 @@ export default function App() {
       {/* Floating header */}
       <div id="site-header" className="sticky top-0 z-20 px-2 pt-3 sm:px-6 sm:pt-5">
         <header
-          className={`mx-auto flex max-w-[1376px] items-center justify-between rounded-panel border px-4 backdrop-blur-xl transition-[height,background-color,border-color,box-shadow] duration-500 ease-out sm:px-5 ${
+          className={`relative mx-auto flex max-w-[1376px] items-center justify-between rounded-panel border px-4 backdrop-blur-xl transition-[height,background-color,border-color,box-shadow] duration-500 ease-out sm:px-5 ${
             scrolled ? "h-[64px] sm:h-[76px]" : "h-[72px] sm:h-24"
           } ${
             dark
@@ -144,6 +167,7 @@ export default function App() {
               : "border-line bg-surface/90 shadow-[0_14px_40px_-18px_rgba(27,29,36,0.28)]"
           }`}
         >
+          <ScrollProgress />
           <Logo dark={dark} />
           <nav className="hidden items-center gap-8 md:flex">
             {NAV.map((k) => (
@@ -187,8 +211,16 @@ export default function App() {
             <p className="mt-2">{t.footer.d2}</p>
           </div>
         </Container>
-        <div aria-hidden dir="ltr" className="pointer-events-none select-none px-4 pb-6 text-center font-[Inter] text-[22vw] font-extrabold leading-[0.8] tracking-[-0.05em] text-gold-sheen opacity-90 sm:px-6">
-          RAQEEB
+        <div
+          aria-hidden
+          lang={lang}
+          className={`pointer-events-none select-none px-4 pb-6 text-center text-gold-sheen opacity-90 sm:px-6 ${
+            lang === "ar"
+              ? "font-['Noto_Kufi_Arabic'] text-[24vw] font-extrabold leading-[1.05]"
+              : "font-[Inter] text-[22vw] font-extrabold leading-[0.8] tracking-[-0.05em]"
+          }`}
+        >
+          {t.brand.name}
         </div>
       </footer>
     </div>

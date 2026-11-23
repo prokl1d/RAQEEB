@@ -67,7 +67,7 @@ export function EvidenceSheet({ result, message, onClose }: { result: Investigat
 
   const plain = useMemo(() => {
     const L: string[] = [];
-    L.push(`RAQEEB · ${P.title}`, `${P.ref}: ${ref}`, `${P.prepared}: ${prepared}`, "");
+    L.push(`${t.brand.name} · ${P.title}`, `${P.ref}: ${ref}`, `${P.prepared}: ${prepared}`, "");
     L.push(`${P.verdict}: ${t.risk[level]} · ${P.score(result.score.score)}`);
     L.push(`${P.what}: ${P.kinds[result.type] ?? result.type}`);
     L.push(`${P.claimed}: ${claimed.length ? claimed.map((c) => c.name).join(", ") : P.none}`);
@@ -132,7 +132,7 @@ export function EvidenceSheet({ result, message, onClose }: { result: Investigat
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d9b76e" strokeWidth="2.2" aria-hidden><circle cx="11" cy="11" r="7" /><path d="m20 20-3.5-3.5" /></svg>
               </span>
               <div>
-                <p className="font-display text-[20px] font-extrabold tracking-[0.04em]">RAQEEB · رقيب</p>
+                <p className={lang === "ar" ? "font-['Noto_Kufi_Arabic'] text-[22px] font-bold" : "font-display text-[20px] font-extrabold tracking-[0.04em]"}>{t.brand.name}</p>
                 <p className="text-small text-[#ecd6a3]">{P.title}</p>
               </div>
             </div>
