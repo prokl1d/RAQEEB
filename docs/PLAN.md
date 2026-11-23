@@ -86,7 +86,6 @@ Everything runs in memory for each request. Each step returns typed `Evidence` i
 
 ```
 RAQEEB/
-├─ CLAUDE.md
 ├─ README.md
 ├─ .env.example
 ├─ docs/            MASTER_PLAN.md, PLAN.md, ARCHITECTURE.md, API.md, DEMO.md, design-research/

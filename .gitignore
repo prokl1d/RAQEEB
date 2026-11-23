@@ -44,3 +44,6 @@ docs/design-research/*.jpeg
 
 # OCR engine and language data, copied from node_modules by scripts/copy-ocr.mjs
 frontend/public/ocr/
+
+# Local assistant notes (kept on this computer, not published)
+CLAUDE.md
