@@ -3,6 +3,7 @@
 // The icon is drawn from Feather-style SVG paths and turned into gold "tubes" (3D strokes).
 // Pauses when off-screen; a single still frame under prefers-reduced-motion. Decorative (aria-hidden).
 import { useEffect, useRef } from "react";
+import { useNearViewport } from "../lib/useNearViewport";
 import * as THREE from "three";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { SVGLoader } from "three/examples/jsm/loaders/SVGLoader.js";
@@ -57,14 +58,16 @@ function iconTubes(icon: EmblemIcon, size: number, radius: number, mat: THREE.Ma
 
 export default function Emblem3D({ icon, className = "" }: { icon: EmblemIcon; className?: string }) {
   const mount = useRef<HTMLDivElement>(null);
+  // The WebGL scene only exists while this is on or near the screen (see useNearViewport).
+  const near = useNearViewport(mount);
 
   useEffect(() => {
     const el = mount.current;
-    if (!el) return;
+    if (!el || !near) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
@@ -221,9 +224,10 @@ export default function Emblem3D({ icon, className = "" }: { icon: EmblemIcon; c
       envRT.dispose();
       pmrem.dispose();
       renderer.dispose();
+      renderer.forceContextLoss(); // release the WebGL context right away
       renderer.domElement.remove();
     };
-  }, [icon]);
+  }, [icon, near]);
 
   return <div ref={mount} className={`relative h-full w-full ${className}`} aria-hidden="true" dir="ltr" />;
 }

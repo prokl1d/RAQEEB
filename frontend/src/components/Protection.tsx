@@ -7,6 +7,7 @@ import { Badge, Button, Container, Mono } from "./ui";
 import { EASE_OUT, Reveal, RevealGroup, RiskGauge, fadeUp } from "./motion";
 import Particles from "./bits/Particles";
 import ScrollReveal from "./bits/ScrollReveal";
+import { NearMount } from "./NearMount";
 import { CALL_EXAMPLES } from "./InvestigationInput";
 import {
   checkLinks,
@@ -258,9 +259,9 @@ export function SearchShield() {
 
   return (
     <section id="shield" data-theme="dark" className="grain relative scroll-mt-28 overflow-hidden bg-shell-950 py-24 text-white sm:py-32">
-      <div aria-hidden className="absolute inset-0 opacity-60">
-        <Particles particleColors={["#d9b76e", "#f3dfae", "#a8863f"]} particleCount={90} particleSpread={12} speed={0.04} particleBaseSize={60} alphaParticles moveParticlesOnHover={false} glow={0.6} twinkle={0.5} pixelRatio={1} />
-      </div>
+      <NearMount className="absolute inset-0 opacity-70">
+        <Particles particleColors={["#d9b76e", "#f3dfae", "#a8863f"]} particleCount={140} particleSpread={12} speed={0.05} particleBaseSize={64} alphaParticles moveParticlesOnHover particleHoverFactor={0.3} glow={0.65} twinkle={0.5} pixelRatio={1} />
+      </NearMount>
       <div aria-hidden className="absolute inset-0 bg-[radial-gradient(45%_55%_at_85%_10%,rgba(217,183,110,0.16),transparent_70%)]" />
       <Container className="relative">
         <div className="grid items-center gap-12 lg:grid-cols-[1.15fr_0.85fr]">

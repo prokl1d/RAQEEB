@@ -3,6 +3,7 @@
 // Proportion 1:2. Never mirrored, also in right-to-left (Arabic) mode.
 // Pauses when off-screen; static under prefers-reduced-motion. Decorative (aria-hidden).
 import { useEffect, useRef } from "react";
+import { useNearViewport } from "../lib/useNearViewport";
 import * as THREE from "three";
 
 const COLORS = { red: "#ef3340", green: "#009739", white: "#ffffff", black: "#1b1b1f" }; // black lifted to charcoal so the stripe stays visible on the dark showcase
@@ -41,14 +42,16 @@ function flagTexture(): THREE.CanvasTexture {
 
 export default function Flag3D({ className = "" }: { className?: string }) {
   const mount = useRef<HTMLDivElement>(null);
+  // The WebGL scene only exists while this is on or near the screen (see useNearViewport).
+  const near = useNearViewport(mount);
 
   useEffect(() => {
     const el = mount.current;
-    if (!el) return;
+    if (!el || !near) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: "low-power" });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.75));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
@@ -162,9 +165,10 @@ export default function Flag3D({ className = "" }: { className?: string }) {
       tex.dispose();
       gold.dispose();
       renderer.dispose();
+      renderer.forceContextLoss(); // release the WebGL context right away
       renderer.domElement.remove();
     };
-  }, []);
+  }, [near]);
 
   return <div ref={mount} className={`relative h-full w-full ${className}`} aria-hidden="true" dir="ltr" />;
 }

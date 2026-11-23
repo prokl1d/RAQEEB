@@ -5,6 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText as GsapSplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
 import { InvestigationInput, type InputPreset } from "../components/InvestigationInput";
+import { NearMount } from "../components/NearMount";
 import { CallCheck, ListingCheck, ProtectIntro, SearchShield } from "../components/Protection";
 import { Report } from "../components/Report";
 import { Badge, Card, Container, Mono, RiskBadge } from "../components/ui";
@@ -663,9 +664,9 @@ export function Dashboard() {
 
       {/* ───────── Privacy (dark) ───────── */}
       <section id="privacy" data-theme="dark" className="grain relative scroll-mt-32 overflow-hidden bg-shell-950 py-24 text-white sm:py-32">
-        <div aria-hidden className="absolute inset-0 opacity-70">
-          <Particles particleColors={["#d9b76e", "#f3dfae", "#a8863f"]} particleCount={110} particleSpread={12} speed={0.04} particleBaseSize={60} alphaParticles moveParticlesOnHover={false} glow={0.6} twinkle={0.5} pixelRatio={1} />
-        </div>
+        <NearMount className="absolute inset-0 opacity-70">
+          <Particles particleColors={["#d9b76e", "#f3dfae", "#a8863f"]} particleCount={140} particleSpread={12} speed={0.05} particleBaseSize={64} alphaParticles moveParticlesOnHover particleHoverFactor={0.3} glow={0.65} twinkle={0.5} pixelRatio={1} />
+        </NearMount>
         <div aria-hidden className="absolute inset-0 bg-[radial-gradient(50%_60%_at_80%_0%,rgba(217,183,110,0.14),transparent_70%)]" />
         <Container className="relative">
           <div className="max-w-[760px]">
