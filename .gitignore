@@ -41,3 +41,6 @@ docs/design-research/*.jpeg
 *.egg-info/
 .pytest_cache/
 *.tsbuildinfo
+
+# OCR engine and language data, copied from node_modules by scripts/copy-ocr.mjs
+frontend/public/ocr/

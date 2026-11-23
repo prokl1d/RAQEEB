@@ -196,9 +196,18 @@ The score is a **risk assessment, not a probability of fraud**, and RAQEEB never
 | Listing check | `POST /api/check-listing`, `GET /api/listing-demo` | `pipeline/listing.py`. Name → claimed organization (English or Arabic names); website → Search Shield check; phone → official numbers in the registry (`phones`, with `phone_source` from the organization's own website). Weights: identity 45, phone 35, website 20; coverage < 40% or no known organization → `needs_verification`. Addresses are never claimed as checked. |
 | Link Guard on search pages | extension `search.js` → background `raqeeb-domains` → `/api/check-links` | Sends only `scheme://host` of each result; search words are never read. Ads are resolved through `data-pcu`. Switch in the popup. |
 
+## 7c. Tools that run in the browser
+
+| Tool | Where | How |
+|---|---|---|
+| QR codes | `frontend/src/lib/imageScan.ts` | `jsQR` on the uploaded image (several sizes) or on live camera frames. A decoded link becomes a link investigation; other text becomes a message. |
+| Screenshot text | `frontend/src/lib/imageScan.ts` | `tesseract.js` with English + Arabic language data served from `/ocr` (copied from `node_modules` by `scripts/copy-ocr.mjs` before `dev` and `build`). No CDN, no upload; the user can correct the text before investigating. |
+| Evidence sheet | `frontend/src/components/EvidenceSheet.tsx` | Built from the investigation result on the device. Print stylesheet produces one A4 page. Reference number from `crypto.getRandomValues`. Marked "not an Abu Dhabi Police document". |
+| Spot the scam | `frontend/src/components/ScamQuiz.tsx`, `lib/quizItems.ts` | 8 messages × 2 languages. Each was run through the engine to confirm its verdict matches the quiz answer; this found and fixed a missing rule for "new number" family scams. |
+
 ## 8. Testing
 
-**132 automated backend tests** (`pytest`):
+**136 automated backend tests** (`pytest`):
 - extraction (defanged links, emails, file names, punycode);
 - lookalike detection for each match type;
 - the three demo scenarios end to end;

@@ -34,9 +34,26 @@ def test_arabic_normalisation_keeps_length():
      {"remote-app", "transfer", "secrecy"}),
     ("Pay with Google Play cards and stay on the line", {"gift-card", "secrecy"}),
     ("He told me not to hang up and not to tell anyone", {"secrecy"}),
+    ("Hi Mum, this is my new number. Can you transfer AED 2,000 to this account today? Please don't tell Dad.",
+     {"new-number", "transfer", "secrecy"}),
+    ("مرحبًا أمي، هذا رقمي الجديد. هل يمكنك تحويل 2000 درهم إلى هذا الحساب اليوم؟ لا تخبري أبي.",
+     {"new-number", "transfer", "secrecy"}),
 ])
 def test_call_and_arabic_rules(text, expected):
     assert expected <= rules(text)
+
+
+def test_family_new_number_scam_is_high_risk():
+    for text in ("Hi Mum, this is my new number. My phone broke. Can you transfer AED 2,000 to this account today? Please don't tell Dad.",
+                 "مرحبًا أمي، هذا رقمي الجديد، هاتفي تعطّل. هل يمكنك تحويل 2000 درهم إلى هذا الحساب اليوم؟ لا تخبري أبي."):
+        body = client.post("/api/investigate", json={"type": "message", "message": text}).json()
+        assert body["score"]["band"] == "High Risk", (text, body["score"])
+
+
+def test_genuine_bank_alert_stays_low():
+    body = client.post("/api/investigate", json={"type": "message", "message": (
+        "AED 120.00 was spent on your card ending 4471 at Carrefour. If this wasn't you, call us on 600 54 0000.")}).json()
+    assert body["score"]["band"] in ("Low Risk", "Likely Safe")
 
 
 def test_harmless_texts_raise_nothing():

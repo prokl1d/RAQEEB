@@ -33,6 +33,10 @@ All three work offline in demo mode.
 2. **Describe a call:** click "Bank + remote app" or the Arabic police story. The report shows who they claimed to be, what they asked for, the pressure tricks, and the official number to call back (with its source), plus AD Police Aman 800 2626.
 3. **Listing check:** click "Impersonating listing" (High Risk: wrong website and wrong phone), then "Consistent listing" (Likely Safe), then "Incomplete listing" (Needs verification: RAQEEB never accuses without evidence).
 
+4. **Screenshot or QR:** open the **Image** tab and drop a screenshot of a scam SMS (English or Arabic) or a QR code. Point out that it is read on the device; then start the investigation.
+5. **Report to AD Police:** on any High Risk report, click **Report to AD Police**: a one-page evidence sheet with a reference number, ready to print, copy or send to Aman (800 2626 / SMS 2828).
+6. **Spot the scam:** let a judge answer two quiz messages; the red flags light up, and "Check it with RAQEEB" runs the engine.
+
 Extension bonus: with Link Guard v0.3.2 installed, search Google for "Emirates NBD login" and the real results get badges.
 
 ## Live mode (optional, needs internet)

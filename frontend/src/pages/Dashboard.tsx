@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import { InvestigationInput, type InputPreset } from "../components/InvestigationInput";
 import { NearMount } from "../components/NearMount";
 import { CallCheck, ListingCheck, ProtectIntro, SearchShield } from "../components/Protection";
+import { ScamQuiz } from "../components/ScamQuiz";
 import { Report } from "../components/Report";
 import { Badge, Card, Container, Mono, RiskBadge } from "../components/ui";
 import { CountUp, EASE_OUT, Reveal, RevealGroup, fadeUp } from "../components/motion";
@@ -302,7 +303,7 @@ function SectionTitle({ badge, title, lead }: { badge: string; title: string; le
   );
 }
 
-const STAT_VALUES = [26, 5, 132, 0];
+const STAT_VALUES = [26, 5, 136, 0];
 
 /** "Made for the UAE": 3D waving flag in a dark showcase, beside the registry story. */
 function MadeForUAE() {
@@ -550,7 +551,7 @@ export function Dashboard() {
       </section>
 
       {/* ───────── Protection everywhere: Search Shield, calls, listings ───────── */}
-      <ProtectIntro />
+      <ProtectIntro onOpenImage={() => setPreset({ tab: "screenshot", value: "", nonce: Date.now() })} />
       <SearchShield />
       <CallCheck
         onTry={(story) => {
@@ -560,6 +561,12 @@ export function Dashboard() {
         onDescribe={() => openInput("call", "")}
       />
       <ListingCheck />
+      <ScamQuiz
+        onCheck={(text) => {
+          setPreset({ tab: "message", value: text, nonce: Date.now() });
+          run({ type: "message", message: text });
+        }}
+      />
 
       {/* ───────── Made for the UAE (3D flag) ───────── */}
       <MadeForUAE />

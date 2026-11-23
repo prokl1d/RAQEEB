@@ -223,3 +223,17 @@ html.lenis, html.lenis body { height: auto; }
 @media (prefers-reduced-motion: reduce) {
   .wave-bar { animation: none; transform: scaleY(0.6); }
 }
+
+/* Printing the evidence sheet ("Report to AD Police"): only the sheet, on white paper. */
+@media print {
+  @page { margin: 12mm; }
+  html, body { background: #fff !important; color-scheme: light !important; height: auto !important; overflow: visible !important; }
+  body > *:not(.raqeeb-print-root) { display: none !important; }
+  body::before, body::after { display: none !important; }
+  .raqeeb-print-root { position: static !important; inset: auto !important; display: block !important; padding: 0 !important; background: #fff !important; backdrop-filter: none !important; overflow: visible !important; }
+  .raqeeb-print-root .no-print { display: none !important; }
+  .raqeeb-print-root .print-sheet { max-width: none !important; transform: none !important; opacity: 1 !important; zoom: 0.86; }
+  .raqeeb-print-root .sheet-row, .raqeeb-print-root footer { break-inside: avoid; }
+  .raqeeb-print-root article { box-shadow: none !important; border-radius: 0 !important; }
+  .raqeeb-print-root * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

@@ -85,15 +85,22 @@ const INTRO_ICONS: Record<string, ReactNode> = {
   shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M8.5 12l2.5 2.5 4.5-5" />,
   call: <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />,
   listing: <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z M15 10a3 3 0 1 1-6 0 3 3 0 1 1 6 0z" />,
+  image: <path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3" />,
+  report: <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M9 13h6M9 17h6" />,
+  quiz: <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20z" />,
 };
 
-export function ProtectIntro() {
+export function ProtectIntro({ onOpenImage }: { onOpenImage: () => void }) {
   const { t } = useI18n();
   const P = t.protect;
+  const X = t.tools.intro;
   const items = [
-    { id: "shield", label: P.shield.badge, title: P.shield.title },
-    { id: "call", label: P.call.badge, title: P.call.title },
-    { id: "listing", label: P.listing.badge, title: P.listing.title },
+    { id: "shield", href: "#shield", label: P.shield.badge, title: P.shield.title },
+    { id: "call", href: "#call", label: P.call.badge, title: P.call.title },
+    { id: "listing", href: "#listing", label: P.listing.badge, title: P.listing.title },
+    { id: "image", href: "#investigate", label: X.image[0], title: X.image[1] },
+    { id: "report", href: "#investigate", label: X.report[0], title: X.report[1] },
+    { id: "quiz", href: "#quiz", label: X.quiz[0], title: X.quiz[1] },
   ];
   return (
     <section id="protect" className="scroll-mt-32 pb-10 pt-24 sm:pt-32">
@@ -121,7 +128,8 @@ export function ProtectIntro() {
           {items.map((it) => (
             <motion.a
               key={it.id}
-              href={`#${it.id}`}
+              href={it.href}
+              onClick={it.id === "image" ? onOpenImage : undefined}
               variants={fadeUp}
               className="group relative flex flex-col gap-4 overflow-hidden rounded-card border border-line bg-surface p-6 transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-accent/50 hover:shadow-[0_24px_50px_-30px_rgba(146,114,42,0.55)]"
             >

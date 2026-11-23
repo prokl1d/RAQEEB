@@ -83,9 +83,18 @@ RULES = [
     Rule("transfer", "Asks you to transfer money to another account",
          "No bank or police unit asks you to move money to a 'safe account'. That money goes to the scammer.",
          _r(r"\b(transfer|move|send)\b[^.\n]{0,25}\b(money|funds|balance|savings|amount)\b|"
+            r"\b(transfer|send|wire)\b[^.\n]{0,15}?\b(aed|dhs?|dirhams?|usd|\$)\s?\d[\d,]*(\.\d+)?|"
+            r"\b(transfer|send|wire)\b[^.\n]{0,15}?\b\d[\d,]*(\.\d+)?\s?(aed|dhs?|dirhams?)\b|"
             r"\b(safe|secure|protected|temporary)\s+account\b",
             r"(حوّ?ل|حولي|تحويل|انقل|نقل)\s+(ال)?(مبلغ|فلوس|اموال|رصيد|مبالغ)|"
-            r"(حوّ?ل|تحويل)\s+(فلوسك|رصيدك|اموالك)|حساب (امن|مؤقت|محمي)")),
+            r"(حوّ?ل|تحويل)\s+(فلوسك|رصيدك|اموالك)|حساب (امن|مؤقت|محمي)|"
+            r"(حوّ?ل|حولي|تحويل|ارسل|ارسلي|ابعث|ابعثي)[^.\n]{0,15}?\d[\d,.]*\s*(درهم|دراهم)")),
+    Rule("new-number", "Claims to be someone you know, on a new number",
+         "A 'new number' message from a family member or friend who then asks for money is a common scam. "
+         "Call them on the number you already have.",
+         _r(r"\b(this\s+is\s+my\s+new\s+number|my\s+new\s+number|i\s+(have|got)\s+a\s+new\s+number|"
+            r"(lost|broke)\s+my\s+phone)\b",
+            r"رقمي الجديد|هذا رقمي|رقم جديد|(ضاع|انكسر|تعطل|تعطّل) (هاتفي|جوالي|تلفوني)")),
     Rule("gift-card", "Asks for payment in gift cards",
          "Real organizations never take payment in gift cards; once the code is shared the money is gone.",
          _r(r"\b(gift\s*cards?|itunes\s+cards?|google\s+play\s+cards?|steam\s+cards?|voucher\s+codes?)\b",
@@ -94,7 +103,8 @@ RULES = [
          "Scammers isolate victims so nobody can warn them. A real organization lets you hang up and call back.",
          _r(r"\b(don'?t|do\s+not|not\s+to)\s+(tell|inform)\b|\b(keep\s+(this|it)\s+(secret|confidential)|"
             r"stay\s+on\s+the\s+line|(don'?t|do\s+not|not\s+to)\s+hang\s+up)\b",
-            r"لا (تخبر|تقول|تبلغ|تكلم)\s+(احد|اي|حد)|لا تغلق (الخط|المكالمه)|خليك (علي|ع) الخط|لا تسكر")),
+            r"لا (تخبر|تخبري|تبلغ|تبلغي)\b|لا (تقول|تقولي|تكلم|تكلمي)\s+(لاحد|احد|اي|حد)|"
+            r"لا تغلق (الخط|المكالمه)|خليك (علي|ع) الخط|لا تسكر")),
     Rule("authority", "Uses a fake legal case or police threat",
          "Police and courts don't settle cases by phone, and never ask for payments or codes to close them.",
          _r(r"\b(money\s+laundering|arrest\s+warrant|court\s+case|case\s+(number|against\s+you)|"
@@ -109,7 +119,7 @@ RULES = [
 
 # Requests that directly lead to money or account loss (used by scoring).
 HIGH_IMPACT_RULES = {"otp", "card", "credentials", "fee", "remote-app", "transfer", "gift-card", "personal-id"}
-PRESSURE_RULES = {"urgency", "threat", "secrecy", "authority"}
+PRESSURE_RULES = {"urgency", "threat", "secrecy", "authority", "new-number"}
 
 
 def analyze_content(text: str) -> list[Evidence]:

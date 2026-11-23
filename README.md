@@ -53,6 +53,9 @@ RAQEEB runs an **investigation**, not a guess:
 **More places scams hide** (all offline, no extra API keys):
 - **Search Shield:** labels every search result or ad as *Official site*, *Impersonation*, *Warning signs* or *Not in registry*, on the website and, through Link Guard, on real Google and Bing results pages. Only site addresses are checked; search words are never sent.
 - **Describe a call:** the user writes what a caller said, in English or Arabic. RAQEEB finds who the caller claimed to be, what they asked for (OTP, a remote-control app like AnyDesk, a "safe account" transfer, gift cards, Emirates ID) and the pressure tricks (secrecy, fake police cases, threats), then gives the official number to call back, with its source, and the Abu Dhabi Police Aman service. Nothing is recorded.
+- **Screenshots and QR codes:** drop, paste or photograph an image. A QR code is decoded and its link checked; otherwise the text is read with OCR in English and Arabic. Both run **inside the browser**: the image never leaves the device, and only the link or text the user confirms is checked.
+- **Report to AD Police:** every report has a button that builds a one-page evidence sheet (verdict, domains and redirects, red flags, the message, official contacts and a reference number) to print, save as PDF, copy, or send to the Aman service (800 2626, SMS 2828). It is made on the device and clearly marked as not a police document.
+- **Spot the scam:** a one-minute quiz with 8 realistic UAE messages in English and Arabic. Each answer highlights the red flags, and "Check it with RAQEEB" runs the real engine on the same message (every quiz answer matches the engine's verdict).
 - **Business listing check:** compares a map listing's name, website and phone number with the organization's official domains and phone numbers. A listing that copies a bank's name with its own number and website comes out High Risk; incomplete listings get *Needs verification*, never an accusation.
 
 ## 3. Technical choices and why
@@ -85,7 +88,6 @@ Privacy:
 
 ## 4. What we left out, and what we'd do next
 
-- **Screenshot investigations (OCR):** designed (local Tesseract, then the same pipeline) but not built in time.
 - **More verified registry entries:** only DEWA, Emirates Post and u.ae have authoritative sources so far. Next would be verifying the banks against the Central Bank register.
 - **Phones:** a "Share → RAQEEB" button (an Android share target plus an iPhone Shortcut). This needs RAQEEB hosted online.
 - **Arabic engine output:** the interface, verdicts, advice and Arabic red-flag rules are done; the detailed evidence lines are still written in English.
@@ -132,7 +134,7 @@ Open http://localhost:5173. Use the **Try an example** buttons, or paste your ow
 
 **Chrome extension:** open `chrome://extensions`, turn on **Developer mode**, then **Load unpacked** and pick the `extension` folder. Details in [docs/EXTENSION.md](docs/EXTENSION.md).
 
-**Tests** (132 backend tests):
+**Tests** (136 backend tests):
 
 ```powershell
 cd backend

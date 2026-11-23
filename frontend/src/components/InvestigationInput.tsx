@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { EASE_OUT } from "./motion";
 import type { InvestigateRequest } from "../lib/api";
 import { Button } from "./ui";
 import { useI18n } from "../lib/i18n";
+import { ImageCheck } from "./ImageCheck";
 
 type Tab = "url" | "message" | "call" | "screenshot";
 
@@ -39,7 +40,7 @@ export const CALL_EXAMPLES: string[] = [
 ];
 
 /** Lets another part of the page fill the box (e.g. "Try a story"). `nonce` changes on every request. */
-export type InputPreset = { tab: "message" | "call" | "url"; value: string; nonce: number };
+export type InputPreset = { tab: "message" | "call" | "url" | "screenshot"; value: string; nonce: number };
 
 const field =
   "w-full rounded-control border border-line-strong bg-surface px-4 py-3 text-body text-ink placeholder:text-ink-3 outline-none transition-shadow duration-200 focus:border-accent focus:shadow-[0_0_0_3px_rgba(146,114,42,0.3)]";
@@ -62,13 +63,15 @@ export function InvestigationInput({
   const [url, setUrl] = useState(initial?.type === "url" ? initial.url : "");
   const [message, setMessage] = useState(initial?.type === "message" ? initial.message : "");
   const [story, setStory] = useState(initial?.type === "call" ? initial.message : "");
-  const [file, setFile] = useState<File | null>(null);
+  const [imageReq, setImageReq] = useState<InvestigateRequest | null>(null);
+  const onImage = useCallback((r: InvestigateRequest | null) => setImageReq(r), []);
   const { t } = useI18n();
   const L = t.input;
 
   useEffect(() => {
     if (!preset) return;
     setTab(preset.tab);
+    if (preset.tab === "screenshot") return;
     if (preset.tab === "url") setUrl(preset.value);
     else if (preset.tab === "call") setStory(preset.value);
     else setMessage(preset.value);
@@ -77,10 +80,12 @@ export function InvestigationInput({
   const ready =
     (tab === "url" && url.trim().length > 0) ||
     (tab === "message" && message.trim().length > 0) ||
-    (tab === "call" && story.trim().length > 0);
+    (tab === "call" && story.trim().length > 0) ||
+    (tab === "screenshot" && imageReq !== null);
 
   function submit() {
     if (!ready || busy) return;
+    if (tab === "screenshot") return imageReq && onSubmit(imageReq);
     onSubmit(tab === "url" ? { type: "url", url } : tab === "call" ? { type: "call", message: story } : { type: "message", message });
   }
 
@@ -173,23 +178,7 @@ export function InvestigationInput({
           </label>
         )}
 
-        {tab === "screenshot" && (
-          <div>
-            <label className="flex cursor-pointer flex-col items-center justify-center gap-1 rounded-panel border-2 border-dashed border-line-strong bg-canvas px-4 py-10 text-center hover:border-accent">
-              <span className="text-body font-semibold text-ink">{file ? file.name : L.chooseShot}</span>
-              <span className="text-small text-ink-3">{L.shotTypes}</span>
-              <input
-                type="file"
-                accept="image/png,image/jpeg,image/webp"
-                className="sr-only"
-                onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-              />
-            </label>
-            <p className="mt-2 text-small text-ink-3">
-              {L.shotSoon}
-            </p>
-          </div>
-        )}
+        {tab === "screenshot" && <ImageCheck onRequest={onImage} />}
         </motion.div>
 
         {(tab === "message" || tab === "url") && (

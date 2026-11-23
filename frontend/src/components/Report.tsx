@@ -4,6 +4,7 @@ import { EASE_OUT, RiskGauge, fadeUp, stagger } from "./motion";
 import type { Evidence, EvidenceStatus, InvestigationResult, RiskBand } from "../lib/api";
 import { Badge, Card, Mono, RiskBadge, type RiskLevel } from "./ui";
 import { useI18n } from "../lib/i18n";
+import { EvidenceSheet } from "./EvidenceSheet";
 
 const bandLevel: Record<RiskBand, RiskLevel> = {
   "Likely Safe": "safe",
@@ -177,6 +178,8 @@ export function Report({ result, message }: { result: InvestigationResult; messa
   const outcome = R.outcomes[identity.outcome] ?? identity.outcome;
   // In Arabic, headline and advice come from the translated set (the engine writes English).
   const isCall = result.type === "call" && !!result.call;
+  const [sheet, setSheet] = useState(false);
+  const risky = level === "high" || level === "moderate";
   const C = t.protect.callReport;
   // Calls use call-specific wording in both languages; otherwise Arabic uses the translated set.
   const headline = isCall ? C.headline[level] : ar ? R.headline[level] : (ai.explanation?.summary ?? identity.summary);
@@ -245,6 +248,25 @@ export function Report({ result, message }: { result: InvestigationResult; messa
         )}
       </Card>
       </motion.div>
+
+      {/* Report to AD Police: printable evidence sheet, made on this device */}
+      <motion.div variants={fadeUp} className="flex flex-col gap-3 rounded-card border border-accent/30 bg-accent-cream px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-small text-accent-strong">
+          <span className="font-semibold">{t.tools.pack.title}</span> · {t.tools.pack.privacy}
+        </p>
+        <button
+          onClick={() => setSheet(true)}
+          className={`group inline-flex h-11 shrink-0 cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-control px-4 text-body font-semibold transition-[background-color,box-shadow,transform] duration-200 active:scale-[0.98] ${
+            risky ? "bg-accent text-on-accent hover:bg-accent-hover hover:shadow-[0_6px_18px_-8px_rgba(146,114,42,0.55)]" : "border-2 border-accent text-accent hover:bg-surface"
+          }`}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" aria-hidden>
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><path d="M12 8v5M12 16v.01" />
+          </svg>
+          {t.tools.pack.open}
+        </button>
+      </motion.div>
+      {sheet && <EvidenceSheet result={result} message={message} onClose={() => setSheet(false)} />}
 
       {isCall && (
         <motion.div variants={fadeUp}>
