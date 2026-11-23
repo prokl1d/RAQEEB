@@ -18,6 +18,29 @@ export function scrollToTarget(target: string | HTMLElement, offset = -96) {
 }
 
 export function useSmoothScroll() {
+  // Pinned and scrubbed sections store their scroll positions when they are created. Content that
+  // arrives later (sample search results, listings, reports, lazy 3D scenes) makes the page taller,
+  // which would leave a pinned section (How it works) fixed in the wrong place on top of others.
+  // Whenever the page height really changes, recalculate every ScrollTrigger.
+  useEffect(() => {
+    let last = document.documentElement.scrollHeight;
+    let timer = 0;
+    const ro = new ResizeObserver(() => {
+      clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        const h = document.documentElement.scrollHeight;
+        if (Math.abs(h - last) < 2) return;
+        ScrollTrigger.refresh();
+        last = document.documentElement.scrollHeight; // after refresh (pin spacers included)
+      }, 150);
+    });
+    ro.observe(document.body);
+    return () => {
+      clearTimeout(timer);
+      ro.disconnect();
+    };
+  }, []);
+
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reduce) return;
