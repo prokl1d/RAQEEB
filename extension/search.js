@@ -91,6 +91,7 @@
       "border-radius:999px", `background:${bg}`, `color:${fg}`, `box-shadow:0 0 0 1px ${fg}40`,
       "font:600 12px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif", "letter-spacing:0", "vertical-align:middle",
       "max-width:100%", "white-space:nowrap", "overflow:hidden", "text-overflow:ellipsis",
+      "direction:ltr", "unicode-bidi:isolate",
     ].join(";");
     const mark = document.createElement("span");
     mark.textContent = "R";
@@ -123,28 +124,35 @@
       a.setAttribute(ATTR, "done");
       if (!c || c.verdict === "invalid") continue;
       const holder = document.createElement("div");
-      holder.style.cssText = "display:block;line-height:0;direction:ltr;text-align:left;unicode-bidi:isolate";
+      holder.style.cssText = "display:block;line-height:0;text-align:start";
       holder.append(badge(c));
       a.insertAdjacentElement("afterend", holder);
-      // Some Google layouts mirror a container with transform: scaleX(-1). Undo it for our badge,
-      // otherwise its text reads backwards.
-      if (isMirrored(holder)) holder.style.transform = "scaleX(-1)";
+      // Some Google layouts flip or rotate containers (scaleX(-1), rotate(180deg), ...).
+      // Cancel exactly what the ancestors do, so the badge always reads normally.
+      const fix = inverseOfAncestors(holder);
+      if (fix) holder.style.transform = fix;
     }
   }
 
-  /** True if an odd number of ancestors flip their content horizontally. */
-  function isMirrored(el) {
-    let flips = 0;
+  /** CSS matrix that cancels the combined rotation/flip of all ancestors, or "" if none. */
+  function inverseOfAncestors(el) {
+    let m = new DOMMatrix();
     for (let e = el.parentElement; e && e !== document.documentElement; e = e.parentElement) {
       const t = getComputedStyle(e).transform;
       if (!t || t === "none") continue;
       try {
-        if (new DOMMatrixReadOnly(t).a < 0) flips++;
+        const d = new DOMMatrix(t);
+        m = new DOMMatrix([d.a, d.b, d.c, d.d, 0, 0]).multiply(m); // linear part only
       } catch {
         /* ignore */
       }
     }
-    return flips % 2 === 1;
+    const { a, b, c, d } = m;
+    if (Math.abs(a - 1) < 1e-3 && Math.abs(d - 1) < 1e-3 && Math.abs(b) < 1e-3 && Math.abs(c) < 1e-3) return "";
+    const det = a * d - b * c;
+    if (Math.abs(det) < 1e-6) return "";
+    const inv = [d / det, -b / det, -c / det, a / det].map((v) => Math.round(v * 1000) / 1000);
+    return `matrix(${inv.join(",")},0,0)`;
   }
 
   let timer = 0;
