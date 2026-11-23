@@ -123,10 +123,28 @@
       a.setAttribute(ATTR, "done");
       if (!c || c.verdict === "invalid") continue;
       const holder = document.createElement("div");
-      holder.style.cssText = "display:block;line-height:0";
+      holder.style.cssText = "display:block;line-height:0;direction:ltr;text-align:left;unicode-bidi:isolate";
       holder.append(badge(c));
       a.insertAdjacentElement("afterend", holder);
+      // Some Google layouts mirror a container with transform: scaleX(-1). Undo it for our badge,
+      // otherwise its text reads backwards.
+      if (isMirrored(holder)) holder.style.transform = "scaleX(-1)";
     }
+  }
+
+  /** True if an odd number of ancestors flip their content horizontally. */
+  function isMirrored(el) {
+    let flips = 0;
+    for (let e = el.parentElement; e && e !== document.documentElement; e = e.parentElement) {
+      const t = getComputedStyle(e).transform;
+      if (!t || t === "none") continue;
+      try {
+        if (new DOMMatrixReadOnly(t).a < 0) flips++;
+      } catch {
+        /* ignore */
+      }
+    }
+    return flips % 2 === 1;
   }
 
   let timer = 0;

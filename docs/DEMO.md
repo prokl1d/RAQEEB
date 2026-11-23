@@ -33,7 +33,7 @@ All three work offline in demo mode.
 2. **Describe a call:** click "Bank + remote app" or the Arabic police story. The report shows who they claimed to be, what they asked for, the pressure tricks, and the official number to call back (with its source), plus AD Police Aman 800 2626.
 3. **Listing check:** click "Impersonating listing" (High Risk: wrong website and wrong phone), then "Consistent listing" (Likely Safe), then "Incomplete listing" (Needs verification: RAQEEB never accuses without evidence).
 
-Extension bonus: with Link Guard v0.3.0 installed, search Google for "Emirates NBD login" and the real results get badges.
+Extension bonus: with Link Guard v0.3.1 installed, search Google for "Emirates NBD login" and the real results get badges.
 
 ## Live mode (optional, needs internet)
 
