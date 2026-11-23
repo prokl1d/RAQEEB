@@ -28,7 +28,7 @@ Version 0.2 asks for two permissions:
 
 1. **Click guard** (`content.js`): listens on the page's outermost level in the capture phase, so it runs before the app's own click handling. It also works when you click an icon inside a link, or a link inside a shadow DOM. Gmail, Outlook SafeLinks and WhatsApp/Facebook redirect wrappers are unwrapped to the real destination.
 2. **New-tab safety net** (`background.js`): if one of the four sites opens a new tab to an outside link by itself, that tab is sent to the RAQEEB check page before the site loads.
-3. **Search Shield** (`search.js`, v0.3.2): on Google (`google.com`, `google.ae`) and Bing results pages, each result and ad gets a RAQEEB badge: Official site, In registry, Impersonation, Warning signs or Not in registry. Hover for the reason. Only each result's site address (`https://host`) goes to your RAQEEB server, through the background worker; the search words are never read. Turn it off with "Mark fake sites in Google and Bing results" in the popup.
+3. **Search Shield** (`search.js`, v0.3.3): on Google (`google.com`, `google.ae`) and Bing results pages, each result and ad gets a RAQEEB badge: Official site, In registry, Impersonation, Warning signs or Not in registry. Hover for the reason. Only each result's site address (`https://host`) goes to your RAQEEB server, through the background worker; the search words are never read. Turn it off with "Mark fake sites in Google and Bing results" in the popup.
 
 ## Live demo
 
@@ -44,6 +44,10 @@ Version 0.2 asks for two permissions:
 ```powershell
 $env:CORS_ORIGINS='["http://localhost:5173","http://localhost:5174"]'
 ```
+
+## After updating the extension
+
+Chrome keeps the old copy of an extension's script in tabs that were already open. Since v0.3.3 Link Guard handles this itself: on install or update it puts a fresh copy into open WhatsApp, Gmail, Outlook and Telegram tabs, and an outdated copy never blocks a click (the link simply opens). If a tab still seems unprotected, refresh it once.
 
 ## Limits (say these honestly if judges ask)
 

@@ -124,7 +124,29 @@ if (chrome.webNavigation) chrome.webNavigation.onBeforeNavigate.addListener(asyn
 
 chrome.tabs.onRemoved.addListener((tabId) => pending.delete(tabId));
 
+// After an install or update, tabs that were already open still run the old copy of the click
+// guard (Chrome doesn't refresh them). Put a fresh copy into them so links keep working without
+// refreshing WhatsApp, Gmail, Outlook or Telegram.
+async function reinjectIntoOpenTabs() {
+  if (!chrome.scripting) return;
+  const tabs = await chrome.tabs.query({
+    url: [
+      "https://web.whatsapp.com/*",
+      "https://web.telegram.org/*",
+      "https://mail.google.com/*",
+      "https://outlook.live.com/*",
+      "https://outlook.office.com/*",
+      "https://outlook.office365.com/*",
+    ],
+  });
+  for (const tab of tabs) {
+    if (tab.id === undefined) continue;
+    chrome.scripting.executeScript({ target: { tabId: tab.id, allFrames: true }, files: ["content.js"] }).catch(() => {});
+  }
+}
+
 chrome.runtime.onInstalled.addListener(async () => {
+  reinjectIntoOpenTabs();
   const cur = await chrome.storage.sync.get(["enabled", "backend", "autoContinue", "searchBadges"]);
   await chrome.storage.sync.set({
     enabled: cur.enabled ?? true,

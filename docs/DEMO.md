@@ -37,7 +37,7 @@ All three work offline in demo mode.
 5. **Report to AD Police:** on any High Risk report, click **Report to AD Police**: a one-page evidence sheet with a reference number, ready to print, copy or send to Aman (800 2626 / SMS 2828).
 6. **Spot the scam:** let a judge answer two quiz messages; the red flags light up, and "Check it with RAQEEB" runs the engine.
 
-Extension bonus: with Link Guard v0.3.2 installed, search Google for "Emirates NBD login" and the real results get badges.
+Extension bonus: with Link Guard v0.3.3 installed, search Google for "Emirates NBD login" and the real results get badges.
 
 ## Live mode (optional, needs internet)
 
