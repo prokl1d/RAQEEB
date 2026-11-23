@@ -57,6 +57,24 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
     chrome.action.setBadgeTextColor?.({ tabId: sender.tab.id, color: "#ffffff" });
     return;
   }
+  if (msg?.type === "raqeeb-domains" && Array.isArray(msg.links)) {
+    // Search Shield: site addresses only (scheme + host), never the search words.
+    const links = msg.links.filter((x) => typeof x === "string" && /^https?:\/\/[^/?#]+$/.test(x)).slice(0, 25);
+    if (!links.length) return sendResponse([]);
+    chrome.storage.sync
+      .get("backend")
+      .then(({ backend }) =>
+        fetch((backend || "http://localhost:8000").replace(/\/$/, "") + "/api/check-links", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ links }),
+        }),
+      )
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => sendResponse(data))
+      .catch(() => sendResponse(null));
+    return true;
+  }
   if (msg?.type !== "raqeeb-check" || typeof msg.url !== "string") return;
   const opts = { url: checkPage(msg.url), active: true };
   if (sender.tab?.index !== undefined) opts.index = sender.tab.index + 1;
@@ -107,9 +125,10 @@ if (chrome.webNavigation) chrome.webNavigation.onBeforeNavigate.addListener(asyn
 chrome.tabs.onRemoved.addListener((tabId) => pending.delete(tabId));
 
 chrome.runtime.onInstalled.addListener(async () => {
-  const cur = await chrome.storage.sync.get(["enabled", "backend", "autoContinue"]);
+  const cur = await chrome.storage.sync.get(["enabled", "backend", "autoContinue", "searchBadges"]);
   await chrome.storage.sync.set({
     enabled: cur.enabled ?? true,
+    searchBadges: cur.searchBadges ?? true,
     backend: cur.backend ?? "http://localhost:8000",
     autoContinue: cur.autoContinue ?? true,
   });

@@ -105,7 +105,7 @@ function Logo({ dark }: { dark: boolean }) {
   );
 }
 
-const NAV = ["investigate", "checks", "how", "privacy"] as const;
+const NAV = ["investigate", "protect", "checks", "how", "privacy"] as const;
 
 export default function App() {
   useSmoothScroll();

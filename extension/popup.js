@@ -1,4 +1,4 @@
-const ids = ["enabled", "autoContinue", "backend"];
+const ids = ["enabled", "autoContinue", "searchBadges", "backend"];
 const el = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
 const status = document.getElementById("status");
 
@@ -22,12 +22,14 @@ async function ping(backend) {
 chrome.storage.sync.get(ids).then((s) => {
   el.enabled.checked = s.enabled !== false;
   el.autoContinue.checked = s.autoContinue !== false;
+  el.searchBadges.checked = s.searchBadges !== false;
   el.backend.value = s.backend || "http://localhost:8000";
   ping(el.backend.value);
 });
 
 el.enabled.onchange = () => chrome.storage.sync.set({ enabled: el.enabled.checked });
 el.autoContinue.onchange = () => chrome.storage.sync.set({ autoContinue: el.autoContinue.checked });
+el.searchBadges.onchange = () => chrome.storage.sync.set({ searchBadges: el.searchBadges.checked });
 el.backend.onchange = () => {
   const v = el.backend.value.trim();
   if (!/^https?:\/\//.test(v)) return;

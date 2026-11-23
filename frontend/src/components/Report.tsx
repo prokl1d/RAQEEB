@@ -112,6 +112,62 @@ function HighlightedMessage({ text, evidence }: { text: string; evidence: Eviden
   );
 }
 
+/** For a described phone call: who they claimed to be, what they asked for, and how to check officially. */
+function CallSummary({ result }: { result: InvestigationResult }) {
+  const { t } = useI18n();
+  const C = t.protect.callReport;
+  const call = result.call!;
+  const chips = (keys: string[], tone: string) =>
+    keys.map((k) => (
+      <span key={k} className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-small font-medium ${tone}`}>
+        <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-current" />
+        {C.rules[k] ?? k}
+      </span>
+    ));
+  return (
+    <Card className="overflow-hidden">
+      <div className="grid gap-px bg-line md:grid-cols-3">
+        <div className="bg-surface p-6">
+          <Badge>{C.claimed}</Badge>
+          <p className="mt-3 font-display text-card font-semibold text-ink">{call.claimed.length ? call.claimed.join(", ") : C.nobody}</p>
+        </div>
+        <div className="bg-surface p-6">
+          <Badge>{C.askedFor}</Badge>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {call.asked_for.length ? chips(call.asked_for, "bg-risk-high-bg text-risk-high") : <span className="text-body text-ink-2">{C.nothingAsked}</span>}
+          </div>
+        </div>
+        <div className="bg-surface p-6">
+          <Badge>{C.pressure}</Badge>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {call.pressure.length ? chips(call.pressure, "bg-risk-moderate-bg text-risk-moderate") : <span className="text-body text-ink-2">{C.noPressure}</span>}
+          </div>
+        </div>
+      </div>
+      <div className="grid gap-4 border-t border-line bg-accent-cream p-6 md:grid-cols-[1fr_auto] md:items-center">
+        <div className="space-y-2">
+          {call.contacts.map((c) =>
+            c.phones.length ? (
+              <p key={c.org_id} className="text-body text-accent-strong">
+                <span className="font-semibold">{C.callBack}</span> · {c.org_name}:{" "}
+                <span dir="ltr" className="font-mono font-semibold [unicode-bidi:isolate]">{c.phones.join(" / ")}</span>
+                {c.source && (
+                  <a href={c.source} target="_blank" rel="noreferrer" className="ms-2 text-small text-accent underline underline-offset-2">
+                    {C.source}
+                  </a>
+                )}
+              </p>
+            ) : (
+              <p key={c.org_id} className="text-body text-accent-strong">{C.noPhone(c.org_name)}</p>
+            ),
+          )}
+          <p className="text-small text-accent-strong/80">{C.aman}</p>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 export function Report({ result, message }: { result: InvestigationResult; message?: string }) {
   const { score, identity, ai } = result;
   const level = bandLevel[score.band];
@@ -120,8 +176,13 @@ export function Report({ result, message }: { result: InvestigationResult; messa
   const ar = lang === "ar";
   const outcome = R.outcomes[identity.outcome] ?? identity.outcome;
   // In Arabic, headline and advice come from the translated set (the engine writes English).
-  const headline = ar ? R.headline[level] : (ai.explanation?.summary ?? identity.summary);
-  const actions = ar && R.actions ? R.actions[level] : (ai.explanation?.recommended_actions ?? []);
+  const isCall = result.type === "call" && !!result.call;
+  const C = t.protect.callReport;
+  // Calls use call-specific wording in both languages; otherwise Arabic uses the translated set.
+  const headline = isCall ? C.headline[level] : ar ? R.headline[level] : (ai.explanation?.summary ?? identity.summary);
+  const actions = isCall
+    ? (C.actions[level] ?? C.actions.low)
+    : ar && R.actions ? R.actions[level] : (ai.explanation?.recommended_actions ?? []);
   const aiNotes = new Map(ai.explanation?.points.map((p) => [p.evidence_id, p.explanation]) ?? []);
   const missing = result.evidence.filter((e) => e.status === "missing");
   const claimed = identity.claimed[0];
@@ -129,7 +190,7 @@ export function Report({ result, message }: { result: InvestigationResult; messa
 
   return (
     <motion.section aria-label={R.aria} className="space-y-6" initial="hidden" animate="show" variants={stagger(0.08)}>
-      {result.check_mode === "fixture" && (
+      {result.check_mode === "fixture" && result.urls.length > 0 && (
         <motion.div variants={fadeUp} className="rounded-panel border border-accent/30 bg-accent-cream px-4 py-3 text-small text-accent-strong">
           <strong className="font-semibold">{R.demo.strong}</strong>{R.demo.rest}
         </motion.div>
@@ -155,10 +216,12 @@ export function Report({ result, message }: { result: InvestigationResult; messa
             <h2 className="mt-4 text-[28px] font-extrabold leading-[36px] tracking-[-0.6px] text-ink sm:text-h3">
               {headline}
             </h2>
-            <p className={`mt-3 text-lead font-medium ${outcomeTone[identity.outcome]}`}>
-              {outcome}
-              {!ar && <span className="font-normal text-ink-2"> · {identity.summary}</span>}
-            </p>
+            {!isCall && (
+              <p className={`mt-3 text-lead font-medium ${outcomeTone[identity.outcome]}`}>
+                {outcome}
+                {!ar && <span className="font-normal text-ink-2"> · {identity.summary}</span>}
+              </p>
+            )}
           </div>
           <div className="flex justify-center md:justify-end">
             <RiskGauge
@@ -182,6 +245,12 @@ export function Report({ result, message }: { result: InvestigationResult; messa
         )}
       </Card>
       </motion.div>
+
+      {isCall && (
+        <motion.div variants={fadeUp}>
+          <CallSummary result={result} />
+        </motion.div>
+      )}
 
       <motion.div variants={fadeUp} className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
         {/* Identity */}
@@ -285,7 +354,7 @@ export function Report({ result, message }: { result: InvestigationResult; messa
       <motion.div variants={fadeUp} className="grid gap-6 lg:grid-cols-2">
         {message && (
           <Card className="p-6">
-            <Badge>{R.message}</Badge>
+            <Badge>{isCall ? C.described : R.message}</Badge>
             <div className="mt-4">
               <div dir="auto">
                 <HighlightedMessage text={message} evidence={result.evidence} />

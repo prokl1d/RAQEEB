@@ -8,6 +8,7 @@ from pydantic import BaseModel, Field
 class InvestigationType(str, Enum):
     url = "url"
     message = "message"
+    call = "call"  # the user describes a phone call or situation in their own words
     screenshot = "screenshot"
 
 

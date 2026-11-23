@@ -25,7 +25,7 @@ IDENTITY_RISK = {
     IdentityOutcome.no_relationship: 80,
     IdentityOutcome.verified_match: 0,
 }
-HIGH_IMPACT_CONTENT = {"otp", "card", "credentials", "fee"}
+from app.pipeline.content import HIGH_IMPACT_RULES as HIGH_IMPACT_CONTENT, PRESSURE_RULES  # noqa: E402
 
 
 class CategoryScore(BaseModel):
@@ -156,6 +156,9 @@ def score_investigation(
         elif claimed_any and not has_urls and content_rules & HIGH_IMPACT_CONTENT:
             risk = max(risk, 70)
             reasons.append("it names an organization and asks for money or sensitive details")
+        elif not has_urls and content_rules & HIGH_IMPACT_CONTENT and content_rules & PRESSURE_RULES:
+            risk = max(risk, 60)
+            reasons.append("it asks for money or sensitive details while applying pressure")
         results[Category.context] = (True, True, risk,
                                      ("Context: " + "; ".join(reasons) + ".") if reasons else "Nothing unusual in how the pieces fit together.")
 

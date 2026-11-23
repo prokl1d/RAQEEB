@@ -50,6 +50,11 @@ RAQEEB runs an **investigation**, not a guess:
 - Likely Safe and Low Risk links open after a 3-second countdown.
 - Risky ones are stopped with the reasons.
 
+**More places scams hide** (all offline, no extra API keys):
+- **Search Shield:** labels every search result or ad as *Official site*, *Impersonation*, *Warning signs* or *Not in registry*, on the website and, through Link Guard, on real Google and Bing results pages. Only site addresses are checked; search words are never sent.
+- **Describe a call:** the user writes what a caller said, in English or Arabic. RAQEEB finds who the caller claimed to be, what they asked for (OTP, a remote-control app like AnyDesk, a "safe account" transfer, gift cards, Emirates ID) and the pressure tricks (secrecy, fake police cases, threats), then gives the official number to call back, with its source, and the Abu Dhabi Police Aman service. Nothing is recorded.
+- **Business listing check:** compares a map listing's name, website and phone number with the organization's official domains and phone numbers. A listing that copies a bank's name with its own number and website comes out High Risk; incomplete listings get *Needs verification*, never an accusation.
+
 ## 3. Technical choices and why
 
 | Choice | Why | Trade-off |
@@ -83,7 +88,10 @@ Privacy:
 - **Screenshot investigations (OCR):** designed (local Tesseract, then the same pipeline) but not built in time.
 - **More verified registry entries:** only DEWA, Emirates Post and u.ae have authoritative sources so far. Next would be verifying the banks against the Central Bank register.
 - **Phones:** a "Share → RAQEEB" button (an Android share target plus an iPhone Shortcut). This needs RAQEEB hosted online.
-- **Arabic interface and Arabic message analysis.**
+- **Arabic engine output:** the interface, verdicts, advice and Arabic red-flag rules are done; the detailed evidence lines are still written in English.
+- **Live call protection** needs phone makers or telecom operators (phones don't let apps listen to calls). **Deepfake audio/video checks** need trained models; left as future research.
+- **Scam-pattern intelligence for AD Police** (opt-in, domains and numbers only, no user data): designed, not built, because RAQEEB stores nothing today.
+- **Official phone numbers** are on file for 4 organizations so far (Emirates NBD, Emirates Post, DEWA, AD Police Aman), each taken from the organization's own website.
 - **Hosting and HTTPS deployment**, plus a Chrome Web Store release of the extension.
 - **Tuning the weights on real labelled scam data.** Today they're expert-set, not statistically validated. The score is a risk assessment, not a probability.
 - **Done differently:** we'd start the registry verification and API access (Safe Browsing, Gemini) on day one; both took longer than expected.
@@ -124,7 +132,7 @@ Open http://localhost:5173. Use the **Try an example** buttons, or paste your ow
 
 **Chrome extension:** open `chrome://extensions`, turn on **Developer mode**, then **Load unpacked** and pick the `extension` folder. Details in [docs/EXTENSION.md](docs/EXTENSION.md).
 
-**Tests** (102 backend tests):
+**Tests** (132 backend tests):
 
 ```powershell
 cd backend

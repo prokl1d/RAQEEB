@@ -13,7 +13,7 @@ from pydantic import BaseModel
 from app.ai.provider import AIResult, explain
 from app.config import settings
 from app.models import Evidence, InvestigationType
-from app.pipeline.content import analyze_content
+from app.pipeline.content import HIGH_IMPACT_RULES, PRESSURE_RULES, analyze_content
 from app.pipeline.domains import analyze_url_structure
 from app.pipeline.extract import ParsedUrl, extract_urls, validate_message, validate_url
 from app.pipeline.technical import mode as check_mode, run_checks, to_evidence
@@ -42,6 +42,22 @@ class IdentitySummary(BaseModel):
     claimed: list[OrgRef]
 
 
+class OfficialContact(BaseModel):
+    org_id: str
+    org_name: str
+    phones: list[str]
+    domains: list[str]
+    source: str | None  # where the phone numbers were taken from
+
+
+class CallInsight(BaseModel):
+    """Structured summary for a described call or situation (the website translates it)."""
+    claimed: list[str]  # organization names the caller claimed to be
+    asked_for: list[str]  # rule keys: otp, card, remote-app, transfer, ...
+    pressure: list[str]  # rule keys: urgency, threat, secrecy, authority
+    contacts: list[OfficialContact]  # how to reach the claimed organizations officially
+
+
 class Disclosure(BaseModel):
     """Which outside services received what, for this investigation (shown to the user)."""
     service: str
@@ -58,6 +74,7 @@ class InvestigationResult(BaseModel):
     ai: AIResult
     disclosures: list[Disclosure]
     pending: list[str]
+    call: CallInsight | None = None
 
 
 PENDING: list[str] = []
@@ -67,7 +84,7 @@ async def investigate(kind: InvestigationType, *, message: str | None = None, ur
     if kind == InvestigationType.url:
         parsed = [validate_url(url)]
         text = ""
-    elif kind == InvestigationType.message:
+    elif kind in (InvestigationType.message, InvestigationType.call):
         text = validate_message(message, settings.max_message_chars)
         parsed = extract_urls(text)
     else:
@@ -89,6 +106,14 @@ async def investigate(kind: InvestigationType, *, message: str | None = None, ur
             identity_urls.append(f)
     claimed = detect_claimed_orgs(text) if text else []
     identity = verify_identity(claimed, identity_urls)
+    if kind == InvestigationType.call and claimed and not parsed:
+        # A phone call has no link to compare. Say so in call terms.
+        for e in identity.evidence:
+            if e.id == "identity.no-link":
+                e.finding = (f"The caller claimed to be from {', '.join(o.name for o in claimed)}. "
+                             "A phone call can't be verified from what the caller says.")
+                e.why_it_matters = ("Caller ID can be faked. Hang up and call the organization back on its "
+                                    "official number.")
     evidence += identity.evidence
 
     if text:
@@ -112,8 +137,20 @@ async def investigate(kind: InvestigationType, *, message: str | None = None, ur
         disclosures.append(Disclosure(service="Google Gemini (free tier; Google may review it)",
                                       received="the message text with personal details masked"))
 
+    call = None
+    if kind == InvestigationType.call:
+        rules = [e.raw.get("rule") for e in evidence if e.category.value == "content"]
+        call = CallInsight(
+            claimed=[o.name for o in claimed],
+            asked_for=[r for r in rules if r in HIGH_IMPACT_RULES],
+            pressure=[r for r in rules if r in PRESSURE_RULES],
+            contacts=[OfficialContact(org_id=o.id, org_name=o.name, phones=o.phones, domains=o.domains,
+                                      source=o.phone_source) for o in claimed],
+        )
+
     return InvestigationResult(
         type=kind,
+        call=call,
         check_mode=mode,
         urls=[UrlRef(url=r.url.url, host=r.url.host, registrable_domain=r.url.registrable_domain,
                      final_url=r.final_url.url if r.final_url else None) for r in reports],

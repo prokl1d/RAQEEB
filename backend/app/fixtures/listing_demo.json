@@ -1,0 +1,38 @@
+{
+  "note": "Sample map listings for the demo. Fictional except the official Emirates Post details.",
+  "listings": [
+    {
+      "id": "real",
+      "label": "Consistent listing",
+      "label_ar": "نشاط متطابق",
+      "listing": {
+        "name": "Emirates Post – Customer Happiness Centre",
+        "phone": "600 599 999",
+        "website": "https://www.emiratespost.ae",
+        "address": "Sample address, Dubai"
+      }
+    },
+    {
+      "id": "fake",
+      "label": "Impersonating listing",
+      "label_ar": "نشاط منتحل",
+      "listing": {
+        "name": "Emirates NBD Support Center",
+        "phone": "+971 4 000 0148",
+        "website": "https://emiratesnbd-support.com",
+        "address": "Business Bay, Dubai"
+      }
+    },
+    {
+      "id": "incomplete",
+      "label": "Incomplete listing",
+      "label_ar": "معلومات ناقصة",
+      "listing": {
+        "name": "ENBD Cards Office",
+        "phone": "",
+        "website": "",
+        "address": "Deira, Dubai"
+      }
+    }
+  ]
+}

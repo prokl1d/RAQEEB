@@ -2,8 +2,8 @@
   "manifest_version": 3,
   "name": "RAQEEB Link Guard",
   "short_name": "RAQEEB",
-  "version": "0.2.1",
-  "description": "Checks links you click in WhatsApp Web, Gmail, Outlook and Telegram with RAQEEB before they open. Student hackathon project, not a government service.",
+  "version": "0.3.0",
+  "description": "Checks links you click in WhatsApp Web, Gmail, Outlook and Telegram with RAQEEB before they open, and marks fake bank and government sites in Google and Bing results. Student hackathon project, not a government service.",
   "permissions": [
     "storage",
     "webNavigation"
@@ -42,6 +42,17 @@
       ],
       "run_at": "document_start",
       "all_frames": true
+    },
+    {
+      "matches": [
+        "https://www.google.com/search*",
+        "https://www.google.ae/search*",
+        "https://www.bing.com/search*"
+      ],
+      "js": [
+        "search.js"
+      ],
+      "run_at": "document_idle"
     }
   ],
   "web_accessible_resources": [

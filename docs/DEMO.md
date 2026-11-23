@@ -25,6 +25,16 @@ Use the **Try an example** buttons under the message box.
 
 **Bonus:** paste a made-up link like `https://totally-made-up-shop-xyz8812.com` to show **Inactive Link**, or a real site like `https://www.wikipedia.org` to show **Low Risk**. In demo mode, links other than the three scenarios are checked live.
 
+## New features (2 minutes)
+
+All three work offline in demo mode.
+
+1. **Search Shield** (Protection → Search Shield): click the sample searches. The scan line passes over the results and each gets a badge with its reason: 3 of 4 Emirates NBD results imitate the bank. Then paste your own links in "Check your own links", e.g. `emiratesp0st.ae` (look-alike letters) and `http://192.168.1.1/login` (warning signs).
+2. **Describe a call:** click "Bank + remote app" or the Arabic police story. The report shows who they claimed to be, what they asked for, the pressure tricks, and the official number to call back (with its source), plus AD Police Aman 800 2626.
+3. **Listing check:** click "Impersonating listing" (High Risk: wrong website and wrong phone), then "Consistent listing" (Likely Safe), then "Incomplete listing" (Needs verification: RAQEEB never accuses without evidence).
+
+Extension bonus: with Link Guard v0.3.0 installed, search Google for "Emirates NBD login" and the real results get badges.
+
 ## Live mode (optional, needs internet)
 
 Remove `OFFLINE_DEMO`. Live checks then run: DNS, the TLS certificate, redirects and RDAP domain age.

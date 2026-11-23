@@ -26,6 +26,10 @@ class Organization(BaseModel):
     category: str
     domains: list[str]
     verification: Verification
+    # Official contact numbers, each set taken from the organization's own website (see phone_source).
+    phones: list[str] = []
+    phone_source: str | None = None
+    phone_checked: date | None = None
 
     @property
     def is_verified(self) -> bool:

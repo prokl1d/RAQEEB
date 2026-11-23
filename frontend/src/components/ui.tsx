@@ -22,7 +22,7 @@ export function Button({
 }: ButtonHTMLAttributes<HTMLButtonElement> & { variant?: ButtonVariant; arrow?: boolean }) {
   return (
     <button
-      className={`group inline-flex h-11 cursor-pointer items-center justify-center gap-2 rounded-control px-4 text-body font-semibold transition-[background-color,border-color,color,transform,box-shadow] duration-200 ease-out enabled:hover:shadow-[0_6px_18px_-8px_rgba(146,114,42,0.55)] enabled:active:scale-[0.98] disabled:cursor-not-allowed ${buttonStyles[variant]} ${className}`}
+      className={`group inline-flex h-11 shrink-0 cursor-pointer items-center whitespace-nowrap justify-center gap-2 rounded-control px-4 text-body font-semibold transition-[background-color,border-color,color,transform,box-shadow] duration-200 ease-out enabled:hover:shadow-[0_6px_18px_-8px_rgba(146,114,42,0.55)] enabled:active:scale-[0.98] disabled:cursor-not-allowed ${buttonStyles[variant]} ${className}`}
       {...props}
     >
       {children}

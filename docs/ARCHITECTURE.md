@@ -187,9 +187,18 @@ The score is a **risk assessment, not a probability of fraud**, and RAQEEB never
 - **Input limits:** message ≤ 5,000 characters, URL ≤ 2,048 characters, only http/https links.
 - **CORS** limited to the local frontend.
 
+## 7b. Search Shield, calls and listings
+
+| Feature | Endpoint | How it works |
+|---|---|---|
+| Search Shield | `POST /api/check-links` (≤ 25 links), `GET /api/search-demo` | `pipeline/shield.py`. Offline: registry comparison (`verify.compare`) plus URL structure rules. Verdicts: `official` (verified source), `listed` (registry, not yet confirmed), `impersonation` (wrong ending, look-alike letters, extra words, brand in a subdomain, typo), `caution` (structural red flags), `unknown`, `invalid`. Never "safe". The demo queries in `fixtures/search_demo.json` are labelled sample data; their badges are computed live. |
+| Describe a call | `POST /api/investigate` with `type: "call"` | Same pipeline as a message. Rules in `pipeline/content.py` cover English and Arabic (Arabic letter variants and digits normalised one-to-one in `pipeline/arabic.py`, so highlight positions stay exact) plus phone-scam requests: remote-control apps, "safe account" transfers, gift cards, Emirates ID, secrecy, fake legal cases. The result adds a `call` summary: claimed organizations, what was asked for, pressure tricks and official contacts. |
+| Listing check | `POST /api/check-listing`, `GET /api/listing-demo` | `pipeline/listing.py`. Name → claimed organization (English or Arabic names); website → Search Shield check; phone → official numbers in the registry (`phones`, with `phone_source` from the organization's own website). Weights: identity 45, phone 35, website 20; coverage < 40% or no known organization → `needs_verification`. Addresses are never claimed as checked. |
+| Link Guard on search pages | extension `search.js` → background `raqeeb-domains` → `/api/check-links` | Sends only `scheme://host` of each result; search words are never read. Ads are resolved through `data-pcu`. Switch in the popup. |
+
 ## 8. Testing
 
-**102 automated backend tests** (`pytest`):
+**132 automated backend tests** (`pytest`):
 - extraction (defanged links, emails, file names, punycode);
 - lookalike detection for each match type;
 - the three demo scenarios end to end;
@@ -198,7 +207,10 @@ The score is a **risk assessment, not a probability of fraud**, and RAQEEB never
 - Safe Browsing / VirusTotal / RDAP responses and errors (403, 404, 429);
 - Gemini masking, invented evidence IDs and fallback;
 - prompt injection;
-- secrets.
+- secrets;
+- English and Arabic call/scam rules, Arabic organization names and match positions;
+- every Search Shield verdict and the demo search results;
+- the three listing scenarios, phone formats (including Arabic digits) and "never accuse without evidence".
 
 The external services are mocked in tests. Live checks were verified manually, for example `dewa.gov.ae` showed a valid DigiCert certificate and a Likely Safe verdict.
 

@@ -1,0 +1,84 @@
+{
+  "note": "Sample search results for the demo. The scam domains are fictional. The badges are computed live by RAQEEB's identity engine.",
+  "queries": [
+    {
+      "id": "enbd",
+      "query": "Emirates NBD login",
+      "query_ar": "تسجيل الدخول بنك الإمارات دبي الوطني",
+      "results": [
+        {
+          "title": "Emirates NBD Online Banking – Secure Login",
+          "url": "https://emiratesnbd-online-login.com/signin",
+          "snippet": "Log in to your account in seconds. Verify your card to avoid suspension.",
+          "sponsored": true
+        },
+        {
+          "title": "Emirates NBD | Personal Banking",
+          "url": "https://www.emiratesnbd.com/en",
+          "snippet": "Bank accounts, cards, loans and online banking from Emirates NBD."
+        },
+        {
+          "title": "Emirates NBD Customer Support 24/7",
+          "url": "https://emiratesnbd.help-desk-ae.com/support",
+          "snippet": "Card blocked? Our agents unblock it instantly. Have your OTP ready."
+        },
+        {
+          "title": "ENBD card unblock service",
+          "url": "https://emiratesnbb.com/unblock",
+          "snippet": "Unblock your debit card online without visiting a branch."
+        }
+      ]
+    },
+    {
+      "id": "dewa",
+      "query": "DEWA pay bill",
+      "query_ar": "دفع فاتورة ديوا",
+      "results": [
+        {
+          "title": "DEWA Quick Pay – Pay Without Login",
+          "url": "https://dewa-quickpay.com/bill",
+          "snippet": "Pay your electricity and water bill in one step. Card payments accepted.",
+          "sponsored": true
+        },
+        {
+          "title": "Pay your bill | Dubai Electricity & Water Authority",
+          "url": "https://www.dewa.gov.ae/en/consumer/billing",
+          "snippet": "Pay your DEWA bill online, through the DEWA app or at payment machines."
+        },
+        {
+          "title": "DEWA bill payment portal",
+          "url": "https://dewa.com/pay",
+          "snippet": "Fast DEWA bill payments with instant receipts."
+        }
+      ]
+    },
+    {
+      "id": "post",
+      "query": "Emirates Post track parcel",
+      "query_ar": "تتبع شحنة بريد الإمارات",
+      "results": [
+        {
+          "title": "Emirates Post – Release your parcel (AED 4.50)",
+          "url": "https://emiratespost-redelivery.com/pay",
+          "snippet": "Your parcel is on hold. Pay the redelivery fee to release it today.",
+          "sponsored": true
+        },
+        {
+          "title": "Track your shipment | Emirates Post",
+          "url": "https://www.emiratespost.ae/track",
+          "snippet": "Enter your tracking number to see where your parcel is."
+        },
+        {
+          "title": "Emirates Post customs payment",
+          "url": "https://emiratespost.ae.customs-pay.top/payment",
+          "snippet": "Pay customs duty for international parcels online."
+        },
+        {
+          "title": "Parcel tracking for all UAE couriers",
+          "url": "https://trackmyparcel-uae.com",
+          "snippet": "Track parcels from many couriers in one place."
+        }
+      ]
+    }
+  ]
+}

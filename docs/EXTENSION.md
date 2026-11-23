@@ -28,6 +28,7 @@ Version 0.2 asks for two permissions:
 
 1. **Click guard** (`content.js`): listens on the page's outermost level in the capture phase, so it runs before the app's own click handling. It also works when you click an icon inside a link, or a link inside a shadow DOM. Gmail, Outlook SafeLinks and WhatsApp/Facebook redirect wrappers are unwrapped to the real destination.
 2. **New-tab safety net** (`background.js`): if one of the four sites opens a new tab to an outside link by itself, that tab is sent to the RAQEEB check page before the site loads.
+3. **Search Shield** (`search.js`, v0.3.0): on Google (`google.com`, `google.ae`) and Bing results pages, each result and ad gets a RAQEEB badge: Official site, In registry, Impersonation, Warning signs or Not in registry. Hover for the reason. Only each result's site address (`https://host`) goes to your RAQEEB server, through the background worker; the search words are never read. Turn it off with "Mark fake sites in Google and Bing results" in the popup.
 
 ## Live demo
 

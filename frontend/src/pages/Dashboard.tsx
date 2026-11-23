@@ -4,7 +4,8 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText as GsapSplitText } from "gsap/SplitText";
 import { useGSAP } from "@gsap/react";
-import { InvestigationInput } from "../components/InvestigationInput";
+import { InvestigationInput, type InputPreset } from "../components/InvestigationInput";
+import { CallCheck, ListingCheck, ProtectIntro, SearchShield } from "../components/Protection";
 import { Report } from "../components/Report";
 import { Badge, Card, Container, Mono, RiskBadge } from "../components/ui";
 import { CountUp, EASE_OUT, Reveal, RevealGroup, fadeUp } from "../components/motion";
@@ -300,7 +301,7 @@ function SectionTitle({ badge, title, lead }: { badge: string; title: string; le
   );
 }
 
-const STAT_VALUES = [26, 5, 102, 0];
+const STAT_VALUES = [26, 5, 132, 0];
 
 /** "Made for the UAE": 3D waving flag in a dark showcase, beside the registry story. */
 function MadeForUAE() {
@@ -360,6 +361,14 @@ export function Dashboard() {
   const heroRef = useRef<HTMLElement>(null);
   const pageRef = useRef<HTMLDivElement>(null);
   const { t } = useI18n();
+  const [preset, setPreset] = useState<InputPreset | null>(null);
+
+  /** Fill the investigation box and bring it into view (used by "Describe a call"). */
+  function openInput(tab: InputPreset["tab"], value: string) {
+    setPreset({ tab, value, nonce: Date.now() });
+    const box = document.getElementById("investigate");
+    if (box) scrollToTarget(box, -120);
+  }
 
   useGSAP(
     () => {
@@ -395,7 +404,7 @@ export function Dashboard() {
       // Keep the progress panel up long enough to read (avoids a flash on near-instant demo answers).
       const minShow = reduce ? 0 : 1400;
       const [data] = await Promise.all([investigate(req), new Promise((r) => setTimeout(r, minShow))]);
-      setResult({ data, message: req.type === "message" ? req.message : undefined });
+      setResult({ data, message: req.type === "message" || req.type === "call" ? req.message : undefined });
       setTimeout(() => ScrollTrigger.refresh(), 100);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Something went wrong.");
@@ -486,7 +495,7 @@ export function Dashboard() {
               transition={{ duration: 0.9, ease: EASE_OUT, delay: 0.95 }}
             >
               <div className="rounded-[20px] bg-gradient-to-b from-[#d9b76e]/50 via-[#d9b76e]/10 to-transparent p-px shadow-[0_40px_120px_-40px_rgba(216,183,115,0.45)]">
-                <InvestigationInput onSubmit={run} busy={busy} initial={initial} />
+                <InvestigationInput onSubmit={run} busy={busy} initial={initial} preset={preset} />
               </div>
             </motion.div>
             <motion.div initial={{ opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, ease: EASE_OUT, delay: 1.1 }} className="space-y-4">
@@ -538,6 +547,18 @@ export function Dashboard() {
           </RevealGroup>
         </Container>
       </section>
+
+      {/* ───────── Protection everywhere: Search Shield, calls, listings ───────── */}
+      <ProtectIntro />
+      <SearchShield />
+      <CallCheck
+        onTry={(story) => {
+          setPreset({ tab: "call", value: story, nonce: Date.now() });
+          run({ type: "call", message: story });
+        }}
+        onDescribe={() => openInput("call", "")}
+      />
+      <ListingCheck />
 
       {/* ───────── Made for the UAE (3D flag) ───────── */}
       <MadeForUAE />

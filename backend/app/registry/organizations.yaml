@@ -10,7 +10,7 @@ organizations:
   # ---------- Government ----------
   - id: uae-gov-portal
     name: UAE Government Portal (u.ae)
-    aliases: ["u.ae", "UAE Government Portal", "TDRA portal"]
+    aliases: ["u.ae", "UAE Government Portal", "TDRA portal", "البوابة الرسمية لحكومة الإمارات"]
     category: government
     domains: ["u.ae"]
     verification:
@@ -21,7 +21,7 @@ organizations:
 
   - id: dewa
     name: Dubai Electricity and Water Authority (DEWA)
-    aliases: ["DEWA", "Dubai Electricity and Water Authority", "Dubai Electricity & Water Authority"]
+    aliases: ["DEWA", "Dubai Electricity and Water Authority", "Dubai Electricity & Water Authority", "هيئة كهرباء ومياه دبي", "ديوا"]
     category: government
     domains: ["dewa.gov.ae"]
     verification:
@@ -29,59 +29,65 @@ organizations:
       source_name: Dubai.ae government departments directory
       source_url: https://dubai.ae/en/Lists/GovernmentDepartments/DispForm.aspx?ID=1&category=
       checked: 2026-11-20
+    phones: ["04 601 9999", "991"]
+    phone_source: https://www.dewa.gov.ae/en/about-us/support-and-points-of-interest/support
+    phone_checked: 2026-11-23
 
   - id: icp
     name: Federal Authority for Identity, Citizenship, Customs and Port Security (ICP)
-    aliases: ["ICP", "Federal Authority for Identity", "Emirates ID"]
+    aliases: ["ICP", "Federal Authority for Identity", "Emirates ID", "الهيئة الاتحادية للهوية والجنسية", "الهوية والجنسية"]
     category: government
     domains: ["icp.gov.ae"]
     verification: { status: unverified }
 
   - id: moi
     name: Ministry of Interior
-    aliases: ["Ministry of Interior", "MOI UAE"]
+    aliases: ["Ministry of Interior", "MOI UAE", "وزارة الداخلية"]
     category: government
     domains: ["moi.gov.ae"]
     verification: { status: unverified }
 
   - id: dubai-police
     name: Dubai Police
-    aliases: ["Dubai Police"]
+    aliases: ["Dubai Police", "شرطة دبي"]
     category: government
     domains: ["dubaipolice.gov.ae"]
     verification: { status: unverified }
 
   - id: ad-police
     name: Abu Dhabi Police
-    aliases: ["Abu Dhabi Police", "AD Police", "ADPolice"]
+    aliases: ["Abu Dhabi Police", "AD Police", "ADPolice", "شرطة أبوظبي", "شرطة ابوظبي", "شرطة أبو ظبي"]
     category: government
-    domains: ["adpolice.gov.ae"]
+    domains: ["adpolice.gov.ae", "abudhabipolice.gov.ae"]
     verification: { status: unverified }
+    phones: ["800 2626"]
+    phone_source: https://www.adpolice.gov.ae/en/Media-Center/News/2021/06/28/ADP-Calls-on-the-Public-to-Communicate-with-Aman-Service
+    phone_checked: 2026-11-23
 
   - id: rta
     name: Roads and Transport Authority (RTA)
-    aliases: ["RTA", "Roads and Transport Authority"]
+    aliases: ["RTA", "Roads and Transport Authority", "هيئة الطرق والمواصلات"]
     category: government
     domains: ["rta.ae"]
     verification: { status: unverified }
 
   - id: salik
     name: Salik
-    aliases: ["Salik"]
+    aliases: ["Salik", "سالك"]
     category: government
     domains: ["salik.ae"]
     verification: { status: unverified }
 
   - id: fta
     name: Federal Tax Authority
-    aliases: ["Federal Tax Authority", "FTA UAE"]
+    aliases: ["Federal Tax Authority", "FTA UAE", "الهيئة الاتحادية للضرائب"]
     category: government
     domains: ["tax.gov.ae"]
     verification: { status: unverified }
 
   - id: mohre
     name: Ministry of Human Resources and Emiratisation (MOHRE)
-    aliases: ["MOHRE", "Ministry of Human Resources and Emiratisation"]
+    aliases: ["MOHRE", "Ministry of Human Resources and Emiratisation", "وزارة الموارد البشرية والتوطين"]
     category: government
     domains: ["mohre.gov.ae"]
     verification: { status: unverified }
@@ -89,14 +95,14 @@ organizations:
   # ---------- Regulator ----------
   - id: cbuae
     name: Central Bank of the UAE
-    aliases: ["Central Bank of the UAE", "CBUAE", "UAE Central Bank"]
+    aliases: ["Central Bank of the UAE", "CBUAE", "UAE Central Bank", "مصرف الإمارات المركزي", "المصرف المركزي"]
     category: regulator
     domains: ["centralbank.ae"]
     verification: { status: unverified }
 
   - id: tdra
     name: Telecommunications and Digital Government Regulatory Authority (TDRA)
-    aliases: ["TDRA"]
+    aliases: ["TDRA", "هيئة تنظيم الاتصالات"]
     category: regulator
     domains: ["tdra.gov.ae"]
     verification: { status: unverified }
@@ -104,52 +110,55 @@ organizations:
   # ---------- Banks (entity licensing: CBUAE register) ----------
   - id: emirates-nbd
     name: Emirates NBD
-    aliases: ["Emirates NBD", "EmiratesNBD", "ENBD"]
+    aliases: ["Emirates NBD", "EmiratesNBD", "ENBD", "بنك الإمارات دبي الوطني", "الإمارات دبي الوطني"]
     category: bank
     domains: ["emiratesnbd.com"]
     verification:
       status: unverified
       note: Listed as a licensed national bank in the CBUAE register (Sept 2023); domain not yet confirmed by an authoritative source.
       source_url: https://centralbank.ae/media/busbnghu/cb-register-september-2023.pdf
+    phones: ["600 54 0000"]
+    phone_source: https://www.emiratesnbd.com/en/help-and-support
+    phone_checked: 2026-11-23
 
   - id: fab
     name: First Abu Dhabi Bank
-    aliases: ["First Abu Dhabi Bank", "FAB", "BankFAB"]
+    aliases: ["First Abu Dhabi Bank", "FAB", "BankFAB", "بنك أبوظبي الأول"]
     category: bank
     domains: ["bankfab.com"]
     verification: { status: unverified }
 
   - id: adcb
     name: Abu Dhabi Commercial Bank (ADCB)
-    aliases: ["ADCB", "Abu Dhabi Commercial Bank"]
+    aliases: ["ADCB", "Abu Dhabi Commercial Bank", "بنك أبوظبي التجاري"]
     category: bank
     domains: ["adcb.com"]
     verification: { status: unverified }
 
   - id: dib
     name: Dubai Islamic Bank
-    aliases: ["Dubai Islamic Bank", "DIB"]
+    aliases: ["Dubai Islamic Bank", "DIB", "بنك دبي الإسلامي"]
     category: bank
     domains: ["dib.ae"]
     verification: { status: unverified }
 
   - id: mashreq
     name: Mashreq
-    aliases: ["Mashreq", "Mashreq Bank", "Mashreqbank"]
+    aliases: ["Mashreq", "Mashreq Bank", "Mashreqbank", "بنك المشرق", "المشرق"]
     category: bank
     domains: ["mashreq.com"]
     verification: { status: unverified }
 
   - id: adib
     name: Abu Dhabi Islamic Bank (ADIB)
-    aliases: ["ADIB", "Abu Dhabi Islamic Bank"]
+    aliases: ["ADIB", "Abu Dhabi Islamic Bank", "مصرف أبوظبي الإسلامي"]
     category: bank
     domains: ["adib.ae"]
     verification: { status: unverified }
 
   - id: rakbank
     name: RAKBANK
-    aliases: ["RAKBANK", "RAK Bank", "National Bank of Ras Al Khaimah"]
+    aliases: ["RAKBANK", "RAK Bank", "National Bank of Ras Al Khaimah", "بنك رأس الخيمة الوطني", "بنك رأس الخيمة"]
     category: bank
     domains: ["rakbank.ae"]
     verification: { status: unverified }
@@ -157,7 +166,7 @@ organizations:
   # ---------- Delivery ----------
   - id: emirates-post
     name: Emirates Post
-    aliases: ["Emirates Post", "EmiratesPost", "Empost"]
+    aliases: ["Emirates Post", "EmiratesPost", "Empost", "بريد الإمارات"]
     category: delivery
     domains: ["emiratespost.ae"]
     verification:
@@ -165,10 +174,13 @@ organizations:
       source_name: u.ae, Mail services
       source_url: https://u.ae/en/information-and-services/infrastructure/mail-services
       checked: 2026-11-20
+    phones: ["600 599 999"]
+    phone_source: https://www.emiratespost.ae/help-and-support
+    phone_checked: 2026-11-23
 
   - id: aramex
     name: Aramex
-    aliases: ["Aramex"]
+    aliases: ["Aramex", "أرامكس"]
     category: delivery
     domains: ["aramex.com"]
     verification: { status: unverified }
@@ -183,7 +195,7 @@ organizations:
   # ---------- Telecom ----------
   - id: etisalat
     name: e& (Etisalat)
-    aliases: ["Etisalat", "e&", "etisalat by e&"]
+    aliases: ["Etisalat", "e&", "etisalat by e&", "اتصالات"]
     category: telecom
     domains: ["etisalat.ae", "eand.com"]
     verification: { status: unverified }
@@ -198,14 +210,14 @@ organizations:
   # ---------- Payments / BNPL ----------
   - id: tabby
     name: Tabby
-    aliases: ["Tabby"]
+    aliases: ["Tabby", "تابي"]
     category: payments
     domains: ["tabby.ai"]
     verification: { status: unverified }
 
   - id: tamara
     name: Tamara
-    aliases: ["Tamara"]
+    aliases: ["Tamara", "تمارا"]
     category: payments
     domains: ["tamara.co"]
     verification: { status: unverified }

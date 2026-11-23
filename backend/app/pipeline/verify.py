@@ -14,6 +14,7 @@ from rapidfuzz.distance import Levenshtein
 from rapidfuzz import fuzz
 
 from app.models import Category, Evidence, EvidenceStatus
+from app.pipeline.arabic import normalize as normalize_ar
 from app.pipeline.domains import skeleton
 from app.pipeline.extract import ParsedUrl
 from app.registry import Organization, load_registry
@@ -47,9 +48,11 @@ class DomainMatch:
 # ---------- claimed organization detection (rule-based; AI adds to this later) ----------
 
 def detect_claimed_orgs(text: str) -> list[Organization]:
+    """Organizations named in the text, in English or Arabic (Arabic letter variants normalised)."""
     found: list[Organization] = []
+    text = normalize_ar(text)
     for org in load_registry():
-        for alias in org.aliases:
+        for alias in map(normalize_ar, org.aliases):
             # Short all-caps aliases (FAB, DIB, RTA) must match case-sensitively as whole words.
             if len(alias) <= 4 and alias.isupper():
                 pat = rf"(?<![\w&]){re.escape(alias)}(?![\w&])"
