@@ -205,6 +205,22 @@ The score is a **risk assessment, not a probability of fraud**, and RAQEEB never
 | Evidence sheet | `frontend/src/components/EvidenceSheet.tsx` | Built from the investigation result on the device. Print stylesheet produces one A4 page. Reference number from `crypto.getRandomValues`. Marked "not an Abu Dhabi Police document". |
 | Spot the scam | `frontend/src/components/ScamQuiz.tsx`, `lib/quizItems.ts` | 8 messages × 2 languages. Each was run through the engine to confirm its verdict matches the quiz answer; this found and fixed a missing rule for "new number" family scams. |
 
+## 7d. Zero-day signals, Early Warning and evidence export
+
+| Part | Where | How |
+|---|---|---|
+| Reputation signals | `backend/app/pipeline/reputation.py` | Global brand lookalikes (71 brands; short or common-word names match whole tokens only), brand in path, risky TLDs, 87 free hosting/tunnel/IPFS platforms, machine-generated names, Tranco top-100k "established" list (bundled, gzip), dead-but-scam-shaped. Each signal is an `Evidence` item with its reason; a few specific ones count double (`raw.weight = 2`). |
+| Page facts | `backend/app/net/page.py`, `safe_fetch.py` | Only the final HTML page, capped at 256 KB, decoded as text. Title, password/card/OTP fields, form targets on other hosts, meta-refresh/JS redirects. Linear-time scanning and bounded regexes (a test feeds hostile HTML). Never rendered or executed. |
+| Known-phishing feeds | `backend/app/intel/feeds.py` | Local copy of OpenPhish + Phishing.Database (~720k links), parsed in the background at start-up (~2 s), stored as hashes. Exact-link match; host match only when the host isn't a shared platform. No copy → "missing", never clean. |
+| Fake helplines | `backend/app/pipeline/helpline.py` | Phone numbers in the text (Arabic digits normalised) compared with the claimed organization's sourced official numbers. |
+| Early Warning | `backend/app/pipeline/early_warning.py` | ~100–200 permutations per official domain (lure words, other endings, look-alike characters, omissions, transpositions, keyboard typos) resolved concurrently; crt.sh certificate search; each candidate scored and checked for parking or forwarding to the official site ("defensive"). `GET /api/early-warning/{org_id}`; recorded fixture in demo mode. |
+| Batch triage | `backend/app/main.py` | `POST /api/investigate-batch`, up to 20 links, 8 at a time, sorted by score. |
+| Registrar data | `backend/app/intel/clients.py` | RDAP registrar name, abuse e-mail and phone, nameservers. |
+| Takedown file | `frontend/src/components/EvidenceSheet.tsx` | JSON (`raqeeb-takedown/1`) per link: redirect chain, DNS records, registration, registrar and abuse contact, nameservers, certificate issuer, findings; SHA-256 of the evidence via Web Crypto. |
+| Shared TLS context | `backend/app/net/tlsctx.py` | One certifi-based `SSLContext` for all clients (the CA bundle used to be parsed per connection: ~10× CPU saved). |
+| Evaluation | `backend/eval/` | Labelled sets, tuning vs held-out, `python -m eval.evaluate`. Results in `docs/EVALUATION.md`. |
+| Phone app | `frontend/public/manifest.webmanifest`, `sw.js` | Installable PWA; `share_target` (GET) maps shared `title`/`text`/`url` to an investigation. The service worker never caches `/api/` and is not registered on the Vite dev server. |
+
 ## 8. Testing
 
 **175 automated backend tests** (`pytest`):

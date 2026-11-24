@@ -14,15 +14,15 @@ Everything to paste or upload into the AD Police × 42AD submission form, plus t
 
 ### وصف موجز (Short description, max 600 characters)
 
-**English** (442 characters):
-> Scammers in the UAE borrow trusted names: banks, Emirates Post, even Abu Dhabi Police. RAQEEB investigates who a message, link, call, search result or business listing claims to be, compares it with official domains and phone numbers, and explains a transparent verdict with its evidence, in English or Arabic. A Chrome extension checks links the moment they are clicked, and any report becomes a one-page evidence sheet for the Aman service.
+**English** (533 characters):
+> Scammers in the UAE borrow trusted names: banks, Emirates Post, even Abu Dhabi Police. RAQEEB investigates who a message, link, call, search result or listing claims to be, compares it with official domains and phone numbers, and explains a transparent verdict with its evidence, in English or Arabic. Tested on 1,053 real links with no API keys: 0.3% false alarms. Early Warning finds lookalike domains before a campaign, a Chrome extension checks links on click, and any report becomes a takedown-ready evidence file for AD Police.
 
-**العربية** (378 حرفًا):
-> يستغل المحتالون في الإمارات أسماء جهات موثوقة مثل البنوك وبريد الإمارات وحتى شرطة أبوظبي. يتحقق رقيب من الجهة التي تدّعيها الرسالة أو الرابط أو المكالمة أو نتيجة البحث أو النشاط التجاري، ويقارنها بالنطاقات وأرقام الهاتف الرسمية، ويشرح حكمًا شفافًا مدعومًا بالأدلة بالعربية أو الإنجليزية. وتفحص إضافة كروم الروابط لحظة الضغط عليها، ويتحول أي تقرير إلى ورقة أدلة جاهزة لخدمة أمان.
+**العربية** (474 حرفًا):
+> يستغل المحتالون في الإمارات أسماء جهات موثوقة مثل البنوك وبريد الإمارات وحتى شرطة أبوظبي. يتحقق رقيب من الجهة التي تدّعيها الرسالة أو الرابط أو المكالمة أو نتيجة البحث أو النشاط التجاري، ويقارنها بالنطاقات وأرقام الهاتف الرسمية، ويشرح حكمًا شفافًا مدعومًا بالأدلة. اختُبر على 1,053 رابطًا حقيقيًا دون أي مفتاح API بنسبة إنذارات خاطئة 0.3%. ويكشف الإنذار المبكر النطاقات المشابهة قبل الحملة، وتفحص إضافة كروم الروابط عند الضغط، ويتحول أي تقرير إلى ملف أدلة جاهز لطلب الإزالة.
 
 ### الأدوات المستخدمة (Tools used)
 
-> Python, FastAPI, Pydantic, React, TypeScript, Tailwind CSS, Motion, GSAP, Three.js, tesseract.js (on-device OCR), jsQR, Chrome Extension (Manifest V3), Google Gemini API, Google Safe Browsing API v5, VirusTotal API, RDAP, RapidFuzz, pytest, Playwright
+> Python, FastAPI, Pydantic, React, TypeScript, Tailwind CSS, Motion, GSAP, Three.js, tesseract.js (on-device OCR), jsQR, Chrome Extension (Manifest V3), PWA (Web Share Target), RDAP, Certificate Transparency (crt.sh), OpenPhish and Phishing.Database feeds, Tranco list, RapidFuzz, pytest, Playwright. Optional when keys are added: Google Gemini API, Google Safe Browsing API v5, VirusTotal API
 
 ---
 
@@ -32,8 +32,8 @@ Everything to paste or upload into the AD Police × 42AD submission form, plus t
 |---|---|
 | **Repository URL** | `https://github.com/prokl1d/RAQEEB` (branch `master`). The repository must be **public**, or the judges must be added as collaborators, before submitting. |
 | **Presentation Link** (optional) | Upload `docs/RAQEEB_Pitch_Deck.pptx` to OneDrive or Google Slides and share it as "Anyone with the link can view". |
-| **Upload Presentation File** | `docs/RAQEEB_Presentation.pdf` (1.3 MB). The `.pptx` (3.9 MB) is also accepted. |
-| **Upload Document File** | `docs/RAQEEB_Project_Description.pdf` (4 pages: problem, solution, features, architecture, model choices, privacy, security, trade-offs, roadmap, how to run). |
+| **Upload Presentation File** | `docs/RAQEEB_Presentation.pdf` (1.4 MB, 28 slides). The `.pptx` (4.3 MB) is also accepted. |
+| **Upload Document File** | `docs/RAQEEB_Project_Description.pdf` (4 pages: problem, solution, measured accuracy, features, architecture, model choices, privacy, security, trade-offs, pilot plan, how to run). |
 | **Demo Video URL** | Upload to YouTube as **Unlisted**, or to Google Drive shared as "Anyone with the link", then paste the link. |
 
 ---
