@@ -207,7 +207,7 @@ The score is a **risk assessment, not a probability of fraud**, and RAQEEB never
 
 ## 8. Testing
 
-**136 automated backend tests** (`pytest`):
+**175 automated backend tests** (`pytest`):
 - extraction (defanged links, emails, file names, punycode);
 - lookalike detection for each match type;
 - the three demo scenarios end to end;

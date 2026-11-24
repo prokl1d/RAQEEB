@@ -88,3 +88,13 @@ def test_unknown_org_and_no_link():
     r = verify_identity(detect_claimed_orgs("Emirates Post here"), [])
     assert r.outcome == IdentityOutcome.unable
     assert r.evidence[0].status == EvidenceStatus.missing
+
+
+def test_foreign_government_and_shorter_names_are_not_lookalikes():
+    from app.pipeline.verify import find_lookalikes
+
+    assert find_lookalikes(parse_url("https://customs.go.th/"), set()) == []
+    assert find_lookalikes(parse_url("https://customs-portal.com/"), set()) == [] or all(
+        m.kind.value != "typo" for m in find_lookalikes(parse_url("https://customs-portal.com/"), set()))
+    # Real typos still count.
+    assert [m.org.id for m in find_lookalikes(parse_url("https://adcustom.com/"), set())] == ["ad-customs"]

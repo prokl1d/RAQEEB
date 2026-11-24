@@ -197,7 +197,7 @@ organizations:
     name: e& (Etisalat)
     aliases: ["Etisalat", "e&", "etisalat by e&", "اتصالات"]
     category: telecom
-    domains: ["etisalat.ae", "eand.com"]
+    domains: ["etisalat.ae", "eand.ae", "eand.com"]
     verification: { status: unverified }
 
   - id: du
@@ -220,4 +220,103 @@ organizations:
     aliases: ["Tamara", "تمارا"]
     category: payments
     domains: ["tamara.co"]
+    verification: { status: unverified }
+
+  # ---------- Added for wider UAE coverage (domains only; phones are added only with a source) ----------
+  - id: tamm
+    name: TAMM (Abu Dhabi Government Services)
+    aliases: ["TAMM", "منصة تم", "تطبيق تم", "Abu Dhabi Government Services"]
+    category: government
+    domains: ["tamm.abudhabi"]
+    verification: { status: unverified }
+
+  - id: uae-pass
+    name: UAE PASS
+    aliases: ["UAE PASS", "UAEPASS", "UAE Pass", "الهوية الرقمية", "يو إيه إي باس"]
+    category: government
+    domains: ["uaepass.ae"]
+    verification: { status: unverified }
+
+  - id: itc-darb
+    name: Integrated Transport Centre (Darb tolls, Abu Dhabi)
+    aliases: ["Darb", "ITC Abu Dhabi", "Integrated Transport Centre", "مركز النقل المتكامل", "بوابات درب"]
+    category: government
+    domains: ["itc.gov.ae"]
+    verification: { status: unverified }
+
+  - id: ad-customs
+    name: Abu Dhabi Customs
+    aliases: ["Abu Dhabi Customs", "جمارك أبوظبي"]
+    category: government
+    domains: ["adcustoms.gov.ae"]
+    verification: { status: unverified }
+
+  - id: dubai-customs
+    name: Dubai Customs
+    aliases: ["Dubai Customs", "جمارك دبي"]
+    category: government
+    domains: ["dubaicustoms.gov.ae"]
+    verification: { status: unverified }
+
+  - id: addc
+    name: Abu Dhabi Distribution Company (ADDC)
+    aliases: ["ADDC", "Abu Dhabi Distribution Company", "أبوظبي للتوزيع"]
+    category: utilities
+    domains: ["addc.ae"]
+    verification: { status: unverified }
+
+  - id: aadc
+    name: Al Ain Distribution Company (AADC)
+    aliases: ["AADC", "Al Ain Distribution Company", "العين للتوزيع"]
+    category: utilities
+    domains: ["aadc.ae"]
+    verification: { status: unverified }
+
+  - id: sewa
+    name: Sharjah Electricity, Water and Gas Authority (SEWA)
+    aliases: ["SEWA", "Sharjah Electricity", "هيئة كهرباء ومياه وغاز الشارقة"]
+    category: utilities
+    domains: ["sewa.gov.ae"]
+    verification: { status: unverified }
+
+  - id: adnoc
+    name: ADNOC
+    aliases: ["ADNOC", "ADNOC Distribution", "أدنوك"]
+    category: energy
+    domains: ["adnoc.ae", "adnocdistribution.ae"]
+    verification: { status: unverified }
+
+  - id: emirates-airline
+    name: Emirates (airline)
+    aliases: ["Emirates Airline", "Emirates Skywards", "Skywards", "طيران الإمارات"]
+    category: airline
+    domains: ["emirates.com"]
+    verification: { status: unverified }
+
+  - id: etihad-airways
+    name: Etihad Airways
+    aliases: ["Etihad Airways", "Etihad Guest", "الاتحاد للطيران"]
+    category: airline
+    domains: ["etihad.com"]
+    verification: { status: unverified }
+
+  - id: noon
+    name: noon
+    aliases: ["noon.com", "noon shopping", "noon order"]
+    category: retail
+    domains: ["noon.com"]
+    verification: { status: unverified }
+
+  - id: amazon-ae
+    name: Amazon.ae
+    aliases: ["Amazon.ae", "Amazon UAE", "أمازون"]
+    category: retail
+    domains: ["amazon.ae", "amazon.com"]
+    verification: { status: unverified }
+
+  - id: careem
+    name: Careem
+    aliases: ["Careem", "كريم باي", "Careem Pay"]
+    category: payments
+    domains: ["careem.com"]
     verification: { status: unverified }

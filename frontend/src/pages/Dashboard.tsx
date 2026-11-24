@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react";
 import { InvestigationInput, type InputPreset } from "../components/InvestigationInput";
 import { NearMount } from "../components/NearMount";
 import { CallCheck, ListingCheck, ProtectIntro, SearchShield } from "../components/Protection";
+import { EarlyWarning } from "../components/EarlyWarning";
 import { ScamQuiz } from "../components/ScamQuiz";
 import { Report } from "../components/Report";
 import { Badge, Card, Container, Mono, RiskBadge } from "../components/ui";
@@ -27,11 +28,19 @@ const Flag3D = lazy(() => import("../components/Flag3D"));
 
 gsap.registerPlugin(ScrollTrigger, GsapSplitText, useGSAP);
 
-/** Links from the RAQEEB Link Guard extension: /?url=... or /?message=... start an investigation. */
+/**
+ * Start an investigation from the address bar:
+ *  - the Link Guard extension opens /?url=... or /?message=...
+ *  - "Share → RAQEEB" on a phone (PWA share target) opens /?title=...&text=...&url=...
+ * A shared SMS or WhatsApp message arrives as `text` (often with the link inside), so it is
+ * investigated as a message; a bare shared link is investigated as a link.
+ */
 function requestFromQuery(): InvestigateRequest | null {
   const p = new URLSearchParams(window.location.search);
-  const url = p.get("url");
-  const message = p.get("message");
+  const url = p.get("url")?.trim();
+  const message = p.get("message")?.trim();
+  const text = [p.get("title"), p.get("text")].filter(Boolean).join("\n").trim();
+  if (text) return { type: "message", message: (url && !text.includes(url) ? `${text}\n${url}` : text).slice(0, 5000) };
   if (url) return { type: "url", url: url.slice(0, 2048) };
   if (message) return { type: "message", message: message.slice(0, 5000) };
   return null;
@@ -561,6 +570,7 @@ export function Dashboard() {
         onDescribe={() => openInput("call", "")}
       />
       <ListingCheck />
+      <EarlyWarning />
       <ScamQuiz
         onCheck={(text) => {
           setPreset({ tab: "message", value: text, nonce: Date.now() });

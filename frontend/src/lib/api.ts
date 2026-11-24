@@ -197,3 +197,33 @@ export interface DemoListing {
 
 export const checkListing = (inp: ListingInput) => request<ListingResult>("/api/check-listing", inp);
 export const getListingDemo = () => request<DemoListing[]>("/api/listing-demo");
+
+// ---------- Early warning ----------
+
+export type EarlyRisk = "high" | "watch" | "low" | "parked" | "defensive";
+
+export interface EarlyCandidate {
+  domain: string;
+  sources: ("permutation" | "certificate")[];
+  resolves: boolean | null;
+  ips: string[];
+  cert_first_seen: string | null;
+  cert_days_ago: number | null;
+  match: string;
+  risk: EarlyRisk;
+  redirects_to: string | null;
+  reasons: string[];
+}
+
+export interface EarlyWarningResult {
+  org_id: string;
+  org_name: string;
+  official_domains: string[];
+  checked_permutations: number;
+  certificate_search: string;
+  candidates: EarlyCandidate[];
+  fixture: boolean;
+  generated_utc: string;
+}
+
+export const getEarlyWarning = (orgId: string) => request<EarlyWarningResult>(`/api/early-warning/${encodeURIComponent(orgId)}`);

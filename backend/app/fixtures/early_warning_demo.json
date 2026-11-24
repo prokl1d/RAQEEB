@@ -1,0 +1,1480 @@
+{
+ "emirates-nbd": {
+  "checked_permutations": 172,
+  "recorded_utc": "2026-11-24T11:55:02+00:00",
+  "certificate_search": "unavailable: ReadTimeout",
+  "candidates": [
+   {
+    "domain": "emiratesndb.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "103.224.182.245"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "2 character(s) different from 'emiratesnbd'",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: 2 character(s) different from 'emiratesnbd'.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "emiratesnbd.live",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "185.53.179.128"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.live instead of .com)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: same name, different ending (.live instead of .com).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .live, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "emiratesnnbd.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "103.224.182.245"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'emiratesnbd'",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: 1 character(s) different from 'emiratesnbd'.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "emiratesnbd.me",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.213.45",
+     "76.223.67.189"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.me instead of .com)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: same name, different ending (.me instead of .com).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "emiratesnbd.io",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "194.164.220.5"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.io instead of .com)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: same name, different ending (.io instead of .com).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "emiratenbd.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "144.76.59.138"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'emiratesnbd'",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: 1 character(s) different from 'emiratesnbd'.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "emiratesnbdae.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.243.5",
+     "76.223.105.230"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "official name 'emiratesnbd' combined with other words",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: official name 'emiratesnbd' combined with other words.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "emiratesnbd.co",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "162.4.84.252"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.co instead of .com)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: same name, different ending (.co instead of .com).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "emiratesnbd.cc",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "154.64.245.63"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.cc instead of .com)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: same name, different ending (.cc instead of .com).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .cc, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "emiratsnbd.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "103.224.182.239"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'emiratesnbd'",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: 1 character(s) different from 'emiratesnbd'.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "emiratesnb.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "104.247.81.99"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'emiratesnbd'",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: 1 character(s) different from 'emiratesnbd'.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "emiratesnbc.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "199.188.200.11"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'emiratesnbd'",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: 1 character(s) different from 'emiratesnbd'.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "emiratesbd.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "3.233.30.191"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'emiratesnbd'",
+    "risk": "parked",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: 1 character(s) different from 'emiratesnbd'.",
+     "The domain is registered and live in DNS right now.",
+     "Its page looks parked or for sale. Parked lookalikes are often switched on later, so keep watching."
+    ]
+   },
+   {
+    "domain": "emiratessnbd.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.223.25.84",
+     "2600:1f18:4ae:c605:dd5d:b838:5816:d7fb",
+     "2600:1f18:4ae:c606:78d4:4260:db4e:aeee",
+     "54.243.117.197"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'emiratesnbd'",
+    "risk": "parked",
+    "redirects_to": "hugedomains.com",
+    "reasons": [
+     "Imitates Emirates NBD: 1 character(s) different from 'emiratesnbd'.",
+     "The domain is registered and live in DNS right now.",
+     "It forwards to hugedomains.com, a domain marketplace: it is parked or for sale."
+    ]
+   },
+   {
+    "domain": "emiratesnd.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "162.241.217.141"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'emiratesnbd'",
+    "risk": "parked",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: 1 character(s) different from 'emiratesnbd'.",
+     "The domain is registered and live in DNS right now.",
+     "Its page looks parked or for sale. Parked lookalikes are often switched on later, so keep watching."
+    ]
+   },
+   {
+    "domain": "rmiratesnbd.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "139.162.174.209",
+     "139.162.181.76",
+     "172.104.149.86",
+     "172.104.203.186"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'emiratesnbd'",
+    "risk": "parked",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates NBD: 1 character(s) different from 'emiratesnbd'.",
+     "The domain is registered and live in DNS right now.",
+     "Its page looks parked or for sale. Parked lookalikes are often switched on later, so keep watching."
+    ]
+   }
+  ]
+ },
+ "adcb": {
+  "checked_permutations": 110,
+  "recorded_utc": "2026-11-24T11:55:39+00:00",
+  "certificate_search": "unavailable: crt.sh returned HTTP 502",
+  "candidates": [
+   {
+    "domain": "adcb.shop",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.169.48",
+     "76.223.54.146"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.shop instead of .com)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): same name, different ending (.shop instead of .com).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .shop, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "ad-cb.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "198.251.84.7"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "look-alike characters",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): look-alike characters.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "adcb.ae",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "151.253.117.135",
+     "45.15.172.110",
+     "87.201.209.199"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.ae instead of .com)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): same name, different ending (.ae instead of .com).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "adcb.org",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.169.48",
+     "76.223.54.146"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.org instead of .com)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): same name, different ending (.org instead of .com).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "adcb.net",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.169.48",
+     "76.223.54.146"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.net instead of .com)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): same name, different ending (.net instead of .com).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "adcb.me",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.213.45",
+     "76.223.67.189"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.me instead of .com)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): same name, different ending (.me instead of .com).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "adcbuae.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "34.251.80.132"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "contains the organization's name",
+    "risk": "low",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): contains the organization's name.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "adcbpay.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.169.48",
+     "76.223.54.146"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "contains the organization's name",
+    "risk": "low",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): contains the organization's name.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "adcb.xyz",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "52.20.84.62"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.xyz instead of .com)",
+    "risk": "parked",
+    "redirects_to": "atom.com",
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): same name, different ending (.xyz instead of .com).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .xyz, an ending heavily used for phishing.",
+     "It forwards to atom.com, a domain marketplace: it is parked or for sale."
+    ]
+   },
+   {
+    "domain": "adcb-ae.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "198.185.159.144",
+     "198.185.159.145",
+     "198.49.23.144",
+     "198.49.23.145"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "official name 'adcb' combined with other words",
+    "risk": "parked",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): official name 'adcb' combined with other words.",
+     "The domain is registered and live in DNS right now.",
+     "Its page looks parked or for sale. Parked lookalikes are often switched on later, so keep watching."
+    ]
+   },
+   {
+    "domain": "adcb.io",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "34.68.218.70"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.io instead of .com)",
+    "risk": "parked",
+    "redirects_to": "unstoppabledomains.com",
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): same name, different ending (.io instead of .com).",
+     "The domain is registered and live in DNS right now.",
+     "It forwards to unstoppabledomains.com, a domain marketplace: it is parked or for sale."
+    ]
+   },
+   {
+    "domain": "aclcb.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "2.57.91.91"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "look-alike characters",
+    "risk": "parked",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): look-alike characters.",
+     "The domain is registered and live in DNS right now.",
+     "Its page looks parked or for sale. Parked lookalikes are often switched on later, so keep watching."
+    ]
+   },
+   {
+    "domain": "adcb.co",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "44.232.173.249",
+     "52.40.42.113"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.co instead of .com)",
+    "risk": "parked",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Commercial Bank (ADCB): same name, different ending (.co instead of .com).",
+     "The domain is registered and live in DNS right now.",
+     "Its page looks parked or for sale. Parked lookalikes are often switched on later, so keep watching."
+    ]
+   }
+  ]
+ },
+ "emirates-post": {
+  "checked_permutations": 206,
+  "recorded_utc": "2026-11-24T11:56:04+00:00",
+  "certificate_search": "ok",
+  "candidates": [
+   {
+    "domain": "emiratespost.xyz",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.169.48",
+     "76.223.54.146"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.xyz instead of .ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates Post: same name, different ending (.xyz instead of .ae).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .xyz, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "emiratespost.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "44.195.229.203",
+     "52.200.66.12"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.com instead of .ae)",
+    "risk": "parked",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Emirates Post: same name, different ending (.com instead of .ae).",
+     "The domain is registered and live in DNS right now.",
+     "Its page looks parked or for sale. Parked lookalikes are often switched on later, so keep watching."
+    ]
+   }
+  ]
+ },
+ "dewa": {
+  "checked_permutations": 136,
+  "recorded_utc": "2026-11-24T11:56:10+00:00",
+  "certificate_search": "unavailable: crt.sh returned HTTP 502",
+  "candidates": [
+   {
+    "domain": "dewa.app",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "52.20.84.62"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.app instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.app instead of .gov.ae).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .app, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "dewa.vip",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "173.82.94.116"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.vip instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.vip instead of .gov.ae).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .vip, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "d3wa.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "86.105.245.69"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "look-alike characters",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): look-alike characters.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "dewa.cc",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "119.81.49.3"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.cc instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.cc instead of .gov.ae).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .cc, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "dewa.pro",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "104.21.91.242",
+     "172.67.182.41",
+     "2606:4700:3037::6815:5bf2",
+     "2606:4700:3037::ac43:b629"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.pro instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.pro instead of .gov.ae).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .pro, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "dewa.org",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.169.48",
+     "76.223.54.146"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.org instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.org instead of .gov.ae).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "dewa.io",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "119.81.49.3"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.io instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.io instead of .gov.ae).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "dewa.xyz",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.169.48",
+     "76.223.54.146"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.xyz instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.xyz instead of .gov.ae).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .xyz, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "dewa-pay.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "104.21.90.13",
+     "172.67.193.78",
+     "2606:4700:3031::6815:5a0d",
+     "2606:4700:3035::ac43:c14e"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "official name 'dewa' combined with other words",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): official name 'dewa' combined with other words.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "devva.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.169.48",
+     "76.223.54.146"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "look-alike characters",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): look-alike characters.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "clewa.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.169.48",
+     "76.223.54.146"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "look-alike characters",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): look-alike characters.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "dewa.net",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "103.224.182.244"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.net instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.net instead of .gov.ae).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "dewa.online",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "162.4.84.240"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.online instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.online instead of .gov.ae).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .online, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "dewa.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "139.59.252.247"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.com instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.com instead of .gov.ae).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "dewa.live",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.169.48",
+     "76.223.54.146"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.live instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.live instead of .gov.ae).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .live, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "dewa.info",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "150.95.255.38"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.info instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.info instead of .gov.ae).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .info, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "dewa-service.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "34.68.218.70"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "official name 'dewa' combined with other words",
+    "risk": "parked",
+    "redirects_to": "unstoppabledomains.com",
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): official name 'dewa' combined with other words.",
+     "The domain is registered and live in DNS right now.",
+     "It forwards to unstoppabledomains.com, a domain marketplace: it is parked or for sale."
+    ]
+   },
+   {
+    "domain": "dewa.ae",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "23.206.197.10",
+     "23.206.197.9",
+     "2600:1417:7a::210:9e1b",
+     "2600:1417:7a::210:9e59"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.ae instead of .gov.ae)",
+    "risk": "defensive",
+    "redirects_to": "dewa.gov.ae",
+    "reasons": [
+     "Imitates Dubai Electricity and Water Authority (DEWA): same name, different ending (.ae instead of .gov.ae).",
+     "The domain is registered and live in DNS right now.",
+     "It forwards to the official site dewa.gov.ae, so it is most likely registered by Dubai Electricity and Water Authority (DEWA) itself to protect customers."
+    ]
+   }
+  ]
+ },
+ "ad-police": {
+  "checked_permutations": 169,
+  "recorded_utc": "2026-11-24T11:56:22+00:00",
+  "certificate_search": "ok",
+  "candidates": [
+   {
+    "domain": "adpolice.xyz",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.248.169.48",
+     "76.223.54.146"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.xyz instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Police: same name, different ending (.xyz instead of .gov.ae).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .xyz, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "adpolice.info",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "18.159.76.186"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.info instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Police: same name, different ending (.info instead of .gov.ae).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .info, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "adpolice-ae.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "104.21.3.224",
+     "172.67.153.186",
+     "2606:4700:3031::ac43:99ba",
+     "2606:4700:3033::6815:3e0"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "official name 'adpolice' combined with other words",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Police: official name 'adpolice' combined with other words.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "adpolice.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "52.28.7.129"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.com instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Police: same name, different ending (.com instead of .gov.ae).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "adpolice.app",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "2001:8d8:100f:f000::2b9",
+     "217.160.0.40"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.app instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Police: same name, different ending (.app instead of .gov.ae).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .app, an ending heavily used for phishing."
+    ]
+   },
+   {
+    "domain": "adpolice.ae",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "5.194.255.186"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.ae instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Police: same name, different ending (.ae instead of .gov.ae).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "adpolice.me",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "52.28.7.129"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.me instead of .gov.ae)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates Abu Dhabi Police: same name, different ending (.me instead of .gov.ae).",
+     "The domain is registered and live in DNS right now."
+    ]
+   }
+  ]
+ },
+ "fab": {
+  "checked_permutations": 135,
+  "recorded_utc": "2026-11-24T11:56:40+00:00",
+  "certificate_search": "ok",
+  "candidates": [
+   {
+    "domain": "banfab.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "160.153.0.144"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'bankfab'",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: 1 character(s) different from 'bankfab'.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "bankfsb.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "157.245.162.63"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'bankfab'",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: 1 character(s) different from 'bankfab'.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "bankgab.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "15.197.148.33",
+     "3.33.130.190"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'bankfab'",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: 1 character(s) different from 'bankfab'.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "bankdab.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "162.4.84.237"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'bankfab'",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: 1 character(s) different from 'bankfab'.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "bnakfab.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "192.64.119.22"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "2 character(s) different from 'bankfab'",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: 2 character(s) different from 'bankfab'.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "bankfba.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "192.64.119.78"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "2 character(s) different from 'bankfab'",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: 2 character(s) different from 'bankfab'.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "bankfb.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "15.197.225.128",
+     "3.33.251.168"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'bankfab'",
+    "risk": "watch",
+    "redirects_to": "fbmortgageloans.com",
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: 1 character(s) different from 'bankfab'.",
+     "The domain is registered and live in DNS right now.",
+     "Its website forwards to fbmortgageloans.com."
+    ]
+   },
+   {
+    "domain": "bankfab.ae",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "81.16.132.71"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.ae instead of .com)",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: same name, different ending (.ae instead of .com).",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "bank-fab.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "64.99.64.37"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "look-alike characters",
+    "risk": "watch",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: look-alike characters.",
+     "The domain is registered and live in DNS right now."
+    ]
+   },
+   {
+    "domain": "bnkfab.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "2.57.91.91"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'bankfab'",
+    "risk": "parked",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: 1 character(s) different from 'bankfab'.",
+     "The domain is registered and live in DNS right now.",
+     "Its page looks parked or for sale. Parked lookalikes are often switched on later, so keep watching."
+    ]
+   },
+   {
+    "domain": "bankfan.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.223.25.84",
+     "2600:1f18:4ae:c605:dd5d:b838:5816:d7fb",
+     "2600:1f18:4ae:c606:78d4:4260:db4e:aeee",
+     "54.243.117.197"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'bankfab'",
+    "risk": "parked",
+    "redirects_to": "hugedomains.com",
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: 1 character(s) different from 'bankfab'.",
+     "The domain is registered and live in DNS right now.",
+     "It forwards to hugedomains.com, a domain marketplace: it is parked or for sale."
+    ]
+   },
+   {
+    "domain": "bankfa.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "13.223.25.84",
+     "2600:1f18:4ae:c605:dd5d:b838:5816:d7fb",
+     "2600:1f18:4ae:c606:78d4:4260:db4e:aeee",
+     "54.243.117.197"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'bankfab'",
+    "risk": "parked",
+    "redirects_to": "hugedomains.com",
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: 1 character(s) different from 'bankfab'.",
+     "The domain is registered and live in DNS right now.",
+     "It forwards to hugedomains.com, a domain marketplace: it is parked or for sale."
+    ]
+   },
+   {
+    "domain": "banktab.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "52.20.84.62"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "1 character(s) different from 'bankfab'",
+    "risk": "parked",
+    "redirects_to": "atom.com",
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: 1 character(s) different from 'bankfab'.",
+     "The domain is registered and live in DNS right now.",
+     "It forwards to atom.com, a domain marketplace: it is parked or for sale."
+    ]
+   },
+   {
+    "domain": "bankfabae.com",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "198.49.23.145"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "official name 'bankfab' combined with other words",
+    "risk": "parked",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: official name 'bankfab' combined with other words.",
+     "The domain is registered and live in DNS right now.",
+     "Its page looks parked or for sale. Parked lookalikes are often switched on later, so keep watching."
+    ]
+   },
+   {
+    "domain": "bankfab.info",
+    "sources": [
+     "permutation"
+    ],
+    "resolves": true,
+    "ips": [
+     "198.185.159.144",
+     "198.185.159.145",
+     "198.49.23.144",
+     "198.49.23.145"
+    ],
+    "cert_first_seen": null,
+    "cert_days_ago": null,
+    "match": "same name, different ending (.info instead of .com)",
+    "risk": "parked",
+    "redirects_to": null,
+    "reasons": [
+     "Imitates First Abu Dhabi Bank: same name, different ending (.info instead of .com).",
+     "The domain is registered and live in DNS right now.",
+     "It uses .info, an ending heavily used for phishing.",
+     "Its page looks parked or for sale. Parked lookalikes are often switched on later, so keep watching."
+    ]
+   }
+  ]
+ }
+}

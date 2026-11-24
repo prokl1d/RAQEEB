@@ -17,6 +17,7 @@ from pydantic import BaseModel, Field, ValidationError
 
 from app.ai.masking import mask_pii
 from app.config import settings
+from app.net.tlsctx import shared_context
 from app.models import Evidence, EvidenceStatus
 
 
@@ -189,7 +190,7 @@ class GeminiProvider(Provider):
         url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.gemini_model}:generateContent"
         base = AIResult(provider=self.name, available=False, masked_items=counts, sent_to_external_ai=True)
         try:
-            async with httpx.AsyncClient(transport=self.transport, timeout=settings.ai_timeout_seconds) as c:
+            async with httpx.AsyncClient(transport=self.transport, timeout=settings.ai_timeout_seconds, verify=shared_context()) as c:
                 r = await c.post(url, json=body, headers={"x-goog-api-key": settings.gemini_api_key})
         except httpx.HTTPError as exc:
             base.error = f"Gemini request failed ({type(exc).__name__})"

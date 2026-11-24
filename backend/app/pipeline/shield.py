@@ -26,7 +26,7 @@ from pydantic import BaseModel
 from app.models import EvidenceStatus
 from app.pipeline.domains import analyze_url_structure
 from app.pipeline.extract import InputError, ParsedUrl, validate_url
-from app.pipeline.verify import MatchKind, compare
+from app.pipeline.verify import MatchKind, compare, find_lookalikes
 from app.registry import load_registry
 
 Verdict = Literal["official", "listed", "impersonation", "caution", "unknown", "invalid"]
@@ -66,7 +66,7 @@ def check_link(raw: str) -> LinkCheck:
                          org_name=org.name, official_domain=m.official_domain, match=m.kind.value,
                          source=(f"{v.source_name} ({v.source_url})" if org.is_verified else "RAQEEB registry"))
 
-    lookalikes = [m for o in load_registry() if (m := compare(u, o)).kind in _IMPERSONATION]
+    lookalikes = [m for m in find_lookalikes(u, set()) if m.kind in _IMPERSONATION]
     if lookalikes:
         # Prefer the strongest kind of imitation.
         order = [MatchKind.homoglyph, MatchKind.wrong_suffix, MatchKind.brand_in_subdomain,

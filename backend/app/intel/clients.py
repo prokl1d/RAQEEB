@@ -17,6 +17,7 @@ from typing import Literal
 import httpx
 
 from app.config import settings
+from app.net.tlsctx import shared_context
 
 State = Literal["found", "not_found", "missing"]
 
@@ -31,7 +32,8 @@ class IntelResult:
 
 
 def _client(transport: httpx.AsyncBaseTransport | None) -> httpx.AsyncClient:
-    return httpx.AsyncClient(transport=transport, timeout=httpx.Timeout(settings.http_timeout_seconds))
+    return httpx.AsyncClient(transport=transport, timeout=httpx.Timeout(settings.http_timeout_seconds),
+                             verify=shared_context())
 
 
 # ---------- RDAP (domain registration date) ----------
@@ -62,8 +64,36 @@ async def rdap_lookup(domain: str, transport: httpx.AsyncBaseTransport | None = 
     except ValueError:
         return IntelResult(svc, "missing", f"unrecognised registration date '{reg}'")
     age = (datetime.now(timezone.utc) - when).days
-    return IntelResult(svc, "found", f"registered {when.date().isoformat()} ({age} days ago)",
-                       {"registered": when.date().isoformat(), "age_days": age, "source_url": str(r.url)})
+    data = {"registered": when.date().isoformat(), "age_days": age, "source_url": str(r.url)}
+    data.update(_registrar_facts(body))
+    return IntelResult(svc, "found", f"registered {when.date().isoformat()} ({age} days ago)", data)
+
+
+def _vcard(entity: dict, field_name: str) -> str:
+    for item in (entity.get("vcardArray") or [None, []])[1]:
+        if isinstance(item, list) and len(item) >= 4 and item[0] == field_name and item[3]:
+            return str(item[3]).removeprefix("tel:").removeprefix("mailto:")
+    return ""
+
+
+def _registrar_facts(body: dict) -> dict:
+    """Registrar, its abuse contact and the nameservers: who a takedown request goes to."""
+    out: dict = {}
+    for ent in body.get("entities", []) or []:
+        if "registrar" not in (ent.get("roles") or []):
+            continue
+        if name := _vcard(ent, "fn"):
+            out["registrar"] = name
+        for sub in ent.get("entities", []) or []:
+            if "abuse" in (sub.get("roles") or []):
+                if email := _vcard(sub, "email"):
+                    out["abuse_email"] = email
+                if tel := _vcard(sub, "tel"):
+                    out["abuse_phone"] = tel
+    ns = [str(n.get("ldhName", "")).lower() for n in body.get("nameservers", []) or [] if n.get("ldhName")]
+    if ns:
+        out["nameservers"] = ns[:4]
+    return out
 
 
 # ---------- Google Safe Browsing API v5: urls.search ----------

@@ -105,6 +105,10 @@ def compare(u: ParsedUrl, org: Organization) -> DomainMatch:
             best = DomainMatch(org, MatchKind.brand_in_subdomain, official,
                                f"'{off_label}' appears only in the subdomain; the real domain is {reg}")
             continue
+        # Dropping a whole leading/trailing word is a different name, not a typo
+        # ("customs" is not a misspelling of "adcustoms").
+        if len(off_label) - len(label) >= 2 and (off_label.startswith(label) or off_label.endswith(label)):
+            continue
         dist = Levenshtein.distance(skeleton(label), skeleton(off_label))
         if len(off_label) >= 5 and (dist <= 2 or fuzz.ratio(label, off_label) >= 88):
             if best.kind == MatchKind.none:
@@ -113,16 +117,33 @@ def compare(u: ParsedUrl, org: Organization) -> DomainMatch:
     return best
 
 
+_RESTRICTED = re.compile(r"\.(gov|mil|edu)(\.[a-z]{2})?$|\.(go|gob|gouv|govt|ac|police)\.[a-z]{2}$|\.int$")
+
+
 def find_lookalikes(u: ParsedUrl, exclude: set[str]) -> list[DomainMatch]:
     """Registry organizations this URL imitates, even if the message never names them."""
+    regs = load_registry()
+    # An official domain of one organization is never a lookalike of another
+    # (emiratesnbd.com is not an imitation of emirates.com).
+    if any(compare(u, o).kind == MatchKind.exact for o in regs):
+        return []
+    # Government-only endings (customs.go.th, tax.gov.uk, army.mil) can't be registered by scammers.
+    if _RESTRICTED.search("." + u.suffix):
+        return []
     out = []
-    for org in load_registry():
+    for org in regs:
         if org.id in exclude:
             continue
         m = compare(u, org)
         if m.kind not in (MatchKind.none, MatchKind.exact):
             out.append(m)
-    return out
+
+    # When several organizations match, keep the most specific names: "emiratesnbb" is a typo of
+    # Emirates NBD, not "Emirates (airline) plus words".
+    def label(m: DomainMatch) -> str:
+        return m.official_domain.split(".")[0].lower()
+
+    return [m for m in out if not any(label(m) != label(o) and label(m) in label(o) for o in out)]
 
 
 # ---------- verification ----------

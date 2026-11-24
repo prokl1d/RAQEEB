@@ -121,11 +121,19 @@ def score_investigation(
         results[Category.url_domain] = (False, False, None, "No link to check.")
     else:
         ud = [e for e in by_cat[Category.url_domain] if e.status != S.missing]
-        sus = sum(1 for e in ud if e.status == S.suspicious)
-        weak = sum(1 for e in ud if e.status == S.unverified and not e.id.endswith((".tls", ".age", ".dns")))
+        # A few signals are specific enough to count double (raw["weight"] = 2), e.g. a brand name
+        # in the path of an unrelated site, or a machine-generated page name on a free platform.
+        sus = sum(int(e.raw.get("weight", 1)) for e in ud if e.status == S.suspicious)
+        weak = sum(1 for e in ud if e.status == S.unverified
+                   and not e.id.endswith((".tls", ".age", ".dns", ".established")))
         risk = min(100, sus * 30 + weak * 8)
+        est = any(e.id.endswith(".established") for e in ud)
+        if est and outcome != IdentityOutcome.possible_impersonation:
+            risk = max(0, risk - 20)  # long-standing site: weak hints alone don't make it risky
         reason = (f"{sus} suspicious and {weak} weak indicator(s) in the link." if sus or weak
                   else "No structural or technical warning signs in the link.")
+        if est:
+            reason += " The site is long-established (Tranco top 100,000)."
         results[Category.url_domain] = (True, True, risk, reason)
 
     # Message content
@@ -146,7 +154,10 @@ def score_investigation(
         results[Category.context] = (False, False, None, "Nothing to compare.")
     else:
         risk, reasons = 0, []
-        if ctx_sus:
+        if any(".helpline." in e.id for e in ctx_sus):
+            risk = max(risk, 85)
+            reasons.append("the phone number given isn't the organization's official number")
+        if any(".helpline." not in e.id for e in ctx_sus):
             risk = max(risk, 80)
             reasons.append("the link redirects somewhere other than it appears")
         if claimed_any and outcome in (IdentityOutcome.possible_impersonation, IdentityOutcome.no_relationship) \
@@ -173,9 +184,17 @@ def score_investigation(
         score = 75
         overrides.append("Raised to at least 75 because a security service confirmed the link as malicious.")
     bad_tls = any(e.id.endswith(".tls") and e.status == S.suspicious for e in by_cat[Category.url_domain])
-    if bad_tls and score < 30:
+    other_warnings = [e for e in evidence if e.status in (S.suspicious, S.confirmed) and not e.id.endswith(".tls")]
+    if bad_tls and score < 30 and other_warnings:
+        # Many small genuine sites have expired or mismatched certificates (measured in
+        # docs/EVALUATION.md), so an invalid certificate only raises the verdict alongside another warning.
         score = 30
-        overrides.append("Raised to at least Moderate because the site's HTTPS certificate is invalid; browsers will warn about it.")
+        overrides.append("Raised to at least Moderate: the site's HTTPS certificate is invalid and there are other warning signs.")
+    fake_line = any(".helpline." in e.id and e.status == S.suspicious for e in evidence)
+    if fake_line and content_rules and score < 50:
+        score = 50
+        overrides.append("Raised to at least 50: the message claims to be an organization, gives a phone number that "
+                         "isn't one of its official numbers, and contains red-flag wording.")
     if outcome == IdentityOutcome.possible_impersonation and score < 50:
         score = 50
         overrides.append("Raised to at least 50 because the link imitates a known organization.")
@@ -205,7 +224,8 @@ def score_investigation(
     traces = [e for e in by_cat[Category.url_domain]
               if e.status != S.missing and e.id.rsplit(".", 1)[-1] in ("dns", "tls", "age", "redirects", "ssrf")]
     inactive = any(e.raw.get("dns_exists") is False for e in by_cat[Category.url_domain])
-    old_domain = any(e.id.endswith(".age") and int(e.raw.get("age_days", 0)) >= 365 for e in by_cat[Category.url_domain])
+    old_domain = any((e.id.endswith(".age") and int(e.raw.get("age_days", 0)) >= 365) or e.id.endswith(".established")
+                     for e in by_cat[Category.url_domain])
     valid_tls = any(e.id.endswith(".tls") and e.status == S.unverified for e in by_cat[Category.url_domain])
 
     if band in (RiskBand.low, RiskBand.unknown) and not warnings and has_urls and inactive:

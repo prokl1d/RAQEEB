@@ -31,8 +31,9 @@ RAQEEB runs an **investigation**, not a guess:
    - the wrong ending (`dewa.com` vs `dewa.gov.ae`);
    - the brand only in the subdomain;
    - typos.
-3. **Check the site safely:** DNS, TLS certificate, domain age (RDAP), and the full redirect chain. Every hop is validated, so RAQEEB can't be tricked into reaching private networks.
-4. **Check threat intelligence:** Google Safe Browsing v5 and VirusTotal (lookup only, never submitting links).
+3. **Check the site safely:** DNS, TLS certificate, domain age and registrar (RDAP), and the full redirect chain. Every hop is validated, so RAQEEB can't be tricked into reaching private networks. The final page is read as plain text (capped at 256 KB, never run) to spot sign-in, card or OTP forms that copy a brand.
+   **Zero-day signals, no keys:** lookalikes of 71 global brands, brand names in the path, machine-generated pages on 87 free hosting platforms, risky endings, the Tranco list of established sites (to avoid false alarms), and "offline but scam-shaped" links.
+4. **Check threat intelligence:** a local copy of free known-phishing feeds (OpenPhish, Phishing.Database: about 720,000 links, matched on the machine). Google Safe Browsing v5 and VirusTotal switch on when a key is added (lookup only, never submitting links).
 5. **Read the message** for red flags: OTP, card or password requests, small fees, urgency, threats.
 6. **Score with fixed rules.** The AI never sets the score. The verdict is one of:
 
@@ -46,6 +47,20 @@ RAQEEB runs an **investigation**, not a guess:
 
 7. **Explain** every finding with its source: confirmed, suspicious, verified, unverified or missing. An AI layer writes the plain-English summary and is only allowed to cite evidence RAQEEB actually collected.
 
+**Measured accuracy** ([docs/EVALUATION.md](docs/EVALUATION.md)), on real live links with **no API keys**:
+
+| | Before | Now |
+|---|---|---|
+| False alarms, 200 random real websites (tuning set) | 5.5% | **0.5%** |
+| False alarms, 300 *unseen* real websites (held out) | not measured | **0.3%** |
+| Fresh phishing caught (OpenPhish, 300 links) | 8% | **65%** at 99.5% precision |
+| Older phishing caught (held-out Phishing.Database, 200 links) | 8% | **21%** at 97.7% precision |
+| Official UAE sites and real login pages wrongly flagged (53) | 0 | **0** |
+
+**Early Warning:** finds lookalike domains of a UAE organization **before** a campaign: RAQEEB generates the lookalikes scammers register (typos, swapped letters, "-secure", other endings), checks which are live in DNS right now, searches public certificate logs (crt.sh) for new HTTPS certificates, and separates real threats from parked domains and the organization's own defensive registrations. One click exports the list as JSON for a takedown request. Run live for Emirates NBD it found 16 registered lookalikes.
+
+**Police-ready evidence:** every report can be downloaded as a **takedown file** (JSON): each link's redirect chain, IP addresses, registration date, registrar and its abuse contact, nameservers, certificate issuer and red flags, with a UTC timestamp and a SHA-256 fingerprint. `POST /api/investigate-batch` checks up to 20 reported links at once and sorts them by risk.
+
 **Automatic protection:** the **RAQEEB Link Guard** Chrome extension checks links the moment you click them in WhatsApp Web, Gmail, Outlook or Telegram Web:
 - Likely Safe and Low Risk links open after a 3-second countdown.
 - Risky ones are stopped with the reasons.
@@ -54,6 +69,8 @@ RAQEEB runs an **investigation**, not a guess:
 - **Search Shield:** labels every search result or ad as *Official site*, *Impersonation*, *Warning signs* or *Not in registry*, on the website and, through Link Guard, on real Google and Bing results pages. Only site addresses are checked; search words are never sent.
 - **Describe a call:** the user writes what a caller said, in English or Arabic. RAQEEB finds who the caller claimed to be, what they asked for (OTP, a remote-control app like AnyDesk, a "safe account" transfer, gift cards, Emirates ID) and the pressure tricks (secrecy, fake police cases, threats), then gives the official number to call back, with its source, and the Abu Dhabi Police Aman service. Nothing is recorded.
 - **Screenshots and QR codes:** drop, paste or photograph an image. A QR code is decoded and its link checked; otherwise the text is read with OCR in English and Arabic. Both run **inside the browser**: the image never leaves the device, and only the link or text the user confirms is checked.
+- **Fake helplines:** a message that names an organization but gives a phone number that isn't one of its official numbers (for example "Emirates NBD… call 04 316 0000") is High Risk, in English or Arabic, including Arabic digits.
+- **On your phone:** RAQEEB installs as an app from the browser (PWA). On Android, **Share → RAQEEB** from SMS or WhatsApp starts an investigation of the shared message.
 - **Report to AD Police:** every report has a button that builds a one-page evidence sheet (verdict, domains and redirects, red flags, the message, official contacts and a reference number) to print, save as PDF, copy, or send to the Aman service (800 2626, SMS 2828). It is made on the device and clearly marked as not a police document.
 - **Spot the scam:** a one-minute quiz with 8 realistic UAE messages in English and Arabic. Each answer highlights the red flags, and "Check it with RAQEEB" runs the real engine on the same message (every quiz answer matches the engine's verdict).
 - **Business listing check:** compares a map listing's name, website and phone number with the organization's official domains and phone numbers. A listing that copies a bank's name with its own number and website comes out High Risk; incomplete listings get *Needs verification*, never an accusation.
@@ -89,7 +106,12 @@ Privacy:
 ## 4. What we left out, and what we'd do next
 
 - **More verified registry entries:** only DEWA, Emirates Post and u.ae have authoritative sources so far. Next would be verifying the banks against the Central Bank register.
-- **Phones:** a "Share → RAQEEB" button (an Android share target plus an iPhone Shortcut). This needs RAQEEB hosted online.
+- **Mobile (next phase).** The website already works at phone width; the plan to make RAQEEB a real phone tool:
+  1. **Installable web app (PWA):** add a manifest and service worker so RAQEEB installs on the home screen of iPhone and Android with no app store.
+  2. **"Share → RAQEEB" on Android:** the PWA registers as a share target, so a suspicious SMS or WhatsApp message can be shared straight into an investigation.
+  3. **iPhone Shortcut:** "Check with RAQEEB" in the iOS share sheet sends the selected text or link to the API (iOS doesn't allow web-app share targets).
+  4. **Native wrapper later** (Capacitor) for push alerts from Early Warning and an SMS filter extension on iOS (`ILMessageFilterExtension`), which lets an app classify SMS from unknown senders on the device.
+  5. All of this needs RAQEEB **hosted over HTTPS** (a small container on a UAE cloud region), which is also the first step of a police pilot.
 - **Arabic engine output:** the interface, verdicts, advice and Arabic red-flag rules are done; the detailed evidence lines are still written in English.
 - **Live call protection** needs phone makers or telecom operators (phones don't let apps listen to calls). **Deepfake audio/video checks** need trained models; left as future research.
 - **Scam-pattern intelligence for AD Police** (opt-in, domains and numbers only, no user data): designed, not built, because RAQEEB stores nothing today.
@@ -127,14 +149,21 @@ npm run dev
 
 Open http://localhost:5173. Use the **Try an example** buttons, or paste your own message or link.
 
-**Modes and keys** (all in `backend\.env`, which is git-ignored; never edit `.env.example`):
+**No paid keys needed.** RAQEEB is an MVP, and everything in the demo runs **without any API key, account or credit card**:
+- identity checks, lookalike detection, URL and page checks, domain age (RDAP), DNS, certificates and redirects use public protocols;
+- threat intelligence comes from a **local copy of free known-phishing feeds** (OpenPhish, Phishing.Database), refreshed with `python -m app.intel.feeds update`; links are matched on the machine, never sent anywhere;
+- explanations use the built-in explainer.
+
+Google Safe Browsing needs a Google Cloud project with billing (a credit card) turned on, even for free use, so the MVP doesn't depend on it. The code for Safe Browsing v5, VirusTotal and Gemini is there and switches on by itself if a key is added later; without a key those checks are reported as "not checked", never as clean. The accuracy numbers in [docs/EVALUATION.md](docs/EVALUATION.md) are measured with all of them **off**.
+
+**Modes and keys** (all optional, all in `backend\.env`, which is git-ignored; never edit `.env.example`):
 - `OFFLINE_DEMO=true`: the three demo scenarios replay labelled fixtures; any other link is checked live.
 - `SAFE_BROWSING_API_KEY`, `VIRUSTOTAL_API_KEY`: threat intelligence. Optional: without them, those checks show as "not checked".
 - `AI_PROVIDER=gemini` + `GEMINI_API_KEY`: AI explanations. Optional: the built-in explainer is used otherwise.
 
 **Chrome extension:** open `chrome://extensions`, turn on **Developer mode**, then **Load unpacked** and pick the `extension` folder. Details in [docs/EXTENSION.md](docs/EXTENSION.md).
 
-**Tests** (136 backend tests):
+**Tests** (175 backend tests):
 
 ```powershell
 cd backend

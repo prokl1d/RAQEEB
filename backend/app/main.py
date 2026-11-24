@@ -15,6 +15,11 @@ VERSION = "0.1.0"
 
 app = FastAPI(title="RAQEEB API", version=VERSION)
 
+if settings.phish_feeds and settings.network_checks:
+    from app.intel import feeds as _feeds
+
+    _feeds.preload()  # parse the local known-phishing lists in the background
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
@@ -82,3 +87,56 @@ def check_listing_endpoint(req: ListingInput) -> ListingResult:
 @app.get("/api/listing-demo", response_model=list[DemoListing])
 def listing_demo_endpoint() -> list[DemoListing]:
     return demo_listings()
+
+
+# ---------- batch triage (police / analyst use) ----------
+
+BATCH_MAX = 20
+
+
+class BatchRequest(BaseModel):
+    urls: list[str] = Field(min_length=1, max_length=BATCH_MAX)
+
+
+class BatchItem(BaseModel):
+    url: str
+    verdict: str | None = None
+    score: int | None = None
+    identity: str | None = None
+    top_reasons: list[str] = []
+    error: str | None = None
+
+
+@app.post("/api/investigate-batch", response_model=list[BatchItem])
+async def investigate_batch(req: BatchRequest) -> list[BatchItem]:
+    """Full investigation of up to 20 links at once, most dangerous first. Nothing is stored."""
+    import asyncio
+
+    sem = asyncio.Semaphore(8)
+
+    async def one(raw: str) -> BatchItem:
+        async with sem:
+            try:
+                r = await investigate(InvestigationType.url, url=raw[:2048])
+            except InputError as exc:
+                return BatchItem(url=raw[:2048], error=str(exc))
+            reasons = [e.finding for e in r.evidence if e.status.value in ("confirmed", "suspicious")][:3]
+            return BatchItem(url=r.urls[0].url if r.urls else raw, verdict=r.score.band.value, score=r.score.score,
+                             identity=r.identity.outcome.value, top_reasons=reasons)
+
+    items = await asyncio.gather(*(one(u) for u in req.urls))
+    return sorted(items, key=lambda i: -(i.score if i.score is not None else -1))
+
+
+# ---------- early warning (lookalike domains before they are used) ----------
+
+from app.pipeline.early_warning import EarlyWarningResult, early_warning, find_org  # noqa: E402
+
+
+@app.get("/api/early-warning/{org_id}", response_model=EarlyWarningResult)
+async def early_warning_endpoint(org_id: str) -> EarlyWarningResult:
+    """Lookalike domains of one registry organization: DNS-live permutations + new HTTPS certificates."""
+    org = find_org(org_id)
+    if not org:
+        raise HTTPException(status_code=404, detail="Unknown organization.")
+    return await early_warning(org)

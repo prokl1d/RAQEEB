@@ -157,7 +157,15 @@ async def test_unknown_site_without_network_is_unknown_risk():
     assert r.score.band == RiskBand.unknown
 
 
-def test_invalid_certificate_is_at_least_moderate():
+def test_invalid_certificate_alone_is_not_an_alarm():
+    # Measured: many small genuine sites have broken certificates (docs/EVALUATION.md).
     ev = [dns(True), e(Category.url_domain, S.suspicious, "url0.tls"), e(Category.threat_intel, S.unverified, "url0.sb")]
     r = score_investigation(ev, IdentityOutcome.unable, has_urls=True, has_text=False, claimed_any=False)
-    assert r.band == RiskBand.moderate and r.score >= 30
+    assert r.band == RiskBand.low
+
+
+def test_invalid_certificate_with_another_warning_is_at_least_moderate():
+    ev = [dns(True), e(Category.url_domain, S.suspicious, "url0.tls"), e(Category.url_domain, S.suspicious, "url0.risky-tld"),
+          e(Category.threat_intel, S.unverified, "url0.sb")]
+    r = score_investigation(ev, IdentityOutcome.unable, has_urls=True, has_text=False, claimed_any=False)
+    assert r.band in (RiskBand.moderate, RiskBand.high) and r.score >= 30

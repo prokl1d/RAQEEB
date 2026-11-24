@@ -47,3 +47,8 @@ frontend/public/ocr/
 
 # Local assistant notes (kept on this computer, not published)
 CLAUDE.md
+
+# Local known-phishing feed copies (refresh: python -m app.intel.feeds update)
+backend/app/data/feeds/
+# Evaluation run outputs (re-create with python -m eval.evaluate)
+backend/eval/results/

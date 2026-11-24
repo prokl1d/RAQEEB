@@ -12,10 +12,12 @@ from pydantic import BaseModel
 
 from app.ai.provider import AIResult, explain
 from app.config import settings
-from app.models import Evidence, InvestigationType
+from app.models import Category, Evidence, EvidenceStatus, InvestigationType
 from app.pipeline.content import HIGH_IMPACT_RULES, PRESSURE_RULES, analyze_content
 from app.pipeline.domains import analyze_url_structure
+from app.pipeline.helpline import helpline_evidence
 from app.pipeline.extract import ParsedUrl, extract_urls, validate_message, validate_url
+from app.pipeline.reputation import reputation_evidence
 from app.pipeline.technical import mode as check_mode, run_checks, to_evidence
 from app.pipeline.scoring import ScoreResult, score_investigation
 from app.pipeline.verify import IdentityOutcome, detect_claimed_orgs, verify_identity
@@ -97,6 +99,17 @@ async def investigate(kind: InvestigationType, *, message: str | None = None, ur
     reports = await run_checks(parsed)
     for i, rep in enumerate(reports):
         evidence += to_evidence(rep, i)
+        age = next((int(r.data["age_days"]) for r in rep.intel
+                    if r.service.startswith("RDAP") and r.state == "found" and "age_days" in r.data), None)
+        evidence += reputation_evidence(rep.url, i, page=rep.fetch.page if rep.fetch else None,
+                                        final=rep.final_url, age_days=age,
+                                        dns_exists=rep.dns.exists if rep.dns else None)
+        if rep.final_url and rep.final_url.registrable_domain != rep.url.registrable_domain:
+            # Where the link really lands gets the same offline checks (no page facts twice).
+            evidence += [e for e in reputation_evidence(rep.final_url, i, page=None, final=None, age_days=None,
+                                                        dns_exists=None)
+                         if not e.id.endswith((".established", ".young"))
+                         and e.id not in {x.id for x in evidence}]
 
     # Identity: the links as written, plus where they really lead.
     identity_urls: list[ParsedUrl] = list(parsed)
@@ -115,9 +128,15 @@ async def investigate(kind: InvestigationType, *, message: str | None = None, ur
                 e.why_it_matters = ("Caller ID can be faked. Hang up and call the organization back on its "
                                     "official number.")
     evidence += identity.evidence
+    brand_ev = [e for e in evidence if e.category == Category.identity and e.status == EvidenceStatus.suspicious
+                and e.id.split(".")[1].startswith(("brand", "page-brand"))]
+    if brand_ev and identity.outcome != IdentityOutcome.verified_match:
+        identity.outcome = IdentityOutcome.possible_impersonation
+        identity.summary = "The link imitates a well-known brand: " + brand_ev[0].finding
 
     if text:
         evidence += analyze_content(text)
+        evidence += helpline_evidence(text, claimed)
 
     score = score_investigation(evidence, identity.outcome, has_urls=bool(parsed), has_text=bool(text),
                                 claimed_any=bool(claimed))

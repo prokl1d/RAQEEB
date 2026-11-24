@@ -65,6 +65,13 @@ async def _live(u: ParsedUrl) -> TechReport:
         return None if isinstance(x, BaseException) else x
 
     rep.dns, rep.tls, rep.fetch = ok(dns), ok(tls), ok(fetch)
+    if settings.phish_feeds:
+        from app.intel import feeds
+        from app.pipeline.reputation import FREE_HOSTS, is_established
+        shared = (u.registrable_domain in FREE_HOSTS) or is_established(u.registrable_domain)
+        res = feeds.lookup(u.url, shared_host=shared)
+        if res.state != "missing":
+            rep.intel.append(res)
     for svc, res in (("RDAP (domain registration data)", rdap), ("Google Safe Browsing", sb), ("VirusTotal", vt)):
         if isinstance(res, BaseException) or res is None:
             if res is None and svc.startswith("RDAP"):
@@ -219,9 +226,9 @@ def to_evidence(rep: TechReport, idx: int) -> list[Evidence]:
     for r in rep.intel:
         if r.service.startswith("RDAP"):
             continue
-        key = "sb" if "Safe Browsing" in r.service else "vt"
+        key = "sb" if "Safe Browsing" in r.service else "feed" if "feeds" in r.service else "vt"
         if r.state == "found":
-            strong = key == "sb" or int(r.data.get("malicious", 0)) >= 3
+            strong = key in ("sb", "feed") or int(r.data.get("malicious", 0)) >= 3
             add(Category.threat_intel, key, f"{r.service}: {r.detail}.",
                 "Independent security services have already flagged this link.",
                 EvidenceStatus.confirmed if strong else EvidenceStatus.suspicious, r.service, r.data)

@@ -190,3 +190,30 @@ def test_registry_phones_have_sources():
     for o in load_registry():
         if o.phones:
             assert o.phone_source and o.phone_source.startswith("https://") and o.phone_checked
+
+
+# ---------- fake helpline ----------
+
+def test_fake_helpline_in_message_is_high_risk():
+    import asyncio
+
+    from app.models import InvestigationType
+    from app.pipeline.investigate import investigate
+
+    r = asyncio.run(investigate(InvestigationType.message,
+                                message="Emirates NBD: your card is blocked. Call our helpline 04 316 0000 now."))
+    assert r.score.band.value == "High Risk"
+    assert any(".helpline.emirates-nbd" in e.id for e in r.evidence)
+
+
+def test_official_number_is_not_flagged_and_arabic_digits_work():
+    import asyncio
+
+    from app.models import InvestigationType
+    from app.pipeline.helpline import phones_in
+    from app.pipeline.investigate import investigate
+
+    ok = asyncio.run(investigate(InvestigationType.message, message="Emirates NBD: call 600 54 0000 for help."))
+    assert not any(e.status.value == "suspicious" and "helpline" in e.id for e in ok.evidence)
+    assert phones_in("اتصل على ٠٤٣١٦٠٠٠٠") == ["043160000"]
+    assert phones_in("Meeting in 2026 on 24-11 room 12") == []
