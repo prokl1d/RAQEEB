@@ -105,14 +105,35 @@ class BatchItem(BaseModel):
     identity: str | None = None
     top_reasons: list[str] = []
     error: str | None = None
+    domain: str | None = None
+    registrar: str | None = None
+    abuse_email: str | None = None
+    campaign: str | None = None  # letter of the campaign this link belongs to, if any
 
 
-@app.post("/api/investigate-batch", response_model=list[BatchItem])
-async def investigate_batch(req: BatchRequest) -> list[BatchItem]:
-    """Full investigation of up to 20 links at once, most dangerous first. Nothing is stored."""
+class BatchCampaign(BaseModel):
+    id: str
+    members: list[str]
+    links: list[str]
+
+
+class BatchResult(BaseModel):
+    items: list[BatchItem]
+    campaigns: list[BatchCampaign]
+    generated_utc: str
+
+
+@app.post("/api/investigate-batch", response_model=BatchResult)
+async def investigate_batch(req: BatchRequest) -> BatchResult:
+    """Full investigation of up to 20 links at once, most dangerous first, grouped into campaigns
+    that share infrastructure. Nothing is stored."""
     import asyncio
+    from datetime import datetime, timezone
+
+    from app.pipeline.campaigns import fingerprint_from_result, link
 
     sem = asyncio.Semaphore(8)
+    prints = []
 
     async def one(raw: str) -> BatchItem:
         async with sem:
@@ -120,12 +141,27 @@ async def investigate_batch(req: BatchRequest) -> list[BatchItem]:
                 r = await investigate(InvestigationType.url, url=raw[:2048])
             except InputError as exc:
                 return BatchItem(url=raw[:2048], error=str(exc))
-            reasons = [e.finding for e in r.evidence if e.status.value in ("confirmed", "suspicious")][:3]
-            return BatchItem(url=r.urls[0].url if r.urls else raw, verdict=r.score.band.value, score=r.score.score,
-                             identity=r.identity.outcome.value, top_reasons=reasons)
+            order = {"threat_intel": 0, "identity": 1, "context": 2, "url_domain": 3, "content": 4}
+            flagged = [e for e in r.evidence if e.status.value in ("confirmed", "suspicious")]
+            flagged.sort(key=lambda e: (e.status.value != "confirmed", order.get(e.category.value, 9)))
+            reasons = [e.finding for e in flagged][:3]
+            url = r.urls[0].url if r.urls else raw
+            fp = fingerprint_from_result(url, r)
+            prints.append(fp)
+            return BatchItem(url=url, verdict=r.score.band.value, score=r.score.score,
+                             identity=r.identity.outcome.value, top_reasons=reasons, domain=fp.domain or None,
+                             registrar=fp.registrar,
+                             abuse_email=next((e.raw.get("abuse_email") for e in r.evidence if e.id == "url0.age"), None))
 
-    items = await asyncio.gather(*(one(u) for u in req.urls))
-    return sorted(items, key=lambda i: -(i.score if i.score is not None else -1))
+    items = await asyncio.gather(*(one(u) for u in dict.fromkeys(req.urls)))
+    camps = link(prints)
+    for c in camps:
+        for it in items:
+            if it.url in c.members:
+                it.campaign = c.id
+    items = sorted(items, key=lambda i: -(i.score if i.score is not None else -1))
+    return BatchResult(items=items, campaigns=[BatchCampaign(id=c.id, members=c.members, links=c.links) for c in camps],
+                       generated_utc=datetime.now(timezone.utc).isoformat(timespec="seconds"))
 
 
 # ---------- early warning (lookalike domains before they are used) ----------

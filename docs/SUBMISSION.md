@@ -22,7 +22,7 @@ Everything to paste or upload into the AD Police × 42AD submission form, plus t
 
 ### الأدوات المستخدمة (Tools used)
 
-> Python, FastAPI, Pydantic, React, TypeScript, Tailwind CSS, Motion, GSAP, Three.js, tesseract.js (on-device OCR), jsQR, Chrome Extension (Manifest V3), PWA (Web Share Target), RDAP, Certificate Transparency (crt.sh), OpenPhish and Phishing.Database feeds, Tranco list, RapidFuzz, pytest, Playwright. Optional when keys are added: Google Gemini API, Google Safe Browsing API v5, VirusTotal API
+> Python, FastAPI, Pydantic, React, TypeScript, Tailwind CSS, Motion, GSAP, Three.js, tesseract.js (on-device OCR), jsQR, Chrome Extension (Manifest V3), PWA (Web Share Target), Playwright + Pillow (optional sandboxed screenshots), RDAP, Certificate Transparency (crt.sh), OpenPhish and Phishing.Database feeds, Tranco list, RapidFuzz, pytest, Playwright. Optional when keys are added: Google Gemini API, Google Safe Browsing API v5, VirusTotal API
 
 ---
 
@@ -32,7 +32,7 @@ Everything to paste or upload into the AD Police × 42AD submission form, plus t
 |---|---|
 | **Repository URL** | `https://github.com/prokl1d/RAQEEB` (branch `master`). The repository must be **public**, or the judges must be added as collaborators, before submitting. |
 | **Presentation Link** (optional) | Upload `docs/RAQEEB_Pitch_Deck.pptx` to OneDrive or Google Slides and share it as "Anyone with the link can view". |
-| **Upload Presentation File** | `docs/RAQEEB_Presentation.pdf` (1.4 MB, 28 slides). The `.pptx` (4.3 MB) is also accepted. |
+| **Upload Presentation File** | `docs/RAQEEB_Presentation.pdf` (1.4 MB, 29 slides). The `.pptx` (4.6 MB) is also accepted. |
 | **Upload Document File** | `docs/RAQEEB_Project_Description.pdf` (4 pages: problem, solution, measured accuracy, features, architecture, model choices, privacy, security, trade-offs, pilot plan, how to run). |
 | **Demo Video URL** | Upload to YouTube as **Unlisted**, or to Google Drive shared as "Anyone with the link", then paste the link. |
 

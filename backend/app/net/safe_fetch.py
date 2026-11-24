@@ -29,6 +29,9 @@ from app.net.tlsctx import shared_context
 from app.pipeline.extract import InputError, ParsedUrl, parse_url
 
 Resolver = Callable[[str, int], Awaitable[list[str]]]
+# An Android phone, for the cloaking check: many scam kits only show the real page to phones.
+MOBILE_UA = ("Mozilla/5.0 (Linux; Android 14; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) "
+             "Chrome/131.0 Mobile Safari/537.36")
 PAGE_CAP = 256 * 1024
 # A normal browser identity: phishing kits often show a blank page to anything that looks like a bot.
 BROWSER_UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
@@ -113,8 +116,9 @@ async def safe_fetch(
     resolver: Resolver = system_resolve,
     transport: httpx.AsyncBaseTransport | None = None,
     max_redirects: int | None = None,
+    user_agent: str | None = None,
 ) -> FetchResult:
-    """Follow the redirect chain of `start` safely. Never reads the body."""
+    """Follow the redirect chain of `start` safely. Only the final HTML page is read, as capped text."""
     limit = settings.max_redirects if max_redirects is None else max_redirects
     result = FetchResult()
     current = start
@@ -141,7 +145,7 @@ async def safe_fetch(
                 return result
 
             headers = {"Host": current.host_ascii + (f":{current.port}" if current.port else ""),
-                       "User-Agent": BROWSER_UA,
+                       "User-Agent": user_agent or BROWSER_UA,
                        "Accept": "text/html,*/*;q=0.5"}
             ext = {"sni_hostname": current.host_ascii} if current.scheme == "https" and not current.is_ip else {}
             try:

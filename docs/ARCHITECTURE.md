@@ -219,11 +219,15 @@ The score is a **risk assessment, not a probability of fraud**, and RAQEEB never
 | Takedown file | `frontend/src/components/EvidenceSheet.tsx` | JSON (`raqeeb-takedown/1`) per link: redirect chain, DNS records, registration, registrar and abuse contact, nameservers, certificate issuer, findings; SHA-256 of the evidence via Web Crypto. |
 | Shared TLS context | `backend/app/net/tlsctx.py` | One certifi-based `SSLContext` for all clients (the CA bundle used to be parsed per connection: ~10× CPU saved). |
 | Evaluation | `backend/eval/` | Labelled sets, tuning vs held-out, `python -m eval.evaluate`. Results in `docs/EVALUATION.md`. |
+| Cloaking check | `backend/app/pipeline/cloaking.py` | The link is fetched as a desktop browser and as an Android phone. Flagged only when desktops land on an established site and phones elsewhere, or when only phones are asked for a password/card/OTP. The phone's page is analysed when only it shows a form. |
+| Screenshot | `backend/app/net/screenshot.py`, `pipeline/page_capture.py` | Optional (`.[visual]`). Installed Edge/Chrome via Playwright, headless, fresh context per page; every request routed through the public-IP check; downloads, service workers, permissions and dialogs blocked; 15 s limit; 2 at a time. Only for pages that are neither Tranco-established nor registry-official. Residual risk (DNS rebinding) documented; production would isolate the worker. |
+| Visual brand match | `backend/app/pipeline/visual.py`, `app/data/brand_refs.json` | Content-cropped 256-bit difference hash + main colours; blank pages never compared; threshold 40 bits, calibrated by `eval/visual_calibrate.py`. Only fingerprints are stored, not images. |
+| Campaign linking | `backend/app/pipeline/campaigns.py` | Union-find over batch results: same nameserver pair (registrar/parking defaults excluded), same non-CDN IP, or same registrar within 2 days. Each group lists the exact shared fingerprint. Shown in the Analyst triage section. |
 | Phone app | `frontend/public/manifest.webmanifest`, `sw.js` | Installable PWA; `share_target` (GET) maps shared `title`/`text`/`url` to an investigation. The service worker never caches `/api/` and is not registered on the Vite dev server. |
 
 ## 8. Testing
 
-**175 automated backend tests** (`pytest`):
+**185 automated backend tests** (`pytest`):
 - extraction (defanged links, emails, file names, punycode);
 - lookalike detection for each match type;
 - the three demo scenarios end to end;

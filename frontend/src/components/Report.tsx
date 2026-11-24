@@ -169,6 +169,47 @@ function CallSummary({ result }: { result: InvestigationResult }) {
   );
 }
 
+/** Sandboxed screenshot of the page, with its fingerprint and any visual brand match. */
+function PageShot({ shot }: { shot: NonNullable<InvestigationResult["screenshot"]> }) {
+  const { t } = useI18n();
+  const S = t.shot;
+  const domain = (() => {
+    try {
+      return new URL(shot.final_url).host;
+    } catch {
+      return shot.final_url;
+    }
+  })();
+  const vm = shot.visual_match;
+  return (
+    <Card className="overflow-hidden">
+      <div className="grid gap-0 md:grid-cols-[1.25fr_1fr]">
+        <div className="relative border-b border-line bg-canvas md:border-b-0 md:border-e">
+          <img src={`data:image/jpeg;base64,${shot.jpeg_b64}`} alt={S.alt(domain)} className="block aspect-[16/10] w-full object-cover object-top" loading="lazy" />
+          {vm && <div aria-hidden className="pointer-events-none absolute inset-0 ring-2 ring-inset ring-risk-high/70" />}
+        </div>
+        <div className="flex flex-col gap-3 p-6">
+          <Badge>{S.badge}</Badge>
+          {vm ? (
+            <div className="rounded-panel border border-risk-high/30 bg-risk-high-bg px-4 py-3">
+              <p className="font-semibold text-risk-high">{S.match(vm.name, vm.similarity)}</p>
+              <p className="mt-1 text-small text-ink-2">{S.matchWhy(domain)}</p>
+            </div>
+          ) : (
+            <p className="text-small text-ink-2">{S.none}</p>
+          )}
+          <p dir="ltr" className="break-all text-start font-mono text-small text-ink">{domain}</p>
+          <p className="text-small text-ink-3">{S.caption(shot.taken_utc)}</p>
+          <p className="text-small text-ink-3">
+            {S.sha}: <span dir="ltr" className="break-all font-mono">{shot.sha256}</span>
+          </p>
+          <p className="mt-auto text-small text-ink-3">{S.note}</p>
+        </div>
+      </div>
+    </Card>
+  );
+}
+
 export function Report({ result, message }: { result: InvestigationResult; message?: string }) {
   const { score, identity, ai } = result;
   const level = bandLevel[score.band];
@@ -267,6 +308,12 @@ export function Report({ result, message }: { result: InvestigationResult; messa
         </button>
       </motion.div>
       {sheet && <EvidenceSheet result={result} message={message} onClose={() => setSheet(false)} />}
+
+      {result.screenshot && (
+        <motion.div variants={fadeUp}>
+          <PageShot shot={result.screenshot} />
+        </motion.div>
+      )}
 
       {isCall && (
         <motion.div variants={fadeUp}>

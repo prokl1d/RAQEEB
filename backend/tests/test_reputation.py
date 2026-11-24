@@ -126,9 +126,10 @@ def test_batch_endpoint_sorts_by_risk():
     r = c.post("/api/investigate-batch", json={"urls": ["https://www.google.com/", "https://paypal-secure-login.xyz/verify",
                                                         "not a link at all ::"]})
     assert r.status_code == 200
-    body = r.json()
+    body = r.json()["items"]
     assert body[0]["url"].startswith("https://paypal-secure-login.xyz") and body[0]["verdict"] == "High Risk"
     assert any(i["error"] for i in body)
+    assert r.json()["campaigns"] == []  # no network in tests, so no shared infrastructure to link
     assert c.post("/api/investigate-batch", json={"urls": ["https://a.com"] * 21}).status_code == 422
 
 

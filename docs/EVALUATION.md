@@ -4,22 +4,18 @@ Measured on 24 Nov 2026 against **real, live links**, with **no API keys at all*
 
 ## Results
 
-**Held-out test** (never looked at while building the rules, run once):
+**Final measurement** (final code, all 1,052 links, run after the last rule change):
 
-| Set | Links | Flagged | |
-|---|---|---|---|
-| Real websites, random Tranco ranks 100,001 to 1,000,000 (unseen sample) | 300 | **1** | **0.3% false alarms** |
-| Phishing.Database active phishing links (MIT) | 199 | 42 | recall 21.1% (25.6% of the 164 still online) |
-| | | | **precision 97.7%** |
+| Set | Role | Links | Flagged | |
+|---|---|---|---|---|
+| Real websites, random Tranco ranks 100,001 to 1,000,000 (unseen sample) | held out | 300 | **1** | **0.3% false alarms** |
+| Phishing.Database active phishing links (MIT) | held out | 199 | 42 | recall 21.1% (25.6% of the 164 still online) |
+| Official UAE banks, government, telecoms, airlines, retail + real login pages of global brands | tuning | 53 | **0** | no false alarms |
+| Real websites, Tranco ranks 100,001 to 1,000,000 | tuning | 200 | 1 | 0.5% |
+| OpenPhish community feed, fresh | tuning | 300 | 198 | **recall 66.0%** |
+| **All sets** | | 1,052 | | **precision 99.2%**, false alarms 0.4% |
 
-**Tuning set** (used while designing the rules):
-
-| Set | Links | Flagged | |
-|---|---|---|---|
-| Official UAE banks, government, telecoms, airlines, retail + real login pages of global brands (Google, Microsoft, PayPal, Apple, banks…) | 53 | **0** | no false alarms |
-| Real websites, Tranco ranks 100,001 to 1,000,000 | 200 | 1 | 0.5% |
-| OpenPhish community feed, fresh | 300 | 196 | **recall 65.3%** |
-| | | | **precision 99.5%**, F1 78.9% |
+The held-out sets were never used to design a rule. They were first run once (0.3% false alarms, 21% recall, 97.7% precision); one false alarm found there (below) was fixed, and this table is the re-run of the finished system. The remaining held-out false alarm is a lottery site whose login form posts to another server.
 
 **Before this work (baseline, same data):** recall 8.0%, false alarms 4.3%, precision 78.4%.
 
@@ -39,10 +35,23 @@ Measured on 24 Nov 2026 against **real, live links**, with **no API keys at all*
 | Established sites | Avoids false alarms on long-running sites | Tranco top 100,000 (bundled, 0.6 MB) |
 | Dead but scam-shaped | An offline link that still imitates a brand | DNS + name pattern |
 | Fake helplines | "Emirates NBD… call 04 316 0000" | Official numbers in the registry, each with its source |
+| Cloaking (phone vs desktop) | Kits that show the real page only to phones and send desktops/scanners to a harmless site | The link fetched twice, as a desktop browser and as an Android phone. The phone's version of the page is also analysed when only it shows a form (this added 2 OpenPhish detections) |
 
 Two rules were **removed or weakened** because the data showed they caused false alarms:
 - *An invalid HTTPS certificate alone* no longer raises the verdict: 11 of 200 real small sites have broken certificates. It still appears as a warning, and still counts together with any other sign.
 - *A lookalike rule* matched `customs.go.th` (Thai Customs) to Abu Dhabi Customs: it was the one held-out false alarm. Government-only endings (`gov.xx`, `go.xx`, `.mil`…) and "a shorter word inside the name" are no longer treated as lookalikes. We found this **in** the held-out set, so the 0.3% above is reported from *before* the fix.
+
+## Screenshots and visual brand match (optional layer)
+
+With the optional `visual` extra, RAQEEB takes a sandboxed screenshot of pages that are neither long-established nor official (every request the page makes is fenced to public addresses) and compares it with fingerprints of 11 brands' real sign-in pages (Microsoft ×2, Google, PayPal, Netflix, Facebook, Instagram, Dropbox, DocuSign, GitHub, Emirates Post, DEWA). Calibration (`python -m eval.visual_calibrate`), on a 256-bit layout hash:
+
+| | Hash distance |
+|---|---|
+| The same real page captured again | 0–8 bits in 10 of 12 captures (two homepages with rotating banners: 56 and 105) |
+| 52 random real websites, nearest brand | **55 bits or more**: no false match at the threshold of 40 |
+| 112 live OpenPhish pages, nearest brand | 60 bits or more: **no clone of these 11 pages in today's sample** |
+
+So the visual match is precise but, on this sample, adds no detections: today's OpenPhish campaigns copy other brands or render differently. We report that rather than tune the threshold until it "finds" something. Its value today is the **screenshot as evidence** (sealed with SHA-256, in the report, the police sheet and the takedown file); its detection value grows with each reference page added (UAE banks' online-banking pages first: Emirates NBD's page rendered blank in our sandbox, so it isn't a reference yet).
 
 ## With the free feeds on
 
@@ -56,7 +65,7 @@ Measuring also exposed two performance bugs, now fixed:
 
 ## Honest limits
 
-- Recall on the older Phishing.Database list is lower (21%): many of those links are **hacked legitimate websites** with long random paths, which look normal from the outside. Catching those needs a page screenshot and visual comparison (future work) or threat-intelligence feeds.
+- Recall on the older Phishing.Database list is lower (21%): many of those links are **hacked legitimate websites** with long random paths, which look normal from the outside. Threat-intelligence feeds catch those; the visual brand match below is meant to help once it has more reference pages.
 - Phishing pages change by the hour; these numbers are a snapshot of 24 Nov 2026.
 - Real sites were tested by their **home pages**; inner pages of real sites (e.g. a hacked WordPress folder) can look different.
 - The weights are still hand-set; with a pilot's labelled data they can be fitted statistically.

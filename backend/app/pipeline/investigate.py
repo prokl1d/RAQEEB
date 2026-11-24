@@ -17,6 +17,8 @@ from app.pipeline.content import HIGH_IMPACT_RULES, PRESSURE_RULES, analyze_cont
 from app.pipeline.domains import analyze_url_structure
 from app.pipeline.helpline import helpline_evidence
 from app.pipeline.extract import ParsedUrl, extract_urls, validate_message, validate_url
+from app.pipeline.cloaking import best_page, cloaking_evidence
+from app.pipeline.page_capture import PageScreenshot, capture_and_match, worth_capturing
 from app.pipeline.reputation import reputation_evidence
 from app.pipeline.technical import mode as check_mode, run_checks, to_evidence
 from app.pipeline.scoring import ScoreResult, score_investigation
@@ -77,6 +79,7 @@ class InvestigationResult(BaseModel):
     disclosures: list[Disclosure]
     pending: list[str]
     call: CallInsight | None = None
+    screenshot: PageScreenshot | None = None
 
 
 PENDING: list[str] = []
@@ -101,7 +104,8 @@ async def investigate(kind: InvestigationType, *, message: str | None = None, ur
         evidence += to_evidence(rep, i)
         age = next((int(r.data["age_days"]) for r in rep.intel
                     if r.service.startswith("RDAP") and r.state == "found" and "age_days" in r.data), None)
-        evidence += reputation_evidence(rep.url, i, page=rep.fetch.page if rep.fetch else None,
+        evidence += cloaking_evidence(rep.url, i, rep.fetch, rep.mobile)
+        evidence += reputation_evidence(rep.url, i, page=best_page(rep.fetch, rep.mobile),
                                         final=rep.final_url, age_days=age,
                                         dns_exists=rep.dns.exists if rep.dns else None)
         if rep.final_url and rep.final_url.registrable_domain != rep.url.registrable_domain:
@@ -110,6 +114,15 @@ async def investigate(kind: InvestigationType, *, message: str | None = None, ur
                                                         dns_exists=None)
                          if not e.id.endswith((".established", ".young"))
                          and e.id not in {x.id for x in evidence}]
+
+    # A sandboxed screenshot (and visual brand match) of the first link that is worth it.
+    screenshot = None
+    for i, rep in enumerate(reports):
+        final = rep.final_url or (rep.url if rep.fetch and rep.fetch.final_url else None)
+        if rep.mode == "live" and rep.fetch and not rep.fetch.blocked and worth_capturing(final):
+            screenshot, shot_ev = await capture_and_match(final, i)
+            evidence += shot_ev
+            break
 
     # Identity: the links as written, plus where they really lead.
     identity_urls: list[ParsedUrl] = list(parsed)
@@ -129,7 +142,7 @@ async def investigate(kind: InvestigationType, *, message: str | None = None, ur
                                     "official number.")
     evidence += identity.evidence
     brand_ev = [e for e in evidence if e.category == Category.identity and e.status == EvidenceStatus.suspicious
-                and e.id.split(".")[1].startswith(("brand", "page-brand"))]
+                and e.id.split(".")[1].startswith(("brand", "page-brand", "visual"))]
     if brand_ev and identity.outcome != IdentityOutcome.verified_match:
         identity.outcome = IdentityOutcome.possible_impersonation
         identity.summary = "The link imitates a well-known brand: " + brand_ev[0].finding
@@ -184,4 +197,5 @@ async def investigate(kind: InvestigationType, *, message: str | None = None, ur
         ai=ai,
         disclosures=disclosures,
         pending=PENDING,
+        screenshot=screenshot,
     )

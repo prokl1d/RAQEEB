@@ -66,6 +66,7 @@ export interface InvestigationResult {
   };
   evidence: Evidence[];
   score: ScoreResult;
+  screenshot?: PageScreenshot | null;
   ai: {
     provider: string;
     available: boolean;
@@ -227,3 +228,35 @@ export interface EarlyWarningResult {
 }
 
 export const getEarlyWarning = (orgId: string) => request<EarlyWarningResult>(`/api/early-warning/${encodeURIComponent(orgId)}`);
+
+// ---------- Screenshot, visual match, batch triage ----------
+
+export interface PageScreenshot {
+  jpeg_b64: string;
+  sha256: string;
+  final_url: string;
+  title: string;
+  taken_utc: string;
+  visual_match: { brand: string; name: string; similarity: number; hash_distance: number; official: string[]; reference_page: string } | null;
+}
+
+export interface BatchItem {
+  url: string;
+  verdict: RiskBand | null;
+  score: number | null;
+  identity: string | null;
+  top_reasons: string[];
+  error: string | null;
+  domain: string | null;
+  registrar: string | null;
+  abuse_email: string | null;
+  campaign: string | null;
+}
+
+export interface BatchResult {
+  items: BatchItem[];
+  campaigns: { id: string; members: string[]; links: string[] }[];
+  generated_utc: string;
+}
+
+export const investigateBatch = (urls: string[]) => request<BatchResult>("/api/investigate-batch", { urls });

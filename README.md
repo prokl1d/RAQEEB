@@ -53,13 +53,20 @@ RAQEEB runs an **investigation**, not a guess:
 |---|---|---|
 | False alarms, 200 random real websites (tuning set) | 5.5% | **0.5%** |
 | False alarms, 300 *unseen* real websites (held out) | not measured | **0.3%** |
-| Fresh phishing caught (OpenPhish, 300 links) | 8% | **65%** at 99.5% precision |
-| Older phishing caught (held-out Phishing.Database, 199 links) | 8% | **21%** at 97.7% precision |
+| Fresh phishing caught (OpenPhish, 300 links) | 8% | **66%** |
+| Older phishing caught (held-out Phishing.Database, 199 links) | 8% | **21%** |
+| Precision over all 1,052 links (when RAQEEB says risky, it is right) | 78% | **99.2%** |
 | Official UAE sites and real login pages wrongly flagged (53) | 0 | **0** |
 
 **Early Warning:** finds lookalike domains of a UAE organization **before** a campaign: RAQEEB generates the lookalikes scammers register (typos, swapped letters, "-secure", other endings), checks which are live in DNS right now, searches public certificate logs (crt.sh) for new HTTPS certificates, and separates real threats from parked domains and the organization's own defensive registrations. One click exports the list as JSON for a takedown request. Run live for Emirates NBD it found 16 registered lookalikes.
 
-**Police-ready evidence:** every report can be downloaded as a **takedown file** (JSON): each link's redirect chain, IP addresses, registration date, registrar and its abuse contact, nameservers, certificate issuer and red flags, with a UTC timestamp and a SHA-256 fingerprint. `POST /api/investigate-batch` checks up to 20 reported links at once and sorts them by risk.
+**Police-ready evidence:** every report can be downloaded as a **takedown file** (JSON): each link's redirect chain, IP addresses, registration date, registrar and its abuse contact, nameservers, certificate issuer and red flags, with a UTC timestamp and a SHA-256 fingerprint.
+
+**What the victim would see:** for links that aren't established or official sites, RAQEEB takes a **sandboxed screenshot** (every request the page makes is fenced to public addresses; downloads, pop-ups and permissions are blocked) and compares it with fingerprints of real sign-in pages (Microsoft, Google, PayPal, Netflix, Facebook, Instagram, DocuSign, Emirates Post, DEWA…). A page that *looks* like a brand's login on someone else's domain is flagged as impersonation. The screenshot, sealed with SHA-256, appears in the report, on the police sheet and in the takedown file. Calibrated honestly: no false match on 52 real sites; see [docs/EVALUATION.md](docs/EVALUATION.md).
+
+**Cloaking check:** every link is fetched twice, as a desktop browser and as an Android phone. Kits that send desktops and scanners to a harmless site but show phones the scam page are caught, and the phone's version of the page is the one analysed.
+
+**Analyst triage and campaigns:** the *For AD Police analysts* section (and `POST /api/investigate-batch`) investigates up to 20 reported links at once, sorts them by risk, shows each registrar's abuse contact, and groups links **run by the same people**: same nameserver pair, same server IP (shared CDNs excluded), or a burst of registrations at one registrar. Exported as a JSON triage file.
 
 **Automatic protection:** the **RAQEEB Link Guard** Chrome extension checks links the moment you click them in WhatsApp Web, Gmail, Outlook or Telegram Web:
 - Likely Safe and Low Risk links open after a 3-second countdown.
@@ -131,6 +138,8 @@ Copy-Item .env.example backend\.env
 cd backend
 py -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[dev]"
+# Optional: sandboxed screenshots + visual brand match (uses the installed Microsoft Edge or Chrome)
+.\.venv\Scripts\python.exe -m pip install -e ".[visual]"
 cd ..\frontend
 npm install
 ```
@@ -163,7 +172,7 @@ Google Safe Browsing needs a Google Cloud project with billing (a credit card) t
 
 **Chrome extension:** open `chrome://extensions`, turn on **Developer mode**, then **Load unpacked** and pick the `extension` folder. Details in [docs/EXTENSION.md](docs/EXTENSION.md).
 
-**Tests** (175 backend tests):
+**Tests** (185 backend tests):
 
 ```powershell
 cd backend

@@ -19,7 +19,7 @@ from app.config import settings
 from app.intel.clients import IntelResult, rdap_lookup, safe_browsing, virustotal
 from app.models import Category, Evidence, EvidenceStatus
 from app.net.dns_check import DnsInfo, dns_info
-from app.net.safe_fetch import FetchResult, Hop, TlsInfo, safe_fetch, tls_info
+from app.net.safe_fetch import MOBILE_UA, FetchResult, Hop, TlsInfo, safe_fetch, tls_info
 from app.pipeline.extract import InputError, ParsedUrl, parse_url
 
 FIXTURE_FILE = Path(__file__).resolve().parent.parent / "fixtures" / "demo.json"
@@ -40,6 +40,7 @@ class TechReport:
     fetch: FetchResult | None = None
     intel: list[IntelResult] = field(default_factory=list)
     final_url: ParsedUrl | None = None
+    mobile: FetchResult | None = None  # the same link fetched as an Android phone (cloaking check)
 
 
 def mode() -> str:
@@ -55,16 +56,17 @@ async def _live(u: ParsedUrl) -> TechReport:
         dns_info(domain) if u.registrable_domain else asyncio.sleep(0, result=None),
         tls_info(u) if u.scheme == "https" or not u.had_scheme else asyncio.sleep(0, result=None),
         safe_fetch(u),
+        safe_fetch(u, user_agent=MOBILE_UA),
         rdap_lookup(u.registrable_domain) if u.registrable_domain else asyncio.sleep(0, result=None),
         safe_browsing(u.url),
         virustotal(u.url),
     ]
-    dns, tls, fetch, rdap, sb, vt = await asyncio.gather(*tasks, return_exceptions=True)
+    dns, tls, fetch, mobile, rdap, sb, vt = await asyncio.gather(*tasks, return_exceptions=True)
 
     def ok(x):
         return None if isinstance(x, BaseException) else x
 
-    rep.dns, rep.tls, rep.fetch = ok(dns), ok(tls), ok(fetch)
+    rep.dns, rep.tls, rep.fetch, rep.mobile = ok(dns), ok(tls), ok(fetch), ok(mobile)
     if settings.phish_feeds:
         from app.intel import feeds
         from app.pipeline.reputation import FREE_HOSTS, is_established

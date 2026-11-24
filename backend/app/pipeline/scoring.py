@@ -157,7 +157,10 @@ def score_investigation(
         if any(".helpline." in e.id for e in ctx_sus):
             risk = max(risk, 85)
             reasons.append("the phone number given isn't the organization's official number")
-        if any(".helpline." not in e.id for e in ctx_sus):
+        if any(e.id.endswith(".cloaking") for e in ctx_sus):
+            risk = max(risk, 85)
+            reasons.append("it shows phones a different page than desktop computers")
+        if any(".helpline." not in e.id and not e.id.endswith(".cloaking") for e in ctx_sus):
             risk = max(risk, 80)
             reasons.append("the link redirects somewhere other than it appears")
         if claimed_any and outcome in (IdentityOutcome.possible_impersonation, IdentityOutcome.no_relationship) \

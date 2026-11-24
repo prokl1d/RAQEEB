@@ -2,28 +2,159 @@
   "_comment": "LABELLED DEMO FIXTURES. Used only when OFFLINE_DEMO=true. These are invented example results for invented demo domains, so the live demo works without internet or API keys. They are shown in the UI as 'Recorded demo fixture', never as live results. The two scam domains are fictional examples; do not register or visit them.",
   "domains": {
     "emiratesnbd-secure.co": {
-      "dns": {"exists": true, "records": {"A": ["203.0.113.24"], "MX": [], "NS": ["ns1.example-dns.net."]}},
-      "rdap": {"state": "found", "detail": "registered 2026-11-17 (3 days ago)", "data": {"registered": "2026-11-17", "age_days": 3}},
-      "tls": {"ok": true, "issuer": "Example Free CA", "days_since_issued": 2},
-      "redirects": [{"url": "https://emiratesnbd-secure.co/verify", "status": 302, "location": "https://enbd-login-verify.top/step1"}, {"url": "https://enbd-login-verify.top/step1", "status": 200}],
-      "safe_browsing": {"state": "found", "detail": "listed by Google Safe Browsing as SOCIAL_ENGINEERING", "data": {"threat_types": ["SOCIAL_ENGINEERING"]}},
-      "virustotal": {"state": "found", "detail": "7 of 92 security vendors flagged this link as malicious", "data": {"malicious": 7, "suspicious": 1, "engines": 92}}
+      "dns": {
+        "exists": true,
+        "records": {
+          "A": [
+            "203.0.113.24"
+          ],
+          "MX": [],
+          "NS": [
+            "ns1.example-dns.net.",
+            "ns2.example-dns.net."
+          ]
+        }
+      },
+      "rdap": {
+        "state": "found",
+        "detail": "registered 2026-11-17 (3 days ago)",
+        "data": {
+          "registered": "2026-11-17",
+          "age_days": 3,
+          "registrar": "Example Registrar, Inc. (demo)",
+          "abuse_email": "abuse@registrar.example",
+          "nameservers": [
+            "ns1.example-dns.net",
+            "ns2.example-dns.net"
+          ]
+        }
+      },
+      "tls": {
+        "ok": true,
+        "issuer": "Example Free CA",
+        "days_since_issued": 2
+      },
+      "redirects": [
+        {
+          "url": "https://emiratesnbd-secure.co/verify",
+          "status": 302,
+          "location": "https://enbd-login-verify.top/step1"
+        },
+        {
+          "url": "https://enbd-login-verify.top/step1",
+          "status": 200
+        }
+      ],
+      "safe_browsing": {
+        "state": "found",
+        "detail": "listed by Google Safe Browsing as SOCIAL_ENGINEERING",
+        "data": {
+          "threat_types": [
+            "SOCIAL_ENGINEERING"
+          ]
+        }
+      },
+      "virustotal": {
+        "state": "found",
+        "detail": "7 of 92 security vendors flagged this link as malicious",
+        "data": {
+          "malicious": 7,
+          "suspicious": 1,
+          "engines": 92
+        }
+      }
     },
     "emiratespost-redelivery.com": {
-      "dns": {"exists": true, "records": {"A": ["198.51.100.7"], "MX": [], "NS": ["ns1.example-host.org."]}},
-      "rdap": {"state": "found", "detail": "registered 2026-11-12 (8 days ago)", "data": {"registered": "2026-11-12", "age_days": 8}},
-      "tls": {"ok": true, "issuer": "Example Free CA", "days_since_issued": 7},
-      "redirects": [{"url": "https://emiratespost-redelivery.com/pay", "status": 200}],
-      "safe_browsing": {"state": "not_found", "detail": "not on Google Safe Browsing lists (this does not prove the link is safe)"},
-      "virustotal": {"state": "not_found", "detail": "VirusTotal has no existing report for this link (RAQEEB does not submit links)"}
+      "dns": {
+        "exists": true,
+        "records": {
+          "A": [
+            "198.51.100.7"
+          ],
+          "MX": [],
+          "NS": [
+            "ns1.example-dns.net.",
+            "ns2.example-dns.net."
+          ]
+        }
+      },
+      "rdap": {
+        "state": "found",
+        "detail": "registered 2026-11-12 (8 days ago)",
+        "data": {
+          "registered": "2026-11-12",
+          "age_days": 8,
+          "registrar": "Example Registrar, Inc. (demo)",
+          "abuse_email": "abuse@registrar.example",
+          "nameservers": [
+            "ns1.example-dns.net",
+            "ns2.example-dns.net"
+          ]
+        }
+      },
+      "tls": {
+        "ok": true,
+        "issuer": "Example Free CA",
+        "days_since_issued": 7
+      },
+      "redirects": [
+        {
+          "url": "https://emiratespost-redelivery.com/pay",
+          "status": 200
+        }
+      ],
+      "safe_browsing": {
+        "state": "not_found",
+        "detail": "not on Google Safe Browsing lists (this does not prove the link is safe)"
+      },
+      "virustotal": {
+        "state": "not_found",
+        "detail": "VirusTotal has no existing report for this link (RAQEEB does not submit links)"
+      }
     },
     "dewa.gov.ae": {
-      "dns": {"exists": true, "records": {"A": ["192.0.2.10"], "MX": ["10 mail.example.ae."], "NS": ["ns1.example.ae."]}},
-      "rdap": {"state": "missing", "detail": "no RDAP record available for this domain or its registry"},
-      "tls": {"ok": true, "issuer": "Example Trusted CA", "days_since_issued": 120},
-      "redirects": [{"url": "https://www.dewa.gov.ae/en/consumer/billing", "status": 200}],
-      "safe_browsing": {"state": "not_found", "detail": "not on Google Safe Browsing lists (this does not prove the link is safe)"},
-      "virustotal": {"state": "not_found", "detail": "0 of 92 vendors flagged this link in VirusTotal's last analysis", "data": {"malicious": 0, "suspicious": 0, "engines": 92}}
+      "dns": {
+        "exists": true,
+        "records": {
+          "A": [
+            "192.0.2.10"
+          ],
+          "MX": [
+            "10 mail.example.ae."
+          ],
+          "NS": [
+            "ns1.example.ae."
+          ]
+        }
+      },
+      "rdap": {
+        "state": "missing",
+        "detail": "no RDAP record available for this domain or its registry"
+      },
+      "tls": {
+        "ok": true,
+        "issuer": "Example Trusted CA",
+        "days_since_issued": 120
+      },
+      "redirects": [
+        {
+          "url": "https://www.dewa.gov.ae/en/consumer/billing",
+          "status": 200
+        }
+      ],
+      "safe_browsing": {
+        "state": "not_found",
+        "detail": "not on Google Safe Browsing lists (this does not prove the link is safe)"
+      },
+      "virustotal": {
+        "state": "not_found",
+        "detail": "0 of 92 vendors flagged this link in VirusTotal's last analysis",
+        "data": {
+          "malicious": 0,
+          "suspicious": 0,
+          "engines": 92
+        }
+      }
     }
   }
 }

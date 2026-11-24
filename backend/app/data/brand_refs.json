@@ -1,0 +1,418 @@
+{
+ "microsoft": {
+  "name": "Microsoft",
+  "domains": [
+   "microsoftonline.com",
+   "live.com",
+   "microsoft.com",
+   "office.com"
+  ],
+  "prints": [
+   {
+    "url": "https://login.microsoftonline.com/",
+    "dhash": "0019400c240c4801c80140014401640160016469006901314581540168015401",
+    "colours": [
+     [
+      255,
+      255,
+      255
+     ],
+     [
+      231,
+      235,
+      241
+     ],
+     [
+      253,
+      255,
+      254
+     ],
+     [
+      255,
+      255,
+      254
+     ]
+    ],
+    "detail": 27
+   },
+   {
+    "url": "https://login.live.com/",
+    "dhash": "00192008a00c32040405048102010f016d4160154c014801e4d870811ca10809",
+    "colours": [
+     [
+      255,
+      255,
+      255
+     ],
+     [
+      239,
+      241,
+      247
+     ],
+     [
+      174,
+      199,
+      222
+     ],
+     [
+      251,
+      252,
+      252
+     ]
+    ],
+    "detail": 24
+   }
+  ]
+ },
+ "google": {
+  "name": "Google",
+  "domains": [
+   "google.com"
+  ],
+  "prints": [
+   {
+    "url": "https://accounts.google.com/signin",
+    "dhash": "80008000000081908101c182c180000001c801d001d00006003600162001800d",
+    "colours": [
+     [
+      255,
+      255,
+      255
+     ],
+     [
+      254,
+      255,
+      255
+     ],
+     [
+      223,
+      229,
+      237
+     ],
+     [
+      255,
+      255,
+      254
+     ]
+    ],
+    "detail": 28
+   }
+  ]
+ },
+ "paypal": {
+  "name": "PayPal",
+  "domains": [
+   "paypal.com"
+  ],
+  "prints": [
+   {
+    "url": "https://www.paypal.com/signin",
+    "dhash": "04800680010040406b786968000080008000d218d49c080680181ba071a071a8",
+    "colours": [
+     [
+      255,
+      255,
+      255
+     ],
+     [
+      254,
+      255,
+      254
+     ],
+     [
+      225,
+      226,
+      227
+     ],
+     [
+      255,
+      255,
+      253
+     ]
+    ],
+    "detail": 35
+   }
+  ]
+ },
+ "netflix": {
+  "name": "Netflix",
+  "domains": [
+   "netflix.com"
+  ],
+  "prints": [
+   {
+    "url": "https://www.netflix.com/login",
+    "dhash": "106b384f101f0c13126a136f02ce00320392013710f212b00e091206003311b7",
+    "colours": [
+     [
+      25,
+      6,
+      4
+     ],
+     [
+      51,
+      13,
+      13
+     ],
+     [
+      63,
+      25,
+      27
+     ],
+     [
+      63,
+      8,
+      10
+     ]
+    ],
+    "detail": 31
+   }
+  ]
+ },
+ "facebook": {
+  "name": "Facebook",
+  "domains": [
+   "facebook.com"
+  ],
+  "prints": [
+   {
+    "url": "https://www.facebook.com/login/",
+    "dhash": "01000100010005c05cc058c17c837cc070006cc638c6b418900039d039d0895a",
+    "colours": [
+     [
+      255,
+      255,
+      255
+     ],
+     [
+      184,
+      191,
+      202
+     ],
+     [
+      254,
+      255,
+      255
+     ],
+     [
+      255,
+      255,
+      254
+     ]
+    ],
+    "detail": 93
+   }
+  ]
+ },
+ "instagram": {
+  "name": "Instagram",
+  "domains": [
+   "instagram.com"
+  ],
+  "prints": [
+   {
+    "url": "https://www.instagram.com/accounts/login/",
+    "dhash": "01000100010001c0e8c2e08159d0418071c4f0c6e170f010f1f8a8f8e990e1d0",
+    "colours": [
+     [
+      255,
+      255,
+      255
+     ],
+     [
+      206,
+      201,
+      202
+     ],
+     [
+      254,
+      255,
+      253
+     ],
+     [
+      254,
+      255,
+      255
+     ]
+    ],
+    "detail": 77
+   }
+  ]
+ },
+ "dropbox": {
+  "name": "Dropbox",
+  "domains": [
+   "dropbox.com"
+  ],
+  "prints": [
+   {
+    "url": "https://www.dropbox.com/login",
+    "dhash": "800380010000000008200f000f000d200d000d000d000d000e400e000e800e80",
+    "colours": [
+     [
+      255,
+      255,
+      255
+     ],
+     [
+      254,
+      255,
+      255
+     ],
+     [
+      255,
+      255,
+      251
+     ],
+     [
+      222,
+      231,
+      246
+     ]
+    ],
+    "detail": 28
+   }
+  ]
+ },
+ "docusign": {
+  "name": "DocuSign",
+  "domains": [
+   "docusign.com",
+   "docusign.net"
+  ],
+  "prints": [
+   {
+    "url": "https://account.docusign.com/",
+    "dhash": "00008000400000000000001101c103410381010503000322035c035400610109",
+    "colours": [
+     [
+      245,
+      245,
+      245
+     ],
+     [
+      254,
+      254,
+      254
+     ],
+     [
+      246,
+      245,
+      249
+     ],
+     [
+      184,
+      175,
+      198
+     ]
+    ],
+    "detail": 26
+   }
+  ]
+ },
+ "github": {
+  "name": "GitHub",
+  "domains": [
+   "github.com"
+  ],
+  "prints": [
+   {
+    "url": "https://github.com/login",
+    "dhash": "0300030019c08c008a0381368034310a84c280c201009aa09aa0ba6034900d40",
+    "colours": [
+     [
+      255,
+      255,
+      255
+     ],
+     [
+      246,
+      249,
+      250
+     ],
+     [
+      160,
+      194,
+      175
+     ],
+     [
+      253,
+      254,
+      254
+     ]
+    ],
+    "detail": 29
+   }
+  ]
+ },
+ "emirates-post": {
+  "name": "Emirates Post",
+  "domains": [
+   "emiratespost.ae"
+  ],
+  "prints": [
+   {
+    "url": "https://www.emiratespost.ae/",
+    "dhash": "c86ae81900180014000c840c358400008000020802240232827212d989c94bd8",
+    "colours": [
+     [
+      252,
+      252,
+      252
+     ],
+     [
+      254,
+      254,
+      255
+     ],
+     [
+      249,
+      250,
+      251
+     ],
+     [
+      202,
+      208,
+      214
+     ]
+    ],
+    "detail": 43
+   }
+  ]
+ },
+ "dewa": {
+  "name": "DEWA",
+  "domains": [
+   "dewa.gov.ae"
+  ],
+  "prints": [
+   {
+    "url": "https://www.dewa.gov.ae/en",
+    "dhash": "b0013001340114ba21f1c5cc13463b4633063b261b2dc30dc9198948269b36d3",
+    "colours": [
+     [
+      97,
+      98,
+      97
+     ],
+     [
+      131,
+      134,
+      133
+     ],
+     [
+      188,
+      188,
+      188
+     ],
+     [
+      62,
+      61,
+      61
+     ]
+    ],
+    "detail": 62
+   }
+  ]
+ }
+}

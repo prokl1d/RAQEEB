@@ -31,7 +31,7 @@ RESULTS = HERE / "results"
 FLAGGED = {"High Risk", "Moderate Risk"}
 
 
-def _configure(feeds: bool) -> None:
+def _configure(feeds: bool, visual: bool = False) -> None:
     from app.config import settings
     from app.intel import clients
     from app.pipeline import technical
@@ -53,6 +53,7 @@ def _configure(feeds: bool) -> None:
     technical.safe_browsing = sb_off
     technical.virustotal = vt_off
     settings.phish_feeds = feeds
+    settings.screenshots = visual
     if feeds:
         from app.intel import feeds as feed_mod
         feed_mod._load()
@@ -110,6 +111,7 @@ def metrics(results: dict[str, list[dict]], labels: dict[str, str]) -> str:
 async def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--feeds", action="store_true", help="use the local known-phishing feed cache")
+    ap.add_argument("--visual", action="store_true", help="also take sandboxed screenshots for visual brand match")
     ap.add_argument("--only", nargs="*")
     ap.add_argument("--reuse", action="store_true", help="re-print metrics from cached results")
     ap.add_argument("--concurrency", type=int, default=24)
@@ -118,7 +120,7 @@ async def main() -> None:
 
     sets = load(a.only)
     labels = {n: rows[0]["label"] for n, rows in sets.items() if rows}
-    tag = a.tag or ("feeds" if a.feeds else "zeroday")
+    tag = a.tag or ("feeds" if a.feeds else "visual" if a.visual else "zeroday")
     RESULTS.mkdir(exist_ok=True)
     results: dict[str, list[dict]] = {}
     if a.reuse:
@@ -126,7 +128,7 @@ async def main() -> None:
             p = RESULTS / f"{n}.{tag}.jsonl"
             results[n] = [json.loads(line) for line in p.read_text(encoding="utf-8").splitlines()] if p.exists() else []
     else:
-        _configure(a.feeds)
+        _configure(a.feeds, a.visual)
         sem = asyncio.Semaphore(a.concurrency)
         for n, rows in sets.items():
             t0 = time.perf_counter()

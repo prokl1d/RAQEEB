@@ -8,6 +8,7 @@ import { InvestigationInput, type InputPreset } from "../components/Investigatio
 import { NearMount } from "../components/NearMount";
 import { CallCheck, ListingCheck, ProtectIntro, SearchShield } from "../components/Protection";
 import { EarlyWarning } from "../components/EarlyWarning";
+import { AnalystTriage } from "../components/AnalystTriage";
 import { ScamQuiz } from "../components/ScamQuiz";
 import { Report } from "../components/Report";
 import { Badge, Card, Container, Mono, RiskBadge } from "../components/ui";
@@ -571,6 +572,7 @@ export function Dashboard() {
       />
       <ListingCheck />
       <EarlyWarning />
+      <AnalystTriage />
       <ScamQuiz
         onCheck={(text) => {
           setPreset({ tab: "message", value: text, nonce: Date.now() });

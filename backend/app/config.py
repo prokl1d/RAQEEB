@@ -29,6 +29,7 @@ class Settings(BaseSettings):
     ai_provider: str = "mock"  # "gemini" | "mock"
     offline_demo: bool = False  # replay labelled fixtures instead of calling external APIs
     network_checks: bool = True  # False disables all outbound checks (used by tests)
+    screenshots: bool = True  # sandboxed page screenshots + visual brand match (needs the "visual" extra)
     phish_feeds: bool = True  # local known-phishing feed copy (app/intel/feeds.py); no key needed
     ai_timeout_seconds: float = 45.0
 

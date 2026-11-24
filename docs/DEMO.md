@@ -39,6 +39,15 @@ All three work offline in demo mode.
 
 Extension bonus: with Link Guard v0.3.3 installed, search Google for "Emirates NBD login" and the real results get badges.
 
+## For the police judges (2 minutes)
+
+1. **Measured accuracy:** open `docs/EVALUATION.md` (or the deck slide "Measured, not claimed"): 0.3% false alarms on unseen real sites, 66% of fresh phishing caught, 99.2% precision, all with no API keys.
+2. **Early Warning:** scroll to the radar, pick *Emirates NBD*, press **Scan now**: 172 lookalikes tested, 16 live. Point at the *Defensive* and *Parked* labels, then **Copy takedown list (JSON)**. (Demo mode shows the recorded scan of 24 Nov, labelled as such; live mode scans for real.)
+3. **Analyst triage:** in *For AD Police analysts*, press **Load sample links**, then **Triage links**. The two fake domains are grouped as **Campaign A** (same nameservers), sorted High Risk first, with registrar abuse contacts. **Download triage file (JSON)**.
+4. **Takedown file:** open any risky report → **Report to AD Police** → **Download takedown file (JSON)**: registrar, abuse e-mail, IPs, redirects, screenshot hash, SHA-256 of the whole file.
+5. **Screenshot (live mode, optional extra):** investigate a live suspicious link; the report shows a sandboxed screenshot and, for a copy of a known login page, "Looks like Microsoft's real sign-in page".
+6. **Phone:** open the site on an Android phone, **Add to home screen**, then share an SMS to **RAQEEB**: the investigation starts by itself.
+
 ## Live mode (optional, needs internet)
 
 Remove `OFFLINE_DEMO`. Live checks then run: DNS, the TLS certificate, redirects and RDAP domain age.
@@ -47,6 +56,6 @@ Add keys to `backend/.env` to turn on more checks:
 - `SAFE_BROWSING_API_KEY` and `VIRUSTOTAL_API_KEY` for threat intelligence.
 - `AI_PROVIDER=gemini` with `GEMINI_API_KEY` for AI explanations.
 
-Without keys, those checks show as "not configured" and don't count toward the score.
+Without keys, those checks show as "not configured" and don't count toward the score. The free known-phishing feeds (`python -m app.intel.feeds update`) and the optional screenshots (`pip install -e ".[visual]"`) need no key.
 
 Good live example: paste `https://www.dewa.gov.ae/en` in the **Link** tab.
