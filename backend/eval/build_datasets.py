@@ -16,12 +16,14 @@ from __future__ import annotations
 
 import csv
 import random
+import re
 import sys
 from pathlib import Path
 from urllib.parse import urlsplit
 
 OUT = Path(__file__).with_name("data")
 SEED = 42
+HEX64 = re.compile(r"\b[0-9a-f]{64}\b")
 
 LEGIT_KNOWN = [
     # UAE banks, government, couriers, telecoms, payments (official sites)
@@ -75,7 +77,10 @@ def main(src: Path) -> None:
 
     pdb = [u for u in _http_only((src / "pdb_phishing-links-ACTIVE.txt").open(encoding="utf-8", errors="ignore"))
            if _host(u) and _host(u) not in op_hosts]
-    write("holdout_phish_pdb.csv", [(u, "phish", "phishing.database") for u in rnd.sample(pdb, 200)])
+    # Links holding a 64-hex token are dropped after sampling: the repository's secret scanner
+    # (tests/test_no_secrets.py) can't tell them from an API key. Sampling itself is unchanged.
+    sample = [u for u in rnd.sample(pdb, 200) if not HEX64.search(u)]
+    write("holdout_phish_pdb.csv", [(u, "phish", "phishing.database") for u in sample])
 
     ranked = []
     with (src / "top-1m.csv").open(encoding="utf-8") as f:

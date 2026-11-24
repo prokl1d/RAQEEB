@@ -54,7 +54,7 @@ RAQEEB runs an **investigation**, not a guess:
 | False alarms, 200 random real websites (tuning set) | 5.5% | **0.5%** |
 | False alarms, 300 *unseen* real websites (held out) | not measured | **0.3%** |
 | Fresh phishing caught (OpenPhish, 300 links) | 8% | **65%** at 99.5% precision |
-| Older phishing caught (held-out Phishing.Database, 200 links) | 8% | **21%** at 97.7% precision |
+| Older phishing caught (held-out Phishing.Database, 199 links) | 8% | **21%** at 97.7% precision |
 | Official UAE sites and real login pages wrongly flagged (53) | 0 | **0** |
 
 **Early Warning:** finds lookalike domains of a UAE organization **before** a campaign: RAQEEB generates the lookalikes scammers register (typos, swapped letters, "-secure", other endings), checks which are live in DNS right now, searches public certificate logs (crt.sh) for new HTTPS certificates, and separates real threats from parked domains and the organization's own defensive registrations. One click exports the list as JSON for a takedown request. Run live for Emirates NBD it found 16 registered lookalikes.

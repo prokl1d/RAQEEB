@@ -9,7 +9,7 @@ Measured on 24 Nov 2026 against **real, live links**, with **no API keys at all*
 | Set | Links | Flagged | |
 |---|---|---|---|
 | Real websites, random Tranco ranks 100,001 to 1,000,000 (unseen sample) | 300 | **1** | **0.3% false alarms** |
-| Phishing.Database active phishing links (MIT) | 200 | 42 | recall 21% (25.6% of the 164 still online) |
+| Phishing.Database active phishing links (MIT) | 199 | 42 | recall 21.1% (25.6% of the 164 still online) |
 | | | | **precision 97.7%** |
 
 **Tuning set** (used while designing the rules):
@@ -73,6 +73,6 @@ cd backend
 .\.venv\Scripts\python -m eval.evaluate --feeds              # with the local feed copy
 ```
 
-The labelled sets are in `backend/eval/data/` (CSV, one link per row, with its source). The random samples use a fixed seed, so anyone gets the same links.
+One sampled Phishing.Database link was removed from the committed set because it contains a 64-character hex token that the repository's secret scanner treats as a possible API key (it was a dead link, scored Inactive, so no number changes except the set size: 200 → 199). The labelled sets are in `backend/eval/data/` (CSV, one link per row, with its source). The random samples use a fixed seed, so anyone gets the same links.
 
 Sources: [OpenPhish community feed](https://openphish.com/), [Phishing.Database](https://github.com/Phishing-Database/Phishing.Database) (MIT), [Tranco list](https://tranco-list.eu/) (Le Pochat et al., NDSS 2019).

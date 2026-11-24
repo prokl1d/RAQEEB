@@ -15,10 +15,10 @@ Everything to paste or upload into the AD Police × 42AD submission form, plus t
 ### وصف موجز (Short description, max 600 characters)
 
 **English** (533 characters):
-> Scammers in the UAE borrow trusted names: banks, Emirates Post, even Abu Dhabi Police. RAQEEB investigates who a message, link, call, search result or listing claims to be, compares it with official domains and phone numbers, and explains a transparent verdict with its evidence, in English or Arabic. Tested on 1,053 real links with no API keys: 0.3% false alarms. Early Warning finds lookalike domains before a campaign, a Chrome extension checks links on click, and any report becomes a takedown-ready evidence file for AD Police.
+> Scammers in the UAE borrow trusted names: banks, Emirates Post, even Abu Dhabi Police. RAQEEB investigates who a message, link, call, search result or listing claims to be, compares it with official domains and phone numbers, and explains a transparent verdict with its evidence, in English or Arabic. Tested on 1,052 real links with no API keys: 0.3% false alarms. Early Warning finds lookalike domains before a campaign, a Chrome extension checks links on click, and any report becomes a takedown-ready evidence file for AD Police.
 
 **العربية** (474 حرفًا):
-> يستغل المحتالون في الإمارات أسماء جهات موثوقة مثل البنوك وبريد الإمارات وحتى شرطة أبوظبي. يتحقق رقيب من الجهة التي تدّعيها الرسالة أو الرابط أو المكالمة أو نتيجة البحث أو النشاط التجاري، ويقارنها بالنطاقات وأرقام الهاتف الرسمية، ويشرح حكمًا شفافًا مدعومًا بالأدلة. اختُبر على 1,053 رابطًا حقيقيًا دون أي مفتاح API بنسبة إنذارات خاطئة 0.3%. ويكشف الإنذار المبكر النطاقات المشابهة قبل الحملة، وتفحص إضافة كروم الروابط عند الضغط، ويتحول أي تقرير إلى ملف أدلة جاهز لطلب الإزالة.
+> يستغل المحتالون في الإمارات أسماء جهات موثوقة مثل البنوك وبريد الإمارات وحتى شرطة أبوظبي. يتحقق رقيب من الجهة التي تدّعيها الرسالة أو الرابط أو المكالمة أو نتيجة البحث أو النشاط التجاري، ويقارنها بالنطاقات وأرقام الهاتف الرسمية، ويشرح حكمًا شفافًا مدعومًا بالأدلة. اختُبر على 1,052 رابطًا حقيقيًا دون أي مفتاح API بنسبة إنذارات خاطئة 0.3%. ويكشف الإنذار المبكر النطاقات المشابهة قبل الحملة، وتفحص إضافة كروم الروابط عند الضغط، ويتحول أي تقرير إلى ملف أدلة جاهز لطلب الإزالة.
 
 ### الأدوات المستخدمة (Tools used)
 
